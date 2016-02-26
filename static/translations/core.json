@@ -1178,10 +1178,12 @@
                     "neutron_gre" : "Neutron 并使用 GRE",
                     "neutron_vlan": "Neutron 并使用 VLAN",
                     "neutron_tun": "Neutron 并使用 Tunneling"
-                }
+                },
+                "count_label": "数量",
+                "size_label": "大小"
             },
             "controls": {
-                "files": {
+                "file": {
                     "placeholder": "未选择文件"
                 }
             },
@@ -1205,16 +1207,18 @@
                 "offline": "下线",
                 "config": "VM配置文件",
                 "vms_config_msg": "可在JSON文件中自定义VM配置。",
-                "invalid_vms_conf_msg": "无效的JSON对象"
+                "invalid_vms_conf_msg": "无效的JSON对象",
+                "attributes": "节点属性"
             },
             "cluster": {
                 "status": {
                     "new": "新建",
-                    "deploying": "部署中",
+                    "deployment": "部署中",
                     "operational": "可操作",
                     "error": "错误",
-                    "removing": "移除中",
-                    "stopped": "已停止"
+                    "remove": "移除中",
+                    "stopped": "已停止",
+                    "partially_deployed": "未完全部署"
                 }
             },
             "network": {
@@ -1339,6 +1343,7 @@
             },
             "navbar": {
                 "environments": "环境",
+                "equipment": "设备",
                 "releases": "版本",
                 "plugins": "插件",
                 "support": "技术支持",
@@ -1352,13 +1357,19 @@
             "breadcrumbs": {
                 "home": "首页",
                 "environments": "环境",
+                "equipment": "设备",
                 "releases": "版本",
+                "plugins": "插件",
                 "support": "技术支持",
                 "notifications": "通知",
                 "capacity": "容量"
             },
             "notifications_page": {
-                "title": "通知"
+                "title": "通知",
+                "today": "今天"
+            },
+            "equipment_page": {
+                "title": "设备"
             },
             "notifications_popover": {
                 "view_all_button": "查看全部",
@@ -2028,6 +2039,7 @@
                     "additional": {
                         "title": "附加服务",
                         "release_alert": "__releaseName__ 不支持附加服务",
+                        "network_mode_alert": "Murano 需要使用 Neutron 作为网络服务",
                         "install_sahara": "安装 Sahara",
                         "install_sahara_description": "利用 Sahara 能在各大厂商的 OpenStack 发行版上部署 Hadoop 集群。",
                         "install_ceilometer": "安装 Ceilometer（OpenStack 计费）",
@@ -2064,9 +2076,29 @@
                 },
                 "deploy_cluster": {
                     "title": "部署变更",
-                    "deploy": "部署",
                     "no_deployment": "环境配置有误，无法开始部署。请检查下面的错误。",
-                    "connectivity_alert": "软件包和更新所用的镜像源定义在设置标签页中。如果你的环境使用默认的镜像源，请检查 Fuel 的主节点能访问外网。如果 Fuel 的主节点没有连接外网，你必须搭建一个本地的镜像源，并配置 Fuel 从本地镜像源获取软件包。Fuel 必须能通过网络访问本地镜像源。"
+                    "connectivity_alert": "软件包和更新所用的镜像源定义在设置标签页中。如果你的环境使用默认的镜像源，请检查 Fuel 的主节点能访问外网。如果 Fuel 的主节点没有连接外网，你必须搭建一个本地的镜像源，并配置 Fuel 从本地镜像源获取软件包。Fuel 必须能通过网络访问本地镜像源。",
+                    "are_you_sure_deploy": "单击部署开始操作或者取消",
+                    "deploy": "部署"
+                },
+                "provision_nodes": {
+                    "title": "配置节点",
+                    "locked_node_settings_alert": "在你开始之前，请检查环境的节点配置，包括磁盘分区、接口设置。在 Fuel 开始部署节点之后，你将不能再做更改。",
+                    "are_you_sure_provision": "点击开始配置进行操作或者取消。",
+                    "start_provisioning": "开始配置 __count__ 个节点",
+                    "start_provisioning_plural": "开始配置 __count__ 个节点"
+                },
+                "deploy_nodes": {
+                    "title": "部署节点",
+                    "locked_node_settings_alert": "在你开始之前，请检查节点配置。在 Fuel 部署之后，你将不能再更改节点角色。",
+                    "are_you_sure_deploy": "点击开始部署进行操作或者取消。",
+                    "start_deployment": "开始部署 __count__ 个节点",
+                    "start_deployment_plural": "开始部署 __count__ 个节点"
+                },
+                "select_nodes": {
+                    "title": "选择节点",
+                    "proceed": "选择了 __count__ 个节点",
+                    "proceed_plural": "选择了 __count__ 个节点"
                 },
                 "provision_vms": {
                     "title": "配置 VM",
@@ -2099,8 +2131,8 @@
                     "title": "删除节点",
                     "common_message": "你确定要从当前环境中删除所选节点吗？" ,
                     "common_message_plural": "你确定要从当前环境中删除所选节点吗？" ,
-                    "not_deployed_nodes_message": "未部署的节点会重新变为未分配的节点。",
-                    "not_deployed_nodes_message_plural": "未部署的节点会重新变为未分配的节点。",
+                    "added_nodes_message": "节点会重新变为未分配的节点。",
+                    "added_nodes_message_plural": "节点会重新变为未分配的节点。",
                     "deployed_nodes_message": "已部署的节点会被标记为删除，当前环境重新部署后会从中移除。",
                     "deployed_nodes_message_plural": "已部署的节点会被标记为删除，当前环境重新部署后会从中移除。"
                 },
