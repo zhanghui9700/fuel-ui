@@ -26,12 +26,6 @@ import 'deep-model';
 
 var models = {};
 
-var makePathMixin = {
-  makePath(...args) {
-    return args.join('.');
-  }
-};
-
 var superMixin = models.superMixin = {
   _super(method, args) {
     var object = this;
@@ -579,7 +573,6 @@ models.NodesStatistics = BaseModel.extend({
 
 models.NodeAttributes = Backbone.DeepModel
   .extend(restrictionMixin)
-  .extend(makePathMixin)
   .extend({
     constructorName: 'NodeAttributes',
     isNew() {
@@ -593,7 +586,7 @@ models.NodeAttributes = Backbone.DeepModel
           var groupSetting = group[field];
           if (!(groupSetting.regex || {}).source) return;
           if (!new RegExp(groupSetting.regex.source).test(groupSetting.value)) {
-            errors[this.makePath(groupName, field)] = groupSetting.regex.error;
+            errors[utils.makePath(groupName, field)] = groupSetting.regex.error;
           }
         });
       });
@@ -706,7 +699,6 @@ models.Settings = Backbone.DeepModel
   .extend(superMixin)
   .extend(cacheMixin)
   .extend(restrictionMixin)
-  .extend(makePathMixin)
   .extend({
     constructorName: 'Settings',
     urlRoot: '/api/clusters/',
@@ -770,10 +762,10 @@ models.Settings = Backbone.DeepModel
           checkRestrictions(group.metadata).result) return;
         _.each(group, (setting, settingName) => {
           if (checkRestrictions(setting).result) return;
-          var path = this.makePath(groupName, settingName);
+          var path = utils.makePath(groupName, settingName);
           // support of custom controls
           var CustomControl = customControls[setting.type];
-          if (CustomControl) {
+          if (CustomControl && _.isFunction(CustomControl.validate)) {
             var error = CustomControl.validate(setting, models);
             if (error) errors[path] = error;
             return;
@@ -1508,7 +1500,7 @@ models.WizardModel = Backbone.DeepModel.extend({
   }
 });
 
-models.MirantisCredentials = Backbone.DeepModel.extend(superMixin).extend(makePathMixin).extend({
+models.MirantisCredentials = Backbone.DeepModel.extend(superMixin).extend({
   constructorName: 'MirantisCredentials',
   baseUrl: 'https://software.mirantis.com/wp-content/themes/' +
   'mirantis_responsive_v_1_0/scripts/fuel_forms_api/',
@@ -1516,7 +1508,7 @@ models.MirantisCredentials = Backbone.DeepModel.extend(superMixin).extend(makePa
     var errors = {};
     _.each(attrs, (group, groupName) => {
       _.each(group, (setting, settingName) => {
-        var path = this.makePath(groupName, settingName);
+        var path = utils.makePath(groupName, settingName);
         if (!setting.regex || !setting.regex.source) return;
         if (!setting.value.match(new RegExp(setting.regex.source))) {
           errors[path] = setting.regex.error;

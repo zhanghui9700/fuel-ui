@@ -338,6 +338,9 @@ var utils = {
   composeDocumentationLink(link) {
     return 'https://docs.fuel-infra.org/openstack/fuel/fuel-'
       + app.version.get('release') + '/' + link;
+  },
+  makePath(...args) {
+    return args.join('.');
   }
 };
 

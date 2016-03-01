@@ -55,11 +55,11 @@ export default {
     };
   },
   getError(model, name) {
-    return (model.validationError || {})[model.makePath('statistics', name)];
+    return (model.validationError || {})[utils.makePath('statistics', name)];
   },
   renderInput(settingName, wrapperClassName, disabledState) {
     var settings = this.props.settings;
-    var setting = settings.get(settings.makePath('statistics', settingName));
+    var setting = settings.get(utils.makePath('statistics', settingName));
     if (
       this.checkRestrictions('metadata', 'hide').result ||
       this.checkRestrictions(settingName, 'hide').result ||
@@ -154,6 +154,6 @@ export default {
     );
   },
   onCheckboxChange(name, value) {
-    this.props.settings.set(this.props.settings.makePath('statistics', name, 'value'), value);
+    this.props.settings.set(utils.makePath('statistics', name, 'value'), value);
   }
 };

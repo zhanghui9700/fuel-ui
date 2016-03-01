@@ -120,7 +120,7 @@ customControls.custom_repo_configuration = React.createClass({
           repo.uri = value;
         }
     }
-    var path = this.props.settings.makePath(this.props.path, 'value');
+    var path = utils.makePath(this.props.path, 'value');
     this.props.settings.set(path, repos);
     this.props.settings.isValid({models: this.props.configModels});
   },
@@ -365,9 +365,8 @@ customControls.custom_hugepages = React.createClass({
   render() {
     var inputProps = {
       placeholder: 'None',
-      error: this.props.error,
       description: null,
-      type: 'text',
+      type: 'number',
       name: this.props.name,
       disabled: this.props.disabled
     };

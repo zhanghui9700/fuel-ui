@@ -1696,7 +1696,7 @@ var NetworkingL3Parameters = React.createClass({
 var NetworkSettings = React.createClass({
   onChange(groupName, settingName, value) {
     var settings = this.props.cluster.get('settings');
-    var name = settings.makePath(groupName, settingName, settings.getValueAttribute(settingName));
+    var name = utils.makePath(groupName, settingName, settings.getValueAttribute(settingName));
     this.props.settingsForChecks.set(name, value);
     // FIXME: the following hacks cause we can't pass {validate: true} option to set method
     // this form of validation isn't supported in Backbone DeepModel
@@ -1755,7 +1755,6 @@ var NetworkSettings = React.createClass({
                   onChange={_.bind(this.onChange, this, sectionName)}
                   allocatedRoles={allocatedRoles}
                   settings={settings}
-                  makePath={settings.makePath}
                   getValueAttribute={settings.getValueAttribute}
                   locked={locked}
                   lockedCluster={lockedCluster}
