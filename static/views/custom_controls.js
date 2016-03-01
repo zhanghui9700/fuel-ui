@@ -380,28 +380,28 @@ customControls.custom_hugepages = React.createClass({
           </label>
         </div>
         <div className='row labels'>
-          <div className='col-xs-1'>
+          <div className='col-xs-2'>
             {i18n('common.size_label')}
           </div>
-          <div className='col-xs-11'>
+          <div className='col-xs-10'>
             {i18n('common.count_label')}
           </div>
         </div>
         <div className='contents'>
-          {_.map(this.props.config.value, (value, name) => {
+          {_.map(this.props.config.value, (number, size) => {
             return (
-              <div className='row' key={name}>
-                <div className='col-xs-1'>
+              <div className='row' key={size}>
+                <div className='col-xs-2'>
                   <p>
-                    {name}
+                    {utils.showDiskSize(size, 1)}
                   </p>
                 </div>
-                <div className='col-xs-11'>
+                <div className='col-xs-10'>
                   <Input
                     {...inputProps}
-                    value={value}
-                    key={name}
-                    onChange={_.partialRight(this.props.onChange, name)}
+                    value={number}
+                    key={size}
+                    onChange={_.partialRight(this.props.onChange, size)}
                   />
                 </div>
               </div>
