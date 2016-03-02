@@ -141,8 +141,8 @@ export var dialogMixin = {
   renderImportantLabel() {
     return <span className='label label-danger'>{i18n('common.important')}</span>;
   },
-  submitAction() {
-    this.state.result.resolve();
+  submitAction(options) {
+    this.state.result.resolve(options);
     this.close();
   },
   render() {
@@ -592,7 +592,7 @@ export var SelectNodesDialog = React.createClass({
   mixins: [dialogMixin],
   getInitialState() {
     var selectedNodeIds = {};
-    this.props.nodes.each((node) => selectedNodeIds[node.id] = true);
+    _.each(this.props.selectedNodeIds, (id) => selectedNodeIds[id] = true);
     return {selectedNodeIds};
   },
   getDefaultProps() {
@@ -602,10 +602,6 @@ export var SelectNodesDialog = React.createClass({
     };
   },
   ns: 'dialog.select_nodes.',
-  proceed() {
-    this.close();
-    this.props.callback(_.keys(this.state.selectedNodeIds));
-  },
   selectNodes(ids = [], checked) {
     if (ids.length) {
       var nodeSelection = this.state.selectedNodeIds;
@@ -635,8 +631,8 @@ export var SelectNodesDialog = React.createClass({
       defaultFilters={{roles: [], status: []}}
       showBatchActionButtons={false}
       showLabeManagementButton={false}
-      isViewModeSwitchingPossible={false}
-      nodeSelectionPossibleOnly
+      showViewModeButtons={false}
+      nodeActionsAvailable={false}
       viewMode='compact'
     />;
   },
@@ -654,7 +650,7 @@ export var SelectNodesDialog = React.createClass({
       <button key='proceed'
         className='btn btn-select-nodes btn-success'
         disabled={this.state.actionInProgress || !selectedNodesAmount}
-        onClick={this.proceed}
+        onClick={() => this.submitAction(_.keys(this.state.selectedNodeIds))}
       >
         {selectedNodesAmount ?
           i18n(this.ns + 'proceed', {count: selectedNodesAmount})
