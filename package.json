@@ -35,7 +35,7 @@
     "gulp-util": "3.0.4",
     "i18next-client": "1.11.1",
     "imports-loader": "0.6.4",
-    "ip": "git://github.com/indutny/node-ip.git#8659ae73dba8ee5a508c63c07cdd83b05ec5793b",
+    "ip": "1.1.1",
     "javascript-natural-sort": "0.7.1",
     "jquery": "1.11.3",
     "js-cookie": "1.5.1",

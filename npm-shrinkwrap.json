@@ -8430,9 +8430,8 @@
       }
     },
     "ip": {
-      "version": "1.1.0",
-      "from": "ip@git://github.com/indutny/node-ip.git#8659ae73dba8ee5a508c63c07cdd83b05ec5793b",
-      "resolved": "git://github.com/indutny/node-ip.git#8659ae73dba8ee5a508c63c07cdd83b05ec5793b"
+      "version": "1.1.1",
+      "from": "ip@1.1.1"
     },
     "javascript-natural-sort": {
       "version": "0.7.1",
