@@ -91,12 +91,12 @@ var SettingSection = React.createClass({
   },
   checkDependentRoles(sectionName, settingName) {
     if (!this.props.allocatedRoles.length) return [];
-    var path = this.props.makePath(sectionName, settingName);
+    var path = utils.makePath(sectionName, settingName);
     var setting = this.props.settings.get(path);
     if (!this.areCalculationsPossible(setting)) return [];
     var valueAttribute = this.props.getValueAttribute(settingName);
     var valuesToCheck = this.getValuesToCheck(setting, valueAttribute);
-    var pathToCheck = this.props.makePath(path, valueAttribute);
+    var pathToCheck = utils.makePath(path, valueAttribute);
     var roles = this.props.cluster.get('roles');
     return _.compact(this.props.allocatedRoles.map((roleName) => {
       var role = roles.findWhere({name: roleName});
@@ -114,7 +114,7 @@ var SettingSection = React.createClass({
     }));
   },
   checkDependentSettings(sectionName, settingName) {
-    var path = this.props.makePath(sectionName, settingName);
+    var path = utils.makePath(sectionName, settingName);
     var currentSetting = this.props.settings.get(path);
     if (!this.areCalculationsPossible(currentSetting)) return [];
     var dependentRestrictions = {};
@@ -137,7 +137,7 @@ var SettingSection = React.createClass({
         // we support dependecies on checkboxes,
         // toggleable setting groups, dropdowns and radio groups
         if (!this.areCalculationsPossible(setting) ||
-          this.props.makePath(sectionName, settingName) === path ||
+         utils.makePath(sectionName, settingName) === path ||
           this.props.checkRestrictions('hide', setting).result
         ) return;
         if (setting[this.props.getValueAttribute(settingName)] === true) {
@@ -151,7 +151,7 @@ var SettingSection = React.createClass({
     // evaluate dependencies
     if (!_.isEmpty(dependentRestrictions)) {
       var valueAttribute = this.props.getValueAttribute(settingName);
-      var pathToCheck = this.props.makePath(path, valueAttribute);
+      var pathToCheck = utils.makePath(path, valueAttribute);
       var valuesToCheck = this.getValuesToCheck(currentSetting, valueAttribute);
       var checkValues = _.partial(
         this.checkValues,
@@ -177,7 +177,7 @@ var SettingSection = React.createClass({
     // FIXME: the following hacks cause we can't pass {validate: true} option to set method
     // this form of validation isn't supported in Backbone DeepModel
     settings.validationError = null;
-    settings.set(this.props.makePath(pluginName, 'metadata', 'chosen_id'), Number(version));
+    settings.set(utils.makePath(pluginName, 'metadata', 'chosen_id'), Number(version));
     settings.mergePluginSettings();
     settings.isValid({models: this.props.configModels});
     this.props.settingsForChecks.set(_.cloneDeep(settings.attributes));
@@ -344,7 +344,7 @@ var SettingSection = React.createClass({
           {_.map(sortedSettings, (settingName) => {
             var setting = section[settingName];
             var settingKey = settingName + (isPlugin ? '-' + metadata.chosen_id : '');
-            var path = this.props.makePath(sectionName, settingName);
+            var path = utils.makePath(sectionName, settingName);
             var error = (settings.validationError || {})[path];
             var processedSettingRestrictions = this.processRestrictions(setting, settingName);
             var processedSettingDependencies = this.checkDependencies(sectionName, settingName);

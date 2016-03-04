@@ -151,7 +151,7 @@ var SettingsTab = React.createClass({
                 // do not update hidden settings (hack for #1442143),
                 // the same for settings with group network
                 if (setting.type === 'hidden' || setting.group === 'network') return;
-                var path = settings.makePath(sectionName, settingName);
+                var path = utils.makePath(sectionName, settingName);
                 settings.set(path, defaultSettings.get(path), {silent: true});
               });
             }
@@ -184,7 +184,7 @@ var SettingsTab = React.createClass({
   },
   onChange(groupName, settingName, value) {
     var settings = this.props.cluster.get('settings');
-    var name = settings.makePath(groupName, settingName, settings.getValueAttribute(settingName));
+    var name = utils.makePath(groupName, settingName, settings.getValueAttribute(settingName));
     this.state.settingsForChecks.set(name, value);
     // FIXME: the following hacks cause we can't pass {validate: true} option to set method
     // this form of validation isn't supported in Backbone DeepModel
@@ -276,7 +276,7 @@ var SettingsTab = React.createClass({
               ) return settingName;
             }));
             var hasErrors = _.any(pickedSettings, (settingName) => {
-              return (settings.validationError || {})[settings.makePath(sectionName, settingName)];
+              return (settings.validationError || {})[utils.makePath(sectionName, settingName)];
             });
             if (!_.isEmpty(pickedSettings)) {
               groupedSettings[calculatedGroup][sectionName] = {
@@ -298,7 +298,6 @@ var SettingsTab = React.createClass({
           settings={settings}
           settingsGroupList={settingsGroupList}
           groupedSettings={groupedSettings}
-          makePath={settings.makePath}
           configModels={this.state.configModels}
           setActiveSettingsGroupName={this.props.setActiveSettingsGroupName}
           activeSettingsSectionName={this.props.activeSettingsSectionName}
@@ -330,7 +329,6 @@ var SettingsTab = React.createClass({
                   onChange={_.partial(this.onChange, sectionName)}
                   allocatedRoles={allocatedRoles}
                   settings={settings}
-                  makePath={settings.makePath}
                   getValueAttribute={settings.getValueAttribute}
                   locked={locked}
                   lockedCluster={lockedCluster}
