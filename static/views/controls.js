@@ -57,6 +57,7 @@ export var Input = React.createClass({
   },
   getDefaultProps() {
     return {
+      type: 'text',
       tooltipIcon: 'glyphicon-warning-sign',
       tooltipPlacement: 'right'
     };

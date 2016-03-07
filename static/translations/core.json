@@ -1062,7 +1062,7 @@
                     "node_network_group": "Node network group",
                     "cluster": "Environment",
                     "nova_hugepages": "Nova Huge pages",
-                    "cpu_id": "CPU ID",
+                    "cpu_id": "CPU IDs",
                     "memory": "Memory",
                     "id": "Id",
                     "numa_nodes": "__count__ NUMA node",

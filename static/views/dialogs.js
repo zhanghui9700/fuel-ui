@@ -931,7 +931,7 @@ export var ShowNodeInfoDialog = React.createClass({
     renamingMixin('hostname')
   ],
   renderableAttributes: [
-    'cpu', 'disks', 'interfaces', 'memory', 'system', 'attributes', 'numa_topology'
+    'cpu', 'disks', 'interfaces', 'memory', 'system', 'numa_topology', 'attributes'
   ],
   getDefaultProps() {
     return {modalClass: 'always-show-scrollbar'};
@@ -956,51 +956,46 @@ export var ShowNodeInfoDialog = React.createClass({
       {trigger: true}
     );
   },
-  showSummary(meta, group) {
-    var summary = '';
+  showSummary(group) {
+    var meta = this.props.node.get('meta');
+    var formatSummary = (dict) => _.keys(dict).sort().map((key) => dict[key] + ' x ' + key);
+
     try {
       switch (group) {
         case 'system':
-          summary = (meta.system.manufacturer || '') + ' ' + (meta.system.product || '');
-          break;
+          return (meta.system.manufacturer || '') + ' ' + (meta.system.product || '');
         case 'memory':
-          if (_.isArray(meta.memory.devices) && meta.memory.devices.length) {
-            var sizes = _.countBy(_.pluck(meta.memory.devices, 'size'), (value) => {
-              return utils.showSize(value);
-            });
-            summary = _.map(_.keys(sizes).sort(), (size) => sizes[size] + ' x ' + size).join(', ');
-            summary += ', ' + utils.showSize(meta.memory.total) + ' ' +
-              i18n('dialog.show_node.total');
-          } else {
-            summary = utils.showSize(meta.memory.total) + ' ' +
-              i18n('dialog.show_node.total');
-          }
-          break;
+          return (
+            _.isArray(meta.memory.devices) ?
+              formatSummary(
+                _.countBy(_.pluck(meta.memory.devices, 'size'), (value) => utils.showSize(value))
+              )
+            :
+              []
+          )
+          .concat(utils.showSize(meta.memory.total) + ' ' + i18n('dialog.show_node.total'))
+          .join(', ');
         case 'disks':
-          summary = meta.disks.length + ' ';
-          summary += i18n('dialog.show_node.drive', {count: meta.disks.length});
-          summary += ', ' + utils.showSize(_.reduce(_.pluck(meta.disks, 'size'), (sum, n) =>
-            sum + n, 0)) + ' ' + i18n('dialog.show_node.total');
-          break;
+          return meta.disks.length + ' ' +
+            i18n('dialog.show_node.drive', {count: meta.disks.length}) + ', ' +
+            utils.showSize(_.reduce(_.pluck(meta.disks, 'size'), (sum, n) => sum + n, 0)) + ' ' +
+            i18n('dialog.show_node.total');
         case 'cpu':
-          var frequencies = _.countBy(_.pluck(meta.cpu.spec, 'frequency'), utils.showFrequency);
-          summary = _.map(_.keys(frequencies).sort(), (frequency) => frequencies[frequency] +
-          ' x ' + frequency).join(', ');
-          break;
+          return formatSummary(
+            _.countBy(_.pluck(meta.cpu.spec, 'frequency'), utils.showFrequency)
+          ).join(', ');
         case 'interfaces':
-          var bandwidths = _.countBy(_.pluck(meta.interfaces, 'current_speed'),
-            utils.showBandwidth);
-          summary = _.map(_.keys(bandwidths).sort(), (bandwidth) => bandwidths[bandwidth] +
-          ' x ' + bandwidth).join(', ');
-          break;
+          return formatSummary(
+            _.countBy(_.pluck(meta.interfaces, 'current_speed'), utils.showBandwidth)
+          ).join(', ');
         case 'numa_topology':
-          summary = i18n('dialog.show_node.numa_nodes', {
+          return i18n('dialog.show_node.numa_nodes', {
             count: meta.numa_topology.numa_nodes.length
           });
-          break;
+        default:
+          return '';
       }
     } catch (ignore) {}
-    return summary;
   },
   showPropertyName(propertyName) {
     return String(propertyName).replace(/_/g, ' ');
@@ -1232,226 +1227,245 @@ export var ShowNodeInfoDialog = React.createClass({
       </div>
     );
   },
-  renderNodeHardware() {
-    var {node} = this.props;
-    var meta = node.get('meta');
-    var groups = _.sortBy(_.keys(meta), (group) => _.indexOf(this.renderableAttributes, group));
-    var nodeAttributes = this.state.nodeAttributes;
-    var isPendingAdditionNode = node.get('pending_addition');
-    var sortedAttributes, attributeFields, commonInputProps, nodeAttributesError;
-    if (this.state.VMsConf) groups.push('config');
-    if (nodeAttributes && this.state.configModels) {
-      if (!_.isEmpty(nodeAttributes.attributes)) {
-        // sorting attributes and processing hide restrictions
-        sortedAttributes = _.chain(_.keys(nodeAttributes.attributes))
-        .sortBy((name) => nodeAttributes.get(name + '.metadata.weight'))
-        .filter((name) => {
-          return (!nodeAttributes.checkRestrictions(
-            this.state.configModels,
-            'hide',
-            nodeAttributes.get(name).metadata
-          ).result);
-        })
-        .value();
-        if (sortedAttributes.length) {
-          groups.push('attributes');
-          attributeFields = ['nova', 'dpdk'];
-          commonInputProps = {
-            placeholder: 'None',
-            onChange: this.onNodeAttributesChange,
-            error: null,
-            type: 'number'
-          };
-          nodeAttributesError = this.state.nodeAttributesError;
+  renderVMConfig() {
+    return (
+      <div className='panel-body'>
+        <div className='vms-config'>
+          <Input
+            ref='vms-config'
+            type='textarea'
+            label={i18n('node_details.vms_config_msg')}
+            error={this.state.VMsConfValidationError}
+            onChange={this.onVMsConfChange}
+            defaultValue={this.state.VMsConf}
+          />
+          <button
+            className='btn btn-success'
+            onClick={this.saveVMsConf}
+            disabled={this.state.VMsConfValidationError ||
+              this.state.actionInProgress}
+            >
+            {i18n('common.save_settings_button')}
+          </button>
+        </div>
+      </div>
+    );
+  },
+  renderNodeAttributes() {
+    var {nodeAttributes, configModels, nodeAttributesError} = this.state;
+    var attributesToDisplay = ['nova', 'dpdk'];
+    var isPendingAdditionNode = this.props.node.get('pending_addition');
+
+    var attributes = _.chain(_.keys(nodeAttributes.attributes))
+      .filter(
+        (sectionName) => !nodeAttributes.checkRestrictions(
+          configModels,
+          'hide',
+          nodeAttributes.get(sectionName).metadata
+        ).result
+      )
+      .sortBy(
+        (sectionName) => nodeAttributes.get(utils.makePath(sectionName, 'metadata', 'weight'))
+      )
+      .map(
+        (sectionName) => {
+          var metadata = nodeAttributes.get(utils.makePath(sectionName, 'metadata'));
+          return _.map(attributesToDisplay,
+            (attributeName) => {
+              var path = utils.makePath(sectionName, attributeName);
+              var attribute = nodeAttributes.get(path);
+
+              var commonProps = {
+                name: path,
+                error: (nodeAttributesError || {})[path],
+                disabled: !isPendingAdditionNode ||
+                  nodeAttributes.checkRestrictions(configModels, 'disable', metadata).result,
+                onChange: this.onNodeAttributesChange,
+                placeholder: 'None'
+              };
+
+              if (attribute.type === 'custom_hugepages') {
+                return (
+                  <customControls.custom_hugepages
+                    {...commonProps}
+                    config={attribute}
+                    name='hugepages.nova'
+                  />
+                );
+              }
+
+              return (
+                <div className='row'>
+                  <div className='col-xs-12'>
+                    <Input {...attribute} {...commonProps} />
+                  </div>
+                </div>
+              );
+            }
+          );
         }
+      )
+      .value();
+
+    return (
+      <div className='panel-body'>
+        <div className='node-attributes'>
+          {attributes}
+          {isPendingAdditionNode &&
+            <button
+              className='btn btn-success'
+              onClick={this.saveNodeAttributes}
+              disabled={
+                !_.isNull(nodeAttributesError) ||
+                !this.hasNodeAttributesChanges() ||
+                this.state.actionInProgress
+              }
+              >
+              {i18n('common.save_settings_button')}
+            </button>
+          }
+        </div>
+      </div>
+    );
+  },
+  renderNUMATopology() {
+    return (
+      <div className='panel-body'>
+        <div className='numa-topology'>
+          {_.map(this.props.node.get('meta').numa_topology.numa_nodes, (numaNode, index) => {
+            return (
+              <div
+                className='nested-object'
+                key={'subentries_numa-' + index}
+              >
+                {this.renderNodeInfo('id', numaNode.id)}
+                {!!numaNode.cpus && this.renderNodeInfo('cpu_id', numaNode.cpus.join(', '))}
+                {this.renderNodeInfo('memory', utils.showSize(numaNode.memory))}
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    );
+  },
+  getNodeDetailsGroups() {
+    var groups = _.keys(this.props.node.get('meta'));
+
+    var {nodeAttributes, configModels} = this.state;
+    if (nodeAttributes && configModels) {
+      if (_.any(_.keys(nodeAttributes.attributes), (sectionName) => {
+        return !nodeAttributes.checkRestrictions(
+          configModels,
+          'hide',
+          nodeAttributes.get(sectionName).metadata
+        ).result;
+      })) {
+        groups.push('attributes');
       }
     }
 
+    return _.sortBy(
+      groups,
+      (groupName) => _.indexOf(this.renderableAttributes, groupName)
+    );
+  },
+  renderGroupContent(group, groupIndex) {
     var sortOrder = {
       disks: ['name', 'model', 'size'],
       interfaces: ['name', 'mac', 'state', 'ip', 'netmask', 'current_speed', 'max_speed',
         'driver', 'bus_info']
     };
-
-    return (
-      <div className='panel-group' id='accordion' role='tablist' aria-multiselectable='true'>
-        {_.map(groups, (group, groupIndex) => {
-          var groupEntries = meta[group];
-          if (group === 'interfaces' || group === 'disks') {
-            groupEntries = _.sortBy(groupEntries, 'name');
-          }
-          var subEntries = _.isPlainObject(groupEntries) ?
-            _.find(_.values(groupEntries), _.isArray) : [];
-
-          if (!_.contains(this.renderableAttributes, group)) {
-            return null;
-          }
-          var panelContent;
-          switch (group) {
-            case 'config':
-              panelContent = (
-                <div className='vms-config'>
-                  <Input
-                    ref='vms-config'
-                    type='textarea'
-                    label={i18n('node_details.vms_config_msg')}
-                    error={this.state.VMsConfValidationError}
-                    onChange={this.onVMsConfChange}
-                    defaultValue={this.state.VMsConf}
-                  />
-                  <button
-                    className='btn btn-success'
-                    onClick={this.saveVMsConf}
-                    disabled={this.state.VMsConfValidationError ||
-                      this.state.actionInProgress}
-                    >
-                    {i18n('common.save_settings_button')}
-                  </button>
-                </div>);
-              break;
-            case 'attributes':
-              panelContent = (
-                <div className='node-attributes'>
-                  {_.map(sortedAttributes, (section) => {
-                    return _.map(attributeFields, (field) => {
-                      var disabled = !isPendingAdditionNode ||
-                        (nodeAttributes.checkRestrictions(
-                          this.state.configModels,
-                          'disabled',
-                          nodeAttributes.get(section).metadata
-                        ).result);
-                      var path = utils.makePath(section, field);
-                      var nodeAttribute = nodeAttributes.get(path);
-                      var error = nodeAttributesError && nodeAttributesError[path];
-                      if (nodeAttribute.type === 'custom_hugepages') {
-                        return <customControls.custom_hugepages
-                          config={nodeAttribute}
-                          onChange={this.onNodeAttributesChange}
-                          name='hugepages.nova'
-                          error={error}
-                          disabled={disabled}
-                        />;
-                      }
-                      return (
-                        <div className='row'>
-                          <div className='col-xs-12'>
-                            <Input
-                              {...commonInputProps}
-                              {...nodeAttribute}
-                              name={path}
-                              error={error}
-                              disabled={disabled}
-                            />
-                          </div>
-                        </div>
-                      );
-                    });
-                  })}
-                  {isPendingAdditionNode &&
-                    <button
-                      className='btn btn-success'
-                      onClick={this.saveNodeAttributes}
-                      disabled={
-                        !_.isNull(nodeAttributesError) ||
-                        !this.hasNodeAttributesChanges() ||
-                        this.state.actionInProgress
-                      }
-                    >
-                      {i18n('common.save_settings_button')}
-                    </button>
-                  }
-                </div>);
-              break;
-            case 'numa_topology':
-              panelContent = (
-                <div className='numa-topology'>
-                  {_.map(groupEntries.numa_nodes, (numaNode, index) => {
-                    return (
-                      <div
-                        className='nested-object'
-                        key={'subentries_' + groupIndex + index}
-                      >
-                        {this.renderNodeInfo('id', numaNode.id)}
-                        {this.renderNodeInfo('cpu_id', numaNode.cpus.join(', '))}
-                        {this.renderNodeInfo('memory', utils.showSize(numaNode.memory))}
-                      </div>
-                    );
-                  })}
-                </div>);
-              break;
-            default:
-              panelContent = (
-                <div>
-                  {_.isArray(groupEntries) &&
-                    <div>
-                      {_.map(groupEntries, (entry, entryIndex) => {
-                        return (
-                          <div className='nested-object' key={'entry_' + groupIndex + entryIndex}>
-                            {_.map(utils.sortEntryProperties(entry, sortOrder[group]),
-                              (propertyName) => {
-                                if (
-                                  !_.isPlainObject(entry[propertyName]) &&
-                                  !_.isArray(entry[propertyName])
-                                ) {
-                                  return this.renderNodeInfo(
-                                    propertyName,
-                                    this.showPropertyValue(group, propertyName, entry[propertyName])
-                                  );
-                                }
-                              }
-                            )}
-                          </div>
-                        );
-                      })}
-                    </div>
-                  }
-                  {_.isPlainObject(groupEntries) &&
-                    <div>
-                      {_.map(groupEntries, (propertyValue, propertyName) => {
-                        if (
-                          !_.isPlainObject(propertyValue) &&
-                          !_.isArray(propertyValue) &&
-                          !_.isNumber(propertyName)
-                        ) {
-                          return this.renderNodeInfo(
-                            propertyName,
-                            this.showPropertyValue(group, propertyName, propertyValue)
-                          );
+    var groupEntries = this.props.node.get('meta')[group];
+    if (group === 'interfaces' || group === 'disks') {
+      groupEntries = _.sortBy(groupEntries, 'name');
+    }
+    var subEntries = _.isPlainObject(groupEntries) ?
+      _.find(_.values(groupEntries), _.isArray) : [];
+    switch (group) {
+      case 'config':
+        return this.renderVMConfig();
+      case 'numa_topology':
+        return this.renderNUMATopology();
+      case 'attributes':
+        return this.renderNodeAttributes();
+      default:
+        return (
+          <div className='panel-body'>
+            {_.isArray(groupEntries) &&
+              <div>
+                {_.map(groupEntries, (entry, entryIndex) => {
+                  return (
+                    <div className='nested-object' key={'entry_' + groupIndex + entryIndex}>
+                      {_.map(utils.sortEntryProperties(entry, sortOrder[group]),
+                        (propertyName) => {
+                          if (
+                            !_.isPlainObject(entry[propertyName]) &&
+                            !_.isArray(entry[propertyName])
+                          ) {
+                            return this.renderNodeInfo(
+                              propertyName,
+                              this.showPropertyValue(group, propertyName, entry[propertyName])
+                            );
+                          }
                         }
-                      })}
-                      {!_.isEmpty(subEntries) &&
-                        <div>
-                          {_.map(subEntries, (subentry, subentrysIndex) => {
-                            return (
-                              <div
-                                className='nested-object'
-                                key={'subentries_' + groupIndex + subentrysIndex}
-                              >
-                                {_.map(utils.sortEntryProperties(subentry), (propertyName) => {
-                                  return this.renderNodeInfo(
-                                    propertyName,
-                                    this.showPropertyValue(
-                                      group, propertyName, subentry[propertyName]
-                                    )
-                                  );
-                                })}
-                              </div>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+            }
+            {_.isPlainObject(groupEntries) &&
+              <div>
+                {_.map(groupEntries, (propertyValue, propertyName) => {
+                  if (
+                    !_.isPlainObject(propertyValue) &&
+                    !_.isArray(propertyValue) &&
+                    !_.isNumber(propertyName)
+                  ) {
+                    return this.renderNodeInfo(
+                      propertyName,
+                      this.showPropertyValue(group, propertyName, propertyValue)
+                    );
+                  }
+                })}
+                {!_.isEmpty(subEntries) &&
+                  <div>
+                    {_.map(subEntries, (subentry, subentrysIndex) => {
+                      return (
+                        <div
+                          className='nested-object'
+                          key={'subentries_' + groupIndex + subentrysIndex}
+                          >
+                          {_.map(utils.sortEntryProperties(subentry), (propertyName) => {
+                            return this.renderNodeInfo(
+                              propertyName,
+                              this.showPropertyValue(
+                                group, propertyName, subentry[propertyName]
+                              )
                             );
                           })}
                         </div>
-                      }
-                    </div>
-                  }
-                  {
-                    !_.isPlainObject(groupEntries) &&
-                    !_.isArray(groupEntries) &&
-                    !_.isUndefined(groupEntries) &&
-                      <div>{groupEntries}</div>
-                  }
-                </div>
-              );
-          }
-
+                      );
+                    })}
+                  </div>
+                }
+              </div>
+            }
+            {
+              !_.isPlainObject(groupEntries) &&
+              !_.isArray(groupEntries) &&
+              !_.isUndefined(groupEntries) &&
+                <div>{groupEntries}</div>
+            }
+          </div>
+        );
+    }
+  },
+  renderNodeHardware() {
+    var groups = this.getNodeDetailsGroups();
+    return (
+      <div className='panel-group' id='accordion' role='tablist' aria-multiselectable='true'>
+        {_.map(groups, (group, groupIndex) => {
           return (
             <div className='panel panel-default' key={group + groupIndex}>
               <div
@@ -1467,7 +1481,7 @@ export var ShowNodeInfoDialog = React.createClass({
                     aria-controls={'body' + group}
                   >
                     <strong>{i18n('node_details.' + group, {defaultValue: group})}</strong>
-                    {this.showSummary(meta, group)}
+                    {this.showSummary(group)}
                     <i className='glyphicon glyphicon-plus pull-right' />
                   </div>
                 </div>
@@ -1478,9 +1492,7 @@ export var ShowNodeInfoDialog = React.createClass({
                 aria-labelledby={'heading' + group}
                 ref={'togglable_' + groupIndex}
               >
-                <div className='panel-body enable-selection'>
-                  {panelContent}
-                </div>
+                {this.renderGroupContent(group, groupIndex)}
               </div>
             </div>
           );
@@ -1491,7 +1503,7 @@ export var ShowNodeInfoDialog = React.createClass({
   renderBody() {
     if (!this.props.node.get('meta')) return <ProgressBar />;
     return (
-      <div className='node-details-popup'>
+      <div className='node-details-popup enable-selection'>
         {this.renderNodeSummary()}
         {this.renderNodeHardware()}
       </div>
