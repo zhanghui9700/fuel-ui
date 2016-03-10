@@ -18,13 +18,15 @@ define([
   'intern!object',
   'tests/functional/pages/common',
   'tests/functional/pages/cluster',
+  'tests/functional/pages/clusters',
   'tests/functional/pages/healthcheck'
-], function(registerSuite, Common, ClusterPage, HealthcheckPage) {
+], function(registerSuite, Common, ClusterPage, ClustersPage, HealthcheckPage) {
   'use strict';
 
   registerSuite(function() {
     var common,
       clusterPage,
+      clustersPage,
       clusterName,
       healthCheckPage;
 
@@ -33,17 +35,18 @@ define([
       setup: function() {
         common = new Common(this.remote);
         clusterPage = new ClusterPage(this.remote);
+        clustersPage = new ClustersPage(this.remote);
         clusterName = common.pickRandomName('Healthcheck test');
         healthCheckPage = new HealthcheckPage(this.remote);
         return this.remote
           .then(function() {
             return common.getIn();
-          });
-      },
-      beforeEach: function() {
-        return this.remote
+          })
           .then(function() {
             return common.createCluster(clusterName);
+          })
+          .then(function() {
+            return common.addNodesToCluster(1, ['Controller']);
           });
       },
       afterEach: function() {
@@ -51,8 +54,9 @@ define([
           .then(function() {
             return healthCheckPage.restoreServer();
           })
+          .clickLinkByText('Environments')
           .then(function() {
-            return common.removeCluster(clusterName);
+            return clustersPage.goToEnvironment(clusterName);
           });
       },
       'Health Check tests are rendered if response received': function() {
@@ -79,9 +83,6 @@ define([
       'Check Healthcheck tab manipulations after deploy': function() {
         this.timeout = 100000;
         return this.remote
-          .then(function() {
-            return common.addNodesToCluster(1, ['Controller']);
-          })
           .then(function() {
             return clusterPage.deployEnvironment();
           })
@@ -110,14 +111,7 @@ define([
             '"Run Tests" button is enabled if there are checked tests');
       },
       'Check running tests': function() {
-        this.timeout = 100000;
         return this.remote
-          .then(function() {
-            return common.addNodesToCluster(1, ['Controller']);
-          })
-          .then(function() {
-            return clusterPage.deployEnvironment();
-          })
           .then(function() {
             return healthCheckPage.createFakeServerForRunningTests();
           })
@@ -134,14 +128,7 @@ define([
           .assertElementsAppear('.healthcheck-status-stopped', 1000, 'Stopped status is reflected');
       },
       'Check finished tests': function() {
-        this.timeout = 100000;
         return this.remote
-          .then(function() {
-            return common.addNodesToCluster(1, ['Controller']);
-          })
-          .then(function() {
-            return clusterPage.deployEnvironment();
-          })
           .then(function() {
             return healthCheckPage.createFakeServerForFinishedTests();
           })
