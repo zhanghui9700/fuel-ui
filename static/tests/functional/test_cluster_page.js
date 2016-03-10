@@ -55,7 +55,8 @@ define([
             'Node list shows warning if there are no nodes in environment'
           )
           .clickByCssSelector('.btn-add-nodes')
-          .assertElementsAppear('.node', 2000, 'Unallocated nodes loaded')
+          .waitForElementDeletion('.btn-add-nodes', 3000)
+          .assertElementsAppear('.node', 3000, 'Unallocated nodes loaded')
           .assertElementDisabled(applyButtonSelector,
             'Apply button is disabled until both roles and nodes chosen')
           .assertElementsExist('.role-panel .row', 4, 'Roles are splitted in groups')

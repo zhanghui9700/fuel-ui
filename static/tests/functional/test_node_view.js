@@ -17,13 +17,12 @@
 define([
   'intern!object',
   'intern/chai!assert',
-  'intern/dojo/node!leadfoot/helpers/pollUntil',
   'tests/functional/pages/node',
   'tests/functional/pages/modal',
   'tests/functional/pages/common',
   'tests/functional/pages/cluster',
   'tests/functional/helpers'
-], function(registerSuite, assert, pollUntil, NodeComponent, ModalWindow, Common, ClusterPage) {
+], function(registerSuite, assert, NodeComponent, ModalWindow, Common, ClusterPage) {
   'use strict';
 
   registerSuite(function() {
@@ -155,11 +154,9 @@ define([
       },
       'Additional tests for unallocated node': function() {
         return this.remote
-          .clickByCssSelector('button.btn-add-nodes')
-          .assertElementAppears('.node-list', 2000, 'Unallocated node list loaded')
-          .then(pollUntil(function() {
-            return window.$('.node-list').is(':visible') || null;
-          }, 3000))
+          .clickByCssSelector('.btn-add-nodes')
+          .waitForElementDeletion('.btn-add-nodes', 3000)
+          .assertElementsAppear('.node', 3000, 'Unallocated nodes loaded')
           .then(function() {
             return node.openCompactNodeExtendedView();
           })
