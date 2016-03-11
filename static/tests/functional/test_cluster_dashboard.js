@@ -67,7 +67,8 @@ define([
             // Escape
             .type('\uE00C')
             .end()
-          .assertElementNotExists(renameInputSelector, 'Rename control disappears')
+          .assertElementDisappears(renameInputSelector, 'Rename control disappears')
+          .assertElementAppears(nameSelector, 'Cluster name appears')
           .assertElementTextEquals(
             nameSelector,
             initialName,

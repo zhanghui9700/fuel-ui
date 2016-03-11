@@ -76,7 +76,8 @@ define([
           .type(name)
           // Enter
           .type('\uE007')
-          .end();
+          .end()
+        .waitForElementDeletion('.rename-block input[type=text]', 2000);
     },
     discardChanges: function() {
       var self = this;
