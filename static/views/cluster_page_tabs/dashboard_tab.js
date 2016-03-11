@@ -159,29 +159,33 @@ var DashboardLink = React.createClass({
   propTypes: {
     title: React.PropTypes.string.isRequired,
     url: React.PropTypes.string.isRequired,
-    description: React.PropTypes.node
-  },
-  processRelativeURL(url) {
-    var sslSettings = this.props.cluster.get('settings').get('public_ssl');
-    if (sslSettings.horizon.value) return 'https://' + sslSettings.hostname.value + url;
-    return this.getHTTPLink(url);
-  },
-  getHTTPLink(url) {
-    return 'http://' + this.props.cluster.get('networkConfiguration').get('public_vip') + url;
+    description: React.PropTypes.node,
+    className: React.PropTypes.node
   },
   render() {
     var {url, title, description, className, cluster} = this.props;
+
     var isSSLEnabled = cluster.get('settings').get('public_ssl.horizon.value');
     var isURLRelative = !(/^(?:https?:)?\/\//.test(url));
-    var link = isURLRelative ? this.processRelativeURL(url) : url;
+
+    var httpsLink = 'https://' + cluster.get('settings').get('public_ssl.hostname.value') + url;
+    var httpLink = 'http://' + cluster.get('networkConfiguration').get('public_vip') + url;
+
     return (
-      <div className={'link-block ' + className}>
+      <div className={utils.classNames('link-block', className)}>
         <div className='title'>
-          <a href={link} target='_blank'>{title}</a>
-          {isURLRelative && isSSLEnabled &&
-            <a href={this.getHTTPLink(link)} className='http-link' target='_blank'>
-              {i18n(ns + 'http_plugin_link')}
-            </a>
+          {isURLRelative ?
+            isSSLEnabled ?
+              [
+                <a key='link' href={httpsLink} target='_blank'>{title}</a>,
+                <a key='http-link' href={httpLink} className='http-link' target='_blank'>
+                  {i18n(ns + 'http_plugin_link')}
+                </a>
+              ]
+            :
+              <a href={httpLink} target='_blank'>{title}</a>
+          :
+            <a href={url} target='_blank'>{title}</a>
           }
         </div>
         <div className='description'>{description}</div>
