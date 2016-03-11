@@ -1390,10 +1390,7 @@ export var ShowNodeInfoDialog = React.createClass({
       }
     }
 
-    return _.sortBy(
-      groups,
-      (groupName) => _.indexOf(this.renderableAttributes, groupName)
-    );
+    return _.intersection(this.renderableAttributes, groups);
   },
   renderGroupContent(group, groupIndex) {
     var sortOrder = {
