@@ -284,7 +284,9 @@ define([
       'Test deployed cluster': function() {
         this.timeout = 100000;
         var self = this;
-        var cidrInitialValue;
+        var cidrCssSelector = '.storage input[name=cidr]';
+        var cidrDeployedValue;
+
         return this.remote
           .then(function() {
             return dashboardPage.startDeployment();
@@ -297,7 +299,7 @@ define([
           .assertElementAppears('.links-block', 5000, 'Deployment completed')
           .assertElementExists('.go-to-healthcheck', 'Healthcheck link is visible after deploy')
           .findByLinkText('Horizon')
-            .getAttribute('href')
+            .getProperty('href')
             .then(function(href) {
               // check the link includes 'http(s)' and there is '.' in it's domain
               return assert.match(
@@ -314,22 +316,24 @@ define([
             '.add-nodegroup-btn',
             'Add Node network group button is enabled after cluster deploy'
           )
-          .findByCssSelector('.storage input[name=cidr]')
+          .findByCssSelector(cidrCssSelector)
             .then(function(element) {
               return element.getProperty('value')
                 .then(function(value) {
-                  cidrInitialValue = value;
+                  cidrDeployedValue = value;
                 });
             })
             .end()
-          .setInputValue('.storage input[name=cidr]', '192.168.1.0/25')
-          .clickByCssSelector('.apply-btn')
+          .setInputValue(cidrCssSelector, '192.168.1.0/25')
+          .clickByCssSelector('.apply-btn:not(:disabled)')
+          .waitForCssSelector(cidrCssSelector + ':not(:disabled)', 1000)
           .clickByCssSelector('.btn-load-deployed')
+          .waitForCssSelector('.apply-btn:not(:disabled)', 1000)
           .then(function() {
-            return self.remote.assertElementAttributeEquals(
-              '.storage input[name=cidr]',
+            return self.remote.assertElementPropertyEquals(
+              cidrCssSelector,
               'value',
-              cidrInitialValue,
+              cidrDeployedValue,
               'Load Deployed Settings button works properly'
             );
           })
@@ -363,10 +367,10 @@ define([
             return clusterPage.goToTab('Networks');
           })
           .then(function() {
-            return self.remote.assertElementAttributeEquals(
-              '.storage input[name=cidr]',
+            return self.remote.assertElementPropertyEquals(
+              cidrCssSelector,
               'value',
-              cidrInitialValue,
+              cidrDeployedValue,
               'Network settings are reset to their deployed state'
             );
           })

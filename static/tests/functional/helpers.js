@@ -414,28 +414,6 @@ define([
             .end();
       });
     },
-    assertElementAttributeEquals: function(cssSelector, attribute, expectedText, message) {
-      return new this.constructor(this, function() {
-        return this.parent
-          .findByCssSelector(cssSelector)
-            .getAttribute(attribute)
-            .then(function(actualText) {
-              assert.equal(actualText, expectedText, message);
-            })
-            .end();
-      });
-    },
-    assertElementAttributeContains: function(cssSelector, attribute, text, message) {
-      return new this.constructor(this, function() {
-        return this.parent
-          .findByCssSelector(cssSelector)
-            .getAttribute(attribute)
-            .then(function(actualText) {
-              assert.include(actualText, text, message);
-            })
-            .end();
-      });
-    },
     assertElementPropertyEquals: function(cssSelector, attribute, expectedText, message) {
       return new this.constructor(this, function() {
         return this.parent
