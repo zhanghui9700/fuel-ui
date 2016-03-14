@@ -1505,25 +1505,6 @@ models.WizardModel = Backbone.DeepModel.extend({
   }
 });
 
-models.MirantisCredentials = Backbone.DeepModel.extend(superMixin).extend({
-  constructorName: 'MirantisCredentials',
-  baseUrl: 'https://software.mirantis.com/wp-content/themes/' +
-  'mirantis_responsive_v_1_0/scripts/fuel_forms_api/',
-  validate(attrs) {
-    var errors = {};
-    _.each(attrs, (group, groupName) => {
-      _.each(group, (setting, settingName) => {
-        var path = utils.makePath(groupName, settingName);
-        if (!setting.regex || !setting.regex.source) return;
-        if (!setting.value.match(new RegExp(setting.regex.source))) {
-          errors[path] = setting.regex.error;
-        }
-      });
-    });
-    return _.isEmpty(errors) ? null : errors;
-  }
-});
-
 models.NodeNetworkGroup = BaseModel.extend({
   constructorName: 'NodeNetworkGroup',
   urlRoot: '/api/nodegroups',
