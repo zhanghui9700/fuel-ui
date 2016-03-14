@@ -101,16 +101,16 @@ var DashboardTab = React.createClass({
                 cluster={cluster}
                 task={finishedDeploymentTask}
               />,
+            <ClusterActionsPanel
+              key='actions-panel'
+              cluster={cluster}
+            />,
             cluster.get('status') === 'operational' &&
               <DashboardLinks
                 key='plugin-links'
                 cluster={cluster}
                 links={dashboardLinks}
-              />,
-            <ClusterActionsPanel
-              key='actions-panel'
-              cluster={cluster}
-            />
+              />
           ]
         }
         <ClusterInfo cluster={cluster} />
