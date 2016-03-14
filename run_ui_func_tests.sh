@@ -111,8 +111,6 @@ function run_ui_func_tests {
     tox -e cleanup
     popd > /dev/null
 
-
-    local server_log=`mktemp /tmp/test_nailgun_ui_server.XXXX`
     if [ $no_nailgun_start -ne 1 ]; then
         pushd "$FUEL_WEB_ROOT" > /dev/null
         tox -e start
@@ -130,10 +128,8 @@ function run_ui_func_tests {
     fi
 
     if [ $result -ne 0 ]; then
-      mv $server_log $ARTIFACTS/app.log
       break
     fi
-    rm $server_log
   done
 
   return $result
