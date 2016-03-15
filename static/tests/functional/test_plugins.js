@@ -40,13 +40,13 @@ define([
         return this.remote
           .then(function() {
             return common.getIn();
+          })
+          .then(function() {
+            return common.createCluster(clusterName);
           });
       },
       beforeEach: function() {
         return this.remote
-          .then(function() {
-            return common.createCluster(clusterName);
-          })
           .then(function() {
             return clusterPage.goToTab('Settings');
           })
@@ -54,9 +54,34 @@ define([
       },
       afterEach: function() {
         return this.remote
+          .clickByCssSelector('.btn-load-defaults')
           .then(function() {
-            return common.removeCluster(clusterName);
+            return settingsPage.waitForRequestCompleted();
+          })
+          .clickByCssSelector('.btn-apply-changes')
+          .then(function() {
+            return settingsPage.waitForRequestCompleted();
           });
+      },
+      'Check plugin restrictions': function() {
+        var loggingSectionSelector = '.setting-section-logging ';
+        return this.remote
+          // activate Logging plugin
+          .clickByCssSelector(loggingSectionSelector + 'h3 input[type=checkbox]')
+          // activate Zabbix plugin
+          .clickByCssSelector(zabbixSectionSelector + 'h3 input[type=checkbox]')
+          .assertElementEnabled(loggingSectionSelector + '[name=logging_text]',
+            'No conflict with default Zabix plugin version')
+          // change Zabbix plugin version
+          .clickByCssSelector(zabbixSectionSelector +
+            '.plugin-versions input[type=radio]:not(:checked)')
+          .assertElementNotSelected(zabbixSectionSelector + '[name=zabbix_checkbox]',
+            'Zabbix checkbox is not activated')
+          .clickByCssSelector(zabbixSectionSelector + '[name=zabbix_checkbox]')
+          .assertElementDisabled(loggingSectionSelector + '[name=logging_text]',
+            'Conflict with Zabbix checkbox')
+          // reset changes
+          .clickByCssSelector('.btn-revert-changes');
       },
       'Check plugin in not deployed environment': function() {
         var self = this;
@@ -150,26 +175,6 @@ define([
                 'Initial plugin version is set for deactivated plugin');
           })
           .assertElementDisabled('.btn-apply-changes', 'The change as reset successfully');
-      },
-      'Check plugin restrictions': function() {
-        var loggingSectionSelector = '.setting-section-logging ';
-        return this.remote
-          // activate Logging plugin
-          .clickByCssSelector(loggingSectionSelector + 'h3 input[type=checkbox]')
-          // activate Zabbix plugin
-          .clickByCssSelector(zabbixSectionSelector + 'h3 input[type=checkbox]')
-          .assertElementEnabled(loggingSectionSelector + '[name=logging_text]',
-            'No conflict with default Zabix plugin version')
-          // change Zabbix plugin version
-          .clickByCssSelector(zabbixSectionSelector +
-            '.plugin-versions input[type=radio]:not(:checked)')
-          .assertElementNotSelected(zabbixSectionSelector + '[name=zabbix_checkbox]',
-            'Zabbix checkbox is not activated')
-          .clickByCssSelector(zabbixSectionSelector + '[name=zabbix_checkbox]')
-          .assertElementDisabled(loggingSectionSelector + '[name=logging_text]',
-            'Conflict with Zabbix checkbox')
-          // reset changes
-          .clickByCssSelector('.btn-revert-changes');
       }
     };
   });
