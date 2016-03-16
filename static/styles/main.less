@@ -3498,7 +3498,7 @@ input[type=range] {
       }
 
       > div {
-        padding: @base-ifc-indent + 2 0 @base-ifc-indent;
+        padding: @base-ifc-indent * 2 0;
         margin: 0;
       }
 
@@ -3512,12 +3512,11 @@ input[type=range] {
       }
       .checkbox-group {
         label {
-          padding-top: 5px;
+          padding-top: 7px;
         }
       }
       .form-group, .checkbox-group {
         margin-bottom: 0;
-        margin-top: 2px;
         label {
           width: auto;
           .font-semibold;
@@ -3562,11 +3561,16 @@ input[type=range] {
           }
         }
       }
-      .bond-properties {
+      .ifc-header {
+        padding-left: @base-ifc-indent * 2;
+        padding-right: @base-ifc-indent * 2;
         border-bottom: 1px dotted @ifc-container-dark-color;
+        .help-block {
+          display: none;
+        }
         .ifc-name {
           &.no-checkbox {
-            padding: 7px 0px 0px 50px;
+            padding: 7px 0 0 50px;
             .font-semibold;
           }
         }
@@ -3699,12 +3703,6 @@ input[type=range] {
         padding: @base-ifc-indent * 2;
         > div {
           padding: 0;
-        }
-        .ifc-checkbox {
-          margin-left: @base-ifc-indent * 2;
-          .custom-thumbler {
-            margin: 0;
-          }
         }
         .ifc-networks {
           @network-block-width: 120px;

@@ -419,9 +419,8 @@ var EditNodeInterfacesScreen = React.createClass({
     });
   },
   render() {
-    var nodes = this.props.nodes;
+    var {nodes, interfaces} = this.props;
     var nodeNames = nodes.pluck('name');
-    var interfaces = this.props.interfaces;
     var locked = this.isLocked();
     var bondingAvailable = this.bondingAvailable();
     var configurationTemplateExists = this.configurationTemplateExists();
@@ -437,9 +436,7 @@ var EditNodeInterfacesScreen = React.createClass({
     var revertChangesEnabled = !this.state.actionInProgress && hasChanges;
     var invalidSpeedsForBonding = bondingPossible &&
       this.validateSpeedsForBonding(checkedBonds.concat(checkedInterfaces)) ||
-      interfaces.any((ifc) => {
-        return ifc.isBond() && this.validateSpeedsForBonding([ifc]);
-      });
+      interfaces.any((ifc) => ifc.isBond() && this.validateSpeedsForBonding([ifc]));
 
     var interfaceSpeeds = this.getIfcProperty('current_speed');
     var interfaceNames = this.getIfcProperty('name');
@@ -491,7 +488,8 @@ var EditNodeInterfacesScreen = React.createClass({
             var ifcName = ifc.get('name');
             if (!_.contains(slaveInterfaceNames, ifcName)) {
               return (
-                <NodeInterfaceDropTarget {...this.props}
+                <NodeInterfaceDropTarget
+                  {...this.props}
                   key={'interface-' + ifcName}
                   interface={ifc}
                   hasChanges={
@@ -937,7 +935,8 @@ var NodeInterface = React.createClass({
   render() {
     var ifc = this.props.interface;
     var {cluster, locked} = this.props;
-    var availableBondingModes = ifc.isBond() ? this.getAvailableBondingModes() : [];
+    var isBond = ifc.isBond();
+    var availableBondingModes = isBond ? this.getAvailableBondingModes() : [];
     var networkConfiguration = cluster.get('networkConfiguration');
     var networks = networkConfiguration.get('networks');
     var networkingParameters = networkConfiguration.get('networking_parameters');
@@ -956,31 +955,35 @@ var NodeInterface = React.createClass({
     var networkErrors = (this.props.errors || {}).network_errors;
     return this.props.connectDropTarget(
       <div className='ifc-container'>
-        <div className={utils.classNames({
-          'ifc-inner-container': true,
-          nodrag: networkErrors,
-          over: this.props.isOver && this.props.canDrop,
-          'has-changes': this.props.hasChanges,
-          [ifc.get('name')]: true
-        })}>
-          {ifc.isBond() &&
-            <div className='bond-properties clearfix forms-box'>
-              <div className={utils.classNames({
-                'common-ifc-name pull-left': true,
-                'no-checkbox': !bondingPossible
-              })}>
-                {bondingPossible ?
-                  <Input
-                    type='checkbox'
-                    label={ifc.get('name')}
-                    onChange={this.bondingChanged}
-                    checked={ifc.get('checked')}
-                    disabled={locked}
-                  />
-                  : ifc.get('name')
-                }
-              </div>
+        <div
+          className={utils.classNames({
+            'ifc-inner-container': true,
+            nodrag: networkErrors,
+            over: this.props.isOver && this.props.canDrop,
+            'has-changes': this.props.hasChanges,
+            [ifc.get('name')]: true
+          })}
+        >
+          <div className='ifc-header clearfix forms-box'>
+            <div className={utils.classNames({
+              'common-ifc-name pull-left': true,
+              'no-checkbox': !bondingPossible
+            })}>
+              {bondingPossible ?
+                <Input
+                  type='checkbox'
+                  label={ifc.get('name')}
+                  onChange={this.bondingChanged}
+                  checked={ifc.get('checked')}
+                  disabled={locked}
+                />
+              :
+                ifc.get('name')
+              }
+            </div>
+            {isBond && [
               <Input
+                key='bonding_mode'
                 type='select'
                 disabled={!bondingPossible}
                 onChange={this.bondingModeChanged}
@@ -988,9 +991,10 @@ var NodeInterface = React.createClass({
                 label={i18n(ns + 'bonding_mode')}
                 children={this.getBondingOptions(availableBondingModes, 'bonding_modes')}
                 wrapperClassName='pull-right'
-              />
-              {this.isHashPolicyNeeded() &&
+              />,
+              this.isHashPolicyNeeded() &&
                 <Input
+                  key='bonding_policy'
                   type='select'
                   value={bondProperties.xmit_hash_policy}
                   disabled={!bondingPossible}
@@ -1001,10 +1005,10 @@ var NodeInterface = React.createClass({
                     'hash_policy'
                   )}
                   wrapperClassName='pull-right'
-                />
-              }
-              {this.isLacpRateAvailable() &&
+                />,
+              this.isLacpRateAvailable() &&
                 <Input
+                  key='lacp_rate'
                   type='select'
                   value={bondProperties.lacp_rate}
                   disabled={!bondingPossible}
@@ -1016,27 +1020,9 @@ var NodeInterface = React.createClass({
                   )}
                   wrapperClassName='pull-right'
                 />
-              }
-            </div>
-          }
-
+            ]}
+          </div>
           <div className='networks-block'>
-            <div className='row'>
-              <div className='col-xs-12'>
-                <div className='ifc-checkbox common-ifc-name'>
-                  {!ifc.isBond() && bondingPossible ?
-                    <Input
-                      type='checkbox'
-                      onChange={this.bondingChanged}
-                      checked={ifc.get('checked')}
-                      label={ifc.get('name')}
-                    />
-                  :
-                    <span>&nbsp;</span>
-                  }
-                </div>
-              </div>
-            </div>
             <div className='row'>
               <div className='col-xs-3'>
                 <div className='pull-left'>
@@ -1052,7 +1038,7 @@ var NodeInterface = React.createClass({
                           />
                         </div>
                         <div className='ifc-info pull-left'>
-                          {ifc.isBond() &&
+                          {isBond &&
                             <div>
                               {i18n(ns + 'name')}:
                               {' '}
