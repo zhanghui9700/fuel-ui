@@ -73,7 +73,7 @@ define([
                     .pressKeys('\uE007')
                     .assertElementTextEquals(
                       '.create-cluster-form span.help-block',
-                      'Environment with name "' + clusterName + '" already exists',
+                      'Environment with this name already exists',
                       'Error message should say that environment with that name already exists'
                     )
                     .then(function() {
