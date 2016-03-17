@@ -891,15 +891,6 @@ var NodeInterface = React.createClass({
         subTabName
     });
   },
-  renderConfigurationPanel() {
-    return (
-      <div className='row configuration-panel'>
-        <div className='col-xs-12'>
-          {this.renderInterfaceSubtab()}
-        </div>
-      </div>
-    );
-  },
   renderInterfaceProperties() {
     if (!this.props.interface.get('interface_properties')) return null;
     var isConfigurationModeOn = !_.isNull(this.state.activeInterfaceSectionName);
