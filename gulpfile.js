@@ -153,12 +153,12 @@ gulp.task('jison', function() {
 });
 
 gulp.task('license', function(cb) {
-  require('nlf').find({production: true, depth: 0}, function(err, data) {
+  require('nlf').find({depth: 0}, function(err, data) {
     if (err) return cb(err);
-    // https://github.com/openstack/requirements#for-new-requirements
-    // Is the library license compatible?
-    // Preferably Apache2, BSD, MIT licensed. LGPL is ok.
-    var licenseRegexp = /(Apache.*?2)|\bBSD\b|\bMIT\b|\bLGPL\b/i;
+    // http://governance.openstack.org/reference/licensing.html
+    // The list of acceptable licenses includes ASLv2, BSD (both forms),
+    // MIT, PSF, LGPL, ISC, and MPL
+    var licenseRegexp = /(Apache.*?2)|\bBSD\b|\bMIT\b|\bPSF\b|\bLGPL\b|\bISC\b|\bMPL\b/i;
 
     var errors = [];
     _.each(data, function(moduleInfo) {
