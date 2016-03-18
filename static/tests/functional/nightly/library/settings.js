@@ -96,17 +96,10 @@ define([
           .end();
     },
     checkSecuritySegment: function() {
-      var commonSelector = 'div.setting-section-common';
       var publicTlsSelector = 'div.setting-section-public_ssl';
       var servicesName = 'TLS for OpenStack public endpoints';
       var horizonName = 'HTTPS for Horizon';
       return this.remote
-        // Check Common subgroup
-        .assertElementsExist(commonSelector, 'Common subgroup exists')
-        .findByCssSelector(commonSelector)
-          .assertElementMatchesRegExp('h3', /Common/i, 'Default subgroup name is observed')
-          .assertElementEnabled('textarea[name="auth_key"]', '"Public Key" textarea enabled')
-          .end()
         // Check Public TLS subgroup
         .assertElementsExist(publicTlsSelector, 'Public TLS subgroup exists')
         .findByCssSelector(publicTlsSelector)
