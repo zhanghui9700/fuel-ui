@@ -3855,6 +3855,7 @@ input[type=range] {
 }
 
 .network-tab, .settings-tab {
+  @base-indent: 10px;
   .subtab-icon {
     position: absolute;
     left: 5px;
@@ -3863,9 +3864,14 @@ input[type=range] {
     width: 15px;
     height: 15px;
   }
+  .page-buttons {
+    .btn-group {
+      margin-left: @base-indent;
+    }
+  }
   .forms-box {
     .setting-section {
-      margin-bottom: 40px;
+      margin-bottom: @base-indent * 4;
     }
     .form-group {
       label {
@@ -3880,7 +3886,7 @@ input[type=range] {
     }
   }
   .nav-pills:last-child:after {
-    margin-bottom: 20px;
+    margin-bottom: @base-indent * 2;
   }
   h3 {
     .checkbox-group {
@@ -3918,6 +3924,9 @@ input[type=range] {
         }
       }
     }
+  }
+  .alert {
+    margin-top: -@base-indent;
   }
   .plugin-versions {
     margin-bottom: 25px;
@@ -4503,7 +4512,7 @@ input[type=range] {
       }
       .btn-discard-changes {
         padding: 0;
-        margin-left: 6px;
+        margin-right: 6px;
         border: none;
         position: relative;
         top: -1px;

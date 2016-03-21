@@ -365,7 +365,7 @@ models.Cluster = BaseModel.extend({
   isDeploymentPossible() {
     return this.get('release').get('state') !== 'unavailable' &&
       !this.task({group: 'deployment', active: true}) &&
-      (this.get('status') !== 'operational' || this.get('nodes').hasChanges());
+      (this.get('status') !== 'operational' || this.hasChanges());
   },
   getCapacity() {
     var result = {
@@ -393,6 +393,12 @@ models.Cluster = BaseModel.extend({
       });
     });
     return result;
+  },
+  hasChanges() {
+    return this.get('nodes').hasChanges() ||
+      this.get('status') !== 'new' && _.any(this.get('changes'),
+        (changeObject) => changeObject.name === 'networks' || changeObject.name === 'attributes'
+      );
   }
 });
 
