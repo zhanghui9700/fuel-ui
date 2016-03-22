@@ -675,11 +675,10 @@ var NodeInterface = React.createClass({
     this.onInterfacePropertiesChange(name, !interfaceProperties[name]);
   },
   makeOffloadingModesExcerpt() {
-    var offloadingNS = 'cluster_page.nodes_tab.configure_interfaces.';
     var states = {
-      true: i18n(offloadingNS + 'offloading_enabled'),
-      false: i18n(offloadingNS + 'offloading_disabled'),
-      null: i18n(offloadingNS + 'offloading_default')
+      true: i18n('common.enabled'),
+      false: i18n('common.disabled'),
+      null: i18n('cluster_page.nodes_tab.configure_interfaces.offloading_default')
     };
     var ifcModes = this.props.interface.get('offloading_modes');
 
@@ -762,9 +761,9 @@ var NodeInterface = React.createClass({
                     {i18n(ns + propertyName) + ':'}
                     <button {...commonButtonProps}>
                       {propertyValue.enabled ?
-                        i18n(ns + 'sriov_enabled')
+                        i18n('common.enabled')
                       :
-                        i18n(ns + 'sriov_disabled')
+                        i18n('common.disabled')
                       }
                     </button>
                   </span>
