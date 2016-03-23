@@ -19,7 +19,6 @@ import i18n from 'i18n';
 import React from 'react';
 import classNames from 'classnames';
 import naturalSort from 'javascript-natural-sort';
-import Expression from 'expression';
 import ModelPath from 'expression/objects';
 import IP from 'ip';
 import {ErrorDialog} from 'views/dialogs';
@@ -74,14 +73,6 @@ var utils = {
     var modelPath = new ModelPath(path);
     modelPath.setModel(models);
     return modelPath;
-  },
-  evaluateExpression(expression, models, options) {
-    var compiledExpression = new Expression(expression, models, options);
-    var value = compiledExpression.evaluate();
-    return {
-      value: value,
-      modelPaths: compiledExpression.modelPaths
-    };
   },
   expandRestriction(restriction) {
     var result = {
