@@ -44,6 +44,7 @@ export default {
     return data;
   },
   saveSettings(data) {
+    this.setState({actionInProgress: true});
     return (new models.FuelSettings(data)).save(null, {patch: true, validate: false});
   },
   checkRestrictions(name, action = 'disable') {
