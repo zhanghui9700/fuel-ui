@@ -81,16 +81,20 @@ var ClusterPage = React.createClass({
     },
     fetchData(id, activeTab, ...tabOptions) {
       id = Number(id);
-      var cluster, promise, currentClusterId;
+      var cluster, promise, currentClusterId, currentTab;
       var tab = _.find(this.getTabs(), {url: activeTab}).tab;
       try {
         currentClusterId = app.page.props.cluster.id;
+        currentTab = app.page.props.activeTab;
       } catch (ignore) {}
 
       if (currentClusterId === id) {
         // just another tab has been chosen, do not load cluster again
         cluster = app.page.props.cluster;
-        promise = tab.fetchData ? tab.fetchData({cluster: cluster, tabOptions: tabOptions}) :
+        // do not load tab data if just another subtab has been chosen
+        promise = (_.isUndefined(currentTab) || currentTab !== activeTab) && tab.fetchData ?
+          tab.fetchData({cluster, tabOptions})
+        :
           $.Deferred().resolve();
       } else {
         cluster = new models.Cluster({id: id});

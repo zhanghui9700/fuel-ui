@@ -583,8 +583,7 @@ var NetworkTab = React.createClass({
         [i18n('cluster_page.tabs.network'), null, {active: true}]
       ];
     },
-    fetchData(options) {
-      var cluster = options.cluster;
+    fetchData({cluster}) {
       return $.when(
         cluster.get('settings').fetch({cache: true}),
         cluster.get('networkConfiguration').fetch({cache: true})
