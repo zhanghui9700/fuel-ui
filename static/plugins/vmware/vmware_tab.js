@@ -349,6 +349,7 @@ var VmWareTab = React.createClass({
     });
   },
   applyChanges() {
+    this.model.beforeSave();
     return this.model.save();
   },
   revertChanges() {
