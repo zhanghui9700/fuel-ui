@@ -979,9 +979,11 @@ models.Interface = BaseModel.extend({
       networkErrors.push(i18n(ns + 'sriov_placement_error'));
     }
 
-    if (this.shouldDPDKBeValidated() &&
-      (!(networks.any({name: 'private'}) && networks.length === 1 || !networks.length) ||
-      !attrs.networkingParameters.segmentation_type === 'vlan')
+    if (this.get('interface_properties').dpdk.enabled &&
+      (
+        !(networks.any({name: 'private'}) && networks.length === 1 || !networks.length) ||
+        !attrs.networkingParameters.segmentation_type === 'vlan'
+      )
     ) {
       networkErrors.push(i18n(ns + 'dpdk_placement_error'));
     }
@@ -1004,10 +1006,6 @@ models.Interface = BaseModel.extend({
     }
     _.extend(errors, this.validateSRIOV());
     return _.isEmpty(errors) ? null : {interface_properties: errors};
-  },
-  shouldDPDKBeValidated() {
-    var dpdk = (this.get('interface_properties') || {}).dpdk;
-    return dpdk && dpdk.available && dpdk.enabled;
   },
   shouldSRIOVBeValidated() {
     var sriov = (this.get('interface_properties') || {}).sriov;
