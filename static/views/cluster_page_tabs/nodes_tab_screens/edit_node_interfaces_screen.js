@@ -943,9 +943,8 @@ var NodeInterface = React.createClass({
     if (!this.props.interface.get('interface_properties')) return null;
     var isConfigurationModeOn = !_.isNull(this.state.activeInterfaceSectionName);
     var toggleConfigurationPanelClasses = utils.classNames({
-      glyphicon: true,
-      'glyphicon-menu-up': !this.state.collapsed,
-      'glyphicon-menu-down': this.state.collapsed
+      'glyphicon glyphicon-menu-down': true,
+      rotate: !this.state.collapsed
     });
     return (
       <div className='ifc-properties clearfix forms-box'>

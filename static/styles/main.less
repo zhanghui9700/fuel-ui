@@ -3622,6 +3622,10 @@ input[type=range] {
             margin-top: 9px;
             left: 50px;
             cursor: pointer;
+            transition: transform .35s ease;
+            &.rotate {
+              transform: rotate(-180deg);
+            }
           }
         }
       }
