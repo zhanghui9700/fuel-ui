@@ -462,7 +462,7 @@ models.Node = BaseModel.extend({
     var status = this.get('status');
     return (
         status === 'discover' ||
-        status === 'error' && this.get('error_type') === 'provisioning'
+        status === 'error' && this.get('error_type') === 'provision'
       ) &&
       // virt nodes should be provisioned with spawn_vms task
       !this.hasRole('virt');

@@ -531,7 +531,7 @@ var ClusterActionsPanel = React.createClass({
           var status = node.get('status');
           return node.hasRole('virt') && (
             status === 'discover' ||
-            status === 'error' && this.get('error_type') === 'provisioning'
+            status === 'error' && this.get('error_type') === 'provision'
           );
         });
       default:
