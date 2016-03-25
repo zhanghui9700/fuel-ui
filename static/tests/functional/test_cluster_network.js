@@ -497,6 +497,7 @@ define([
           );
       },
       'Node network group renaming in deployed environment': function() {
+        this.skip('Restore after merge of https://review.openstack.org/#/c/297168/');
         this.timeout = 100000;
         return this.remote
           .then(function() {
