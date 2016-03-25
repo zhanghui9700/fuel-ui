@@ -132,6 +132,7 @@ define([
           });
       },
       'Check plugin in deployed environment': function() {
+        this.skip('Restore after merge of https://review.openstack.org/#/c/297168/');
         this.timeout = 100000;
         var self = this;
         var zabbixInitialVersion;
