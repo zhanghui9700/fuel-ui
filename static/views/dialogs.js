@@ -327,65 +327,38 @@ export var DiscardClusterChangesDialog = React.createClass({
     this.setState({actionInProgress: true});
     var {cluster, changeName, ns} = this.props;
 
-    if (changeName === 'changed_networks' || changeName === 'changed_settings') {
-      var changes = _.cloneDeep(cluster.get('changes'));
-      var networkConfiguration = cluster.get('networkConfiguration');
+    if (changeName === 'changed_configuration') {
       var settings = cluster.get('settings');
       var deployedSettings = new models.Settings();
-      var requests = [
-        deployedSettings.fetch({url: _.result(cluster, 'url') + '/attributes/deployed'})
-      ];
+      var networkConfiguration = cluster.get('networkConfiguration');
+      var deployedNetworkConfiguration = new models.NetworkConfiguration();
 
-      if (changeName === 'changed_networks') {
-        requests.concat([
-          networkConfiguration.fetch({url: _.result(networkConfiguration, 'url') + '/deployed'}),
-          cluster.save({changes: _.reject(changes, {name: 'networks'})}, {patch: true, wait: true})
-        ]);
-        return $.when(...requests)
-          .done(() => {
-            _.each(settings.attributes, (section, sectionName) => {
-              if (section.metadata.group === 'network') {
-                _.each(section, (setting, settingName) => {
-                  // do not update hidden settings (hack for #1442143),
-                  if (setting.type === 'hidden') return;
-                  var path = utils.makePath(sectionName, settingName);
-                  settings.set(path, deployedSettings.get(path), {silent: true});
-                });
-              }
-            });
-            settings.mergePluginSettings();
-            settings.isValid({models: this.state.configModels});
-            networkConfiguration.isValid({nodeNetworkGroups: cluster.get('nodeNetworkGroups')});
-            this.close();
-          })
-          .fail((response) => this.showError(response, i18n(ns + 'cant_discard')));
-      }
-
-      if (changeName === 'changed_settings') {
-        requests.push(
-          cluster.save(
-            {changes: _.reject(changes, {name: 'attributes'})},
-            {patch: true, wait: true}
-          )
-        );
-        return $.when(...requests)
-          .done(() => {
-            _.each(settings.attributes, (section, sectionName) => {
-              if (section.metadata.group !== 'network') {
-                _.each(section, (setting, settingName) => {
-                  // do not update hidden settings (hack for #1442143),
-                  if (setting.type === 'hidden' || setting.group === 'network') return;
-                  var path = utils.makePath(sectionName, settingName);
-                  settings.set(path, deployedSettings.get(path), {silent: true});
-                });
-              }
-            });
-            settings.mergePluginSettings();
-            settings.isValid({models: this.state.configModels});
-            this.close();
-          })
-          .fail((response) => this.showError(response, i18n(ns + 'cant_discard')));
-      }
+      return $.when(... [
+        deployedSettings.fetch({
+          url: _.result(cluster, 'url') + '/attributes/deployed'
+        }),
+        deployedNetworkConfiguration.fetch({
+          url: _.result(cluster, 'url') + '/network_configuration/deployed'
+        })
+      ])
+        .then(
+          () => {
+            settings.set(deployedSettings.attributes, {silent: true, validate: false});
+            networkConfiguration.set(deployedNetworkConfiguration.attributes, {silent: true});
+            return $.when(... [
+              settings.save(null, {patch: true, validate: false}),
+              networkConfiguration.save(null, {patch: true, validate: false})
+            ]);
+          },
+          (response) => this.showError(response, i18n(ns + 'cant_discard'))
+        )
+        .then(() => {
+          settings.mergePluginSettings();
+          settings.isValid({models: this.state.configModels});
+          networkConfiguration.isValid({nodeNetworkGroups: cluster.get('nodeNetworkGroups')});
+          cluster.fetch();
+          this.close();
+        });
     } else {
       var nodes = new models.Nodes(this.props.nodes.map((node) => {
         if (node.get('pending_deletion')) {
@@ -414,10 +387,8 @@ export var DiscardClusterChangesDialog = React.createClass({
   },
   renderBody() {
     var {nodes, changeName, ns} = this.props;
-    var text = changeName === 'changed_networks' ?
-      i18n(ns + 'discard_network_changes')
-    : changeName === 'changed_settings' ?
-      i18n(ns + 'discard_settings_changes')
+    var text = changeName === 'changed_configuration' ?
+      i18n(ns + 'discard_environment_configuration')
     :
       i18n(ns + (nodes[0].get('pending_deletion') ? 'discard_deletion' : 'discard_addition'));
     return (
@@ -479,13 +450,10 @@ export var DeployClusterDialog = React.createClass({
   renderBody() {
     var cluster = this.props.cluster;
     var warningNs = 'cluster_page.dashboard_tab.';
-    var areSettingsChanged = _.any(cluster.get('changes'),
-      (changeObject) => changeObject.name === 'networks' || changeObject.name === 'attributes'
-    );
     return (
       <div className='display-changes-dialog'>
         {!cluster.needsRedeployment() && [
-          cluster.get('status') !== 'new' && areSettingsChanged &&
+          cluster.isConfigurationChanged() &&
             <div className='text-warning' key='redeployment-alert'>
               <i className='glyphicon glyphicon-warning-sign' />
               <div className='instruction'>

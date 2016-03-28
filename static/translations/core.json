@@ -667,8 +667,7 @@
                     "added_node_plural": "Added __count__ nodes",
                     "deleted_node": "Deleted __count__ node",
                     "deleted_node_plural": "Deleted __count__ nodes",
-                    "changed_networks": "Changed network configuration",
-                    "changed_settings": "Changed OpenStack settings",
+                    "changed_configuration": "Changed environment configuration",
                     "provisioned_node": "Provisioned __count__ node",
                     "provisioned_node_plural": "Provisioned __count__ nodes",
                     "stopped_node": "Stopped __count__ node",
@@ -1099,8 +1098,7 @@
                     "discard_button": "Discard",
                     "discard_addition": "Are you sure you want to discard node addition?",
                     "discard_deletion": "Are you sure you want to discard node deletion?",
-                    "discard_network_changes": "Are you sure you want to discard changes in the environment network configuration? The configuration will be reset to its deployed state.",
-                    "discard_settings_changes": "Are you sure you want to discard changes in the environment OpenStack Settings? The settings will be reset to their deployed state.",
+                    "discard_environment_configuration": "Are you sure you want to discard changes in the environment network and Openstack settings configuration? The configuration will be reset to its deployed state.",
                     "cant_discard": "Cannot discard the changes."
                 },
                 "remove_node": {
