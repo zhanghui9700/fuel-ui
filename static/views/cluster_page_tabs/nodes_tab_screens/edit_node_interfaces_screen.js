@@ -21,6 +21,7 @@ import i18n from 'i18n';
 import utils from 'utils';
 import models from 'models';
 import dispatcher from 'dispatcher';
+import Expression from 'expression';
 import OffloadingModes from 'views/cluster_page_tabs/nodes_tab_screens/offloading_modes_control';
 import {Input} from 'views/controls';
 import {backboneMixin, unsavedChangesMixin} from 'component_mixins';
@@ -189,11 +190,6 @@ var EditNodeInterfacesScreen = React.createClass({
           ),
           interface_properties: updatedIfc.get('interface_properties')
         });
-        if (ifc.isBond()) {
-          var bondProperties = ifc.get('bond_properties');
-          ifc.set({bond_properties: _.extend(bondProperties, {type__:
-            this.getBondType() === 'linux' ? 'linux' : 'ovs'})});
-        }
         if (ifc.get('offloading_modes')) {
           ifc.set({
             offloading_modes: updatedIfc.get('offloading_modes')
@@ -216,26 +212,21 @@ var EditNodeInterfacesScreen = React.createClass({
           message: i18n(errorNS + 'saving_warning'),
           response: response
         });
-      }).always(() => {
-        this.setState({actionInProgress: false});
-      });
+      }).always(() => this.setState({actionInProgress: false}));
   },
   configurationTemplateExists() {
     return !_.isEmpty(this.props.cluster.get('networkConfiguration')
       .get('networking_parameters').get('configuration_template'));
   },
-  bondingAvailable() {
-    var availableBondTypes = this.getBondType();
-    return !!availableBondTypes && !this.configurationTemplateExists();
-  },
-  getBondType() {
+  getAvailableBondingTypes(ifc) {
+    if (ifc.isBond()) return [ifc.get('bond_properties').type__];
+
     return _.compact(_.flatten(_.map(this.props.bondingConfig.availability,
-      (modeAvailabilityData) => {
-        return _.map(modeAvailabilityData, (condition, name) => {
-          var result = utils.evaluateExpression(condition, this.props.configModels).value;
-          return result && name;
-        });
-      })))[0];
+      (modesAvailability) => _.map(modesAvailability,
+        (condition, mode) => (new Expression(condition, this.props.configModels, {strict: false}))
+          .evaluate({interface: ifc}) && mode
+      )
+    )));
   },
   findOffloadingModesIntersection(set1, set2) {
     return _.map(
@@ -262,7 +253,7 @@ var EditNodeInterfacesScreen = React.createClass({
       return this.findOffloadingModesIntersection(result, modes);
     });
   },
-  bondInterfaces() {
+  bondInterfaces(bondType) {
     this.setState({actionInProgress: true});
     var interfaces = this.props.interfaces.filter((ifc) => ifc.get('checked') && !ifc.isBond());
     var bond = this.props.interfaces.find((ifc) => ifc.get('checked') && ifc.isBond());
@@ -270,18 +261,18 @@ var EditNodeInterfacesScreen = React.createClass({
     if (!bond) {
       // if no bond selected - create new one
       var bondMode = _.flatten(
-        _.pluck(this.props.bondingConfig.properties[this.getBondType()].mode, 'values')
+        _.pluck(this.props.bondingConfig.properties[bondType].mode, 'values')
       )[0];
 
       bond = new models.Interface({
         type: 'bond',
-        name: this.props.interfaces.generateBondName(this.getBondType() ===
-          'linux' ? 'bond' : 'ovs-bond'),
+        name: this.props.interfaces.generateBondName(bondType === 'linux' ? 'bond' : 'ovs-bond'),
         mode: bondMode,
         assigned_networks: new models.InterfaceNetworks(),
         slaves: _.invoke(interfaces, 'pick', 'name'),
         bond_properties: {
-          mode: bondMode
+          mode: bondMode,
+          type__: bondType
         },
         interface_properties: {
           mtu: null,
@@ -352,9 +343,9 @@ var EditNodeInterfacesScreen = React.createClass({
     if (slaveInterfaceName) {
       var slavesUpdated = _.reject(slaves, {name: slaveInterfaceName});
       var names = _.pluck(slavesUpdated, 'name');
-      var bondSlaveInterfaces = this.props.interfaces.filter((ifc) => {
-        return _.contains(names, ifc.get('name'));
-      });
+      var bondSlaveInterfaces = this.props.interfaces.filter(
+        (ifc) => _.contains(names, ifc.get('name'))
+      );
 
       bond.set({
         slaves: slavesUpdated,
@@ -366,7 +357,7 @@ var EditNodeInterfacesScreen = React.createClass({
 
     // destroy bond if all slave interfaces have been removed
     if (!slaveInterfaceName && targetInterface === bond) {
-      targetInterface = this.props.interfaces.findWhere({name: slaveInterfaceNames[0]});
+      targetInterface = this.props.interfaces.find({name: slaveInterfaceNames[0]});
     }
 
     // move networks if needed
@@ -440,24 +431,37 @@ var EditNodeInterfacesScreen = React.createClass({
     var {nodes, interfaces} = this.props;
     var nodeNames = nodes.pluck('name');
     var locked = this.isLocked();
-    var bondingAvailable = this.bondingAvailable();
     var configurationTemplateExists = this.configurationTemplateExists();
+
     var checkedInterfaces = interfaces.filter((ifc) => ifc.get('checked') && !ifc.isBond());
     var checkedBonds = interfaces.filter((ifc) => ifc.get('checked') && ifc.isBond());
+
     var creatingNewBond = checkedInterfaces.length >= 2 && !checkedBonds.length;
     var addingInterfacesToExistingBond = !!checkedInterfaces.length && checkedBonds.length === 1;
-    var bondingPossible = creatingNewBond || addingInterfacesToExistingBond;
+
+    var availableBondingTypes = {};
+    interfaces.each((ifc) => {
+      availableBondingTypes[ifc.get('name')] = this.getAvailableBondingTypes(ifc);
+    });
+    var bondType = _.intersection(... _.compact(_.map(availableBondingTypes,
+      (types, ifcName) => interfaces.find({name: ifcName}).get('checked') ? types : null
+    )))[0];
+    var bondingPossible = (creatingNewBond || addingInterfacesToExistingBond) && !!bondType;
+
     var unbondingPossible = !checkedInterfaces.length && !!checkedBonds.length;
+
     var hasChanges = this.hasChanges();
     var slaveInterfaceNames = _.pluck(_.flatten(_.filter(interfaces.pluck('slaves'))), 'name');
     var loadDefaultsEnabled = !this.state.actionInProgress;
     var revertChangesEnabled = !this.state.actionInProgress && hasChanges;
+
     var invalidSpeedsForBonding = bondingPossible &&
       this.validateSpeedsForBonding(checkedBonds.concat(checkedInterfaces)) ||
       interfaces.any((ifc) => ifc.isBond() && this.validateSpeedsForBonding([ifc]));
 
     var interfaceSpeeds = this.getIfcProperty('current_speed');
     var interfaceNames = this.getIfcProperty('name');
+
     return (
       <div className='row'>
         <div className='title'>
@@ -471,14 +475,16 @@ var EditNodeInterfacesScreen = React.createClass({
             </div>
           </div>
         }
-        {bondingAvailable && !locked &&
+        {_.any(availableBondingTypes, (bondingTypes) => bondingTypes.length) &&
+          !configurationTemplateExists &&
+          !locked &&
           <div className='col-xs-12'>
             <div className='page-buttons'>
               <div className='well clearfix'>
                 <div className='btn-group pull-right'>
                   <button
                     className='btn btn-default btn-bond'
-                    onClick={this.bondInterfaces}
+                    onClick={() => this.bondInterfaces(bondType)}
                     disabled={!bondingPossible}
                   >
                     {i18n(ns + 'bond_button')}
@@ -493,8 +499,12 @@ var EditNodeInterfacesScreen = React.createClass({
                 </div>
               </div>
             </div>
-            {checkedBonds.length > 1 &&
-              <div className='alert alert-warning'>{i18n(ns + 'several_bonds_warning')}</div>
+            {!bondingPossible && checkedInterfaces.concat(checkedBonds).length > 1 &&
+              <div className='alert alert-warning'>
+                {i18n(ns + (
+                  checkedBonds.length > 1 ? 'several_bonds_warning' : 'interfaces_cannot_be_bonded'
+                ))}
+              </div>
             }
             {invalidSpeedsForBonding &&
               <div className='alert alert-warning'>{i18n(ns + 'bond_speed_warning')}</div>
@@ -517,13 +527,14 @@ var EditNodeInterfacesScreen = React.createClass({
                     )
                   }
                   locked={locked}
-                  bondingAvailable={bondingAvailable}
                   configurationTemplateExists={configurationTemplateExists}
                   errors={this.state.interfacesErrors[ifcName]}
                   validate={this.validate}
                   removeInterfaceFromBond={this.removeInterfaceFromBond}
-                  bondingProperties={this.props.bondingConfig.properties}
-                  bondType={this.getBondType()}
+                  bondingProperties={
+                    this.props.bondingConfig.properties[availableBondingTypes[ifcName][0]]
+                  }
+                  availableBondingTypes={availableBondingTypes[ifcName]}
                   interfaceSpeeds={interfaceSpeeds[index]}
                   interfaceNames={interfaceNames[index]}
                 />
@@ -608,10 +619,6 @@ var NodeInterface = React.createClass({
     })
   ],
   renderedIfcProperties: ['offloading_modes', 'mtu', 'sriov', 'dpdk'],
-  propTypes: {
-    bondingAvailable: React.PropTypes.bool,
-    locked: React.PropTypes.bool
-  },
   getInitialState() {
     return {
       activeInterfaceSectionName: null,
@@ -631,24 +638,27 @@ var NodeInterface = React.createClass({
     return ifc.get('mode') || (ifc.get('bond_properties') || {}).mode;
   },
   getAvailableBondingModes() {
-    var modes = this.props.bondingProperties[this.props.bondType].mode;
-    var configModels = _.clone(this.props.configModels);
+    var {configModels, bondingProperties} = this.props;
+    var modes = bondingProperties.mode;
     var availableModes = [];
     var interfaces = this.props.interface.isBond() ? this.props.interface.getSlaveInterfaces() :
       [this.props.interface];
     _.each(interfaces, (ifc) => {
-      configModels.interface = ifc;
       availableModes.push(_.reduce(modes, (result, modeSet) => {
-        if (modeSet.condition &&
-          !utils.evaluateExpression(modeSet.condition, configModels).value) return result;
+        if (
+          modeSet.condition &&
+        !(new Expression(modeSet.condition, configModels, {strict: false}))
+          .evaluate({interface: ifc})
+        ) {
+          return result;
+        }
         return result.concat(modeSet.values);
       }, []));
     });
     return _.intersection(...availableModes);
   },
   getBondPropertyValues(propertyName, value) {
-    var bondType = this.props.bondType;
-    return _.flatten(_.pluck(this.props.bondingProperties[bondType][propertyName], value));
+    return _.flatten(_.pluck(this.props.bondingProperties[propertyName], value));
   },
   updateBondProperties(options) {
     var bondProperties = _.cloneDeep(this.props.interface.get('bond_properties')) || {};
@@ -973,7 +983,7 @@ var NodeInterface = React.createClass({
   },
   render() {
     var ifc = this.props.interface;
-    var {cluster, locked} = this.props;
+    var {cluster, locked, availableBondingTypes, configurationTemplateExists} = this.props;
     var isBond = ifc.isBond();
     var availableBondingModes = isBond ? this.getAvailableBondingModes() : [];
     var networkConfiguration = cluster.get('networkConfiguration');
@@ -990,7 +1000,7 @@ var NodeInterface = React.createClass({
       };
     };
     var bondProperties = ifc.get('bond_properties');
-    var bondingPossible = this.props.bondingAvailable && !locked;
+    var bondingPossible = !!availableBondingTypes.length && !configurationTemplateExists && !locked;
     var networkErrors = (this.props.errors || {}).network_errors;
     return this.props.connectDropTarget(
       <div className='ifc-container'>
@@ -1014,7 +1024,6 @@ var NodeInterface = React.createClass({
                   label={ifc.get('name')}
                   onChange={this.bondingChanged}
                   checked={ifc.get('checked')}
-                  disabled={locked}
                 />
               :
                 ifc.get('name')
@@ -1108,7 +1117,7 @@ var NodeInterface = React.createClass({
                 </div>
               </div>
               <div className='col-xs-9'>
-                {!this.props.configurationTemplateExists &&
+                {!configurationTemplateExists &&
                   <div className='ifc-networks'>
                     {assignedNetworks.length ?
                       assignedNetworks.map((interfaceNetwork) => {
