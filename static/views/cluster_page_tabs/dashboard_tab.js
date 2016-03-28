@@ -504,10 +504,7 @@ var ClusterActionsPanel = React.createClass({
     if (_.isArray(nodes) && !nodes.length) return null;
     var {cluster} = this.props;
 
-    if (changeName === 'changed_networks' && !_.any(cluster.get('changes'), {name: 'networks'})) {
-      return null;
-    }
-    if (changeName === 'changed_settings' && !_.any(cluster.get('changes'), {name: 'attributes'})) {
+    if (changeName === 'changed_configuration' && !cluster.isConfigurationChanged()) {
       return null;
     }
 
@@ -592,7 +589,6 @@ var ClusterActionsPanel = React.createClass({
     var actionControls;
     switch (action) {
       case 'deploy':
-        var isNew = cluster.get('status') === 'new';
         actionControls = [
           cluster.hasChanges() &&
             <ul key='cluster-changes'>
@@ -608,8 +604,7 @@ var ClusterActionsPanel = React.createClass({
                 false
               )}
               {this.renderClusterChangeItem('deleted_node', nodes.where({pending_deletion: true}))}
-              {!isNew && this.renderClusterChangeItem('changed_networks')}
-              {!isNew && this.renderClusterChangeItem('changed_settings')}
+              {this.renderClusterChangeItem('changed_configuration')}
             </ul>,
           <ClusterActionButton
             {...actionButtonProps}

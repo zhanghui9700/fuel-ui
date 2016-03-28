@@ -394,11 +394,13 @@ models.Cluster = BaseModel.extend({
     });
     return result;
   },
+  isConfigurationChanged() {
+    return this.get('status') !== 'new' && _.any(this.get('changes'),
+      (changeObject) => changeObject.name === 'networks' || changeObject.name === 'attributes'
+    );
+  },
   hasChanges() {
-    return this.get('nodes').hasChanges() ||
-      this.get('status') !== 'new' && _.any(this.get('changes'),
-        (changeObject) => changeObject.name === 'networks' || changeObject.name === 'attributes'
-      );
+    return this.get('nodes').hasChanges() || this.isConfigurationChanged();
   }
 });
 
