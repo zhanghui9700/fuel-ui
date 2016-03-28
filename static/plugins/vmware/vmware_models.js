@@ -243,6 +243,13 @@ VmWareModels.VCenter = BaseModel.extend({
       glance: new VmWareModels.Glance(glanceValue)
     };
   },
+  beforeSave() {
+    this.get('availability_zones').each((availabilityZone) => {
+      availabilityZone.get('nova_computes').each((novaCompute) => {
+        novaCompute.set({vsphere_cluster: novaCompute.get('vsphere_cluster').trim()});
+      });
+    });
+  },
   isFilled() {
     var result = this.get('availability_zones') && this.get('glance');
     return !!result;
