@@ -318,6 +318,57 @@ button, .btn:not(.btn-link) {.font-semibold;}
   }
 }
 
+.btn-progress {
+  position: relative;
+  color: transparent !important;
+  text-shadow: none !important;
+  &:hover,
+  &:active,
+  &:focus {
+    cursor: default;
+    color: transparent;
+    outline: none !important;
+    box-shadow: none;
+  }
+  > i {
+    visibility: hidden;
+  }
+  &.btn-default:before {
+    border-left-color: @base-text-color;
+    border-right-color: @base-text-color;
+  }
+  .offset-mixin(@offset) {
+    margin-top: -@offset;
+    margin-left: -@offset;
+    width: 2 * @offset;
+    height: 2 * @offset;
+  }
+  &:before {
+    content: '';
+    display: inline-block;
+    position: absolute;
+    background: transparent;
+    border: 2px solid @white;
+    border-top-color: transparent;
+    border-bottom-color: transparent;
+    border-radius: 50%;
+    box-sizing: border-box;
+    top: 50%;
+    left: 50%;
+    animation: btn-progress 1s ease-in-out infinite;
+    .offset-mixin(12px);
+  }
+  &.btn-xs:before {
+    .offset-mixin(7px);
+  }
+  &.btn-sm:before {
+    .offset-mixin(9px);
+  }
+  &.btn-lg:before {
+    .offset-mixin(16px);
+  }
+}
+
 .loading-ticket {
   display: inline-block;
   padding: 10px;
@@ -2855,6 +2906,11 @@ input[type=range] {
   }
 }
 
+@keyframes btn-progress {
+  0%   {transform: rotate(0deg) scale(1);}
+  50%  {transform: rotate(180deg) scale(1.1);}
+  100% {transform: rotate(360deg) scale(1);}
+}
 
 .role-panel {
   h4 {
