@@ -864,18 +864,18 @@ var NodeInterface = React.createClass({
   },
   renderDPDK(errors) {
     var ifc = this.props.interface;
-    var interfaceProperties = ifc.get('interface_properties');
-    var locked = this.props.locked || !interfaceProperties.dpdk.available;
+    var isOVSBond = ifc.isBond() && ifc.get('bond_properties').type__ === 'ovs';
     return (
       <div className='dpdk-panel'>
         <div className='description'>{i18n(ns + 'dpdk_description')}</div>
         <Input
           type='checkbox'
           label={i18n('common.enabled')}
-          checked={interfaceProperties.dpdk.enabled}
+          checked={ifc.get('interface_properties').dpdk.enabled}
           name='dpdk.enabled'
           onChange={this.onInterfacePropertiesChange}
-          disabled={locked}
+          disabled={this.props.locked || isOVSBond}
+          tooltipText={isOVSBond && i18n(ns + 'dpdk_in_ovs_bond')}
           wrapperClassName='dpdk-control'
           error={errors}
         />
