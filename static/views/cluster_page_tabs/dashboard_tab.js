@@ -1294,7 +1294,11 @@ var InstructionElement = React.createClass({
     return (
       <div className={utils.classNames({instruction: true, invalid: isAlert})}>
         {i18n(ns + description) + (link ? ' ' : '')}
-        {link && <a href={link.url} target='_blank'>{i18n(ns + link.title)}</a>}
+        {link &&
+          <a href={utils.composeDocumentationLink(link.url)} target='_blank'>
+            {i18n(ns + link.title)}
+          </a>
+        }
         {explanation ? ' ' + i18n(ns + explanation) : '.'}
       </div>
     );
