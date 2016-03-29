@@ -887,6 +887,7 @@ var NodeInterface = React.createClass({
     var interfaceProperties = ifc.get('interface_properties');
     var isSRIOVEnabled = interfaceProperties.sriov.enabled;
     var locked = this.props.locked || !interfaceProperties.sriov.available;
+    var physnet = interfaceProperties.sriov.physnet;
     return (
       <div className='sriov-panel'>
         <div className='description'>{i18n(ns + 'sriov_description')}</div>
@@ -919,12 +920,15 @@ var NodeInterface = React.createClass({
               key='sriov.physnet'
               type='text'
               label={i18n(ns + 'physical_network')}
-              value={interfaceProperties.sriov.physnet || ''}
+              value={physnet}
               name='sriov.physnet'
               onChange={this.onInterfacePropertiesChange}
               disabled={locked}
               wrapperClassName='physnet'
               error={errors && errors.physnet}
+              tooltipText={_.trim(physnet) && _.trim(physnet) !== 'physnet2' &&
+                i18n(ns + 'validation.non_default_physnet')
+              }
             />
           ]
         }

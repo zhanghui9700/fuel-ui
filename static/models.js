@@ -1026,7 +1026,7 @@ models.Interface = Backbone.DeepModel
       }
       if (sriov.physnet && !sriov.physnet.match(utils.regexes.networkName)) {
         errors.physnet = i18n(ns + 'invalid_physnet');
-      } else if (!(_.trim(sriov.physnet) || '')) {
+      } else if (!_.trim(sriov.physnet)) {
         errors.physnet = i18n(ns + 'empty_physnet');
       }
       return _.isEmpty(errors) ? null : {sriov: errors};
