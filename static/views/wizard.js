@@ -893,7 +893,7 @@ var CreateClusterWizard = React.createClass({
           <button
             className={utils.classNames(
               'btn btn-default btn-success finish-btn',
-              {disabled: actionInProgress}
+              {'disabled btn-progress': actionInProgress}
             )}
             onClick={this.saveCluster}
             autoFocus

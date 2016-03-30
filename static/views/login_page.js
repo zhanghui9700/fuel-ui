@@ -166,7 +166,8 @@ var LoginForm = React.createClass({
               className={utils.classNames({
                 'btn login-btn': true,
                 'btn-success': httpsUsed,
-                'btn-warning': !httpsUsed
+                'btn-warning': !httpsUsed,
+                'btn-progress': this.state.actionInProgress
               })}
               disabled={this.state.actionInProgress}
             >

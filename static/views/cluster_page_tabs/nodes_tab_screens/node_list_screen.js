@@ -1690,7 +1690,10 @@ NodeLabelsPanel = React.createClass({
                   {i18n('common.cancel_button')}
                 </button>
                 <button
-                  className='btn btn-success'
+                  className={utils.classNames(
+                    'btn btn-success',
+                    {'btn-progress': this.state.actionInProgress}
+                  )}
                   onClick={this.applyChanges}
                   disabled={!this.isSavingPossible()}
                 >
