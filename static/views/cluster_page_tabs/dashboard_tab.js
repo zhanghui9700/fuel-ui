@@ -240,9 +240,10 @@ var DeploymentResult = React.createClass({
   dismissTaskResult() {
     var {task, cluster} = this.props;
     if (task.match({name: 'deploy'})) {
-      // deletion of 'deploy' task invokes all deployment tasks deletion in backend
-      task.destroy({silent: true})
-        .done(() => cluster.get('tasks').fetch());
+      // deletion of 'deploy' task does not invoke all deployment tasks
+      // deletion on the backend anymore
+
+      _.invoke(cluster.tasks({group: 'deployment', active: false}), 'destroy');
     } else {
       task.destroy();
     }
