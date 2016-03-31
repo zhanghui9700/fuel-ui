@@ -654,10 +654,13 @@ var NetworkTab = React.createClass({
       hideVerificationResult: false
     };
   },
-  componentDidMount() {
+  validateNetworkConfiguration() {
     this.props.cluster.get('networkConfiguration').isValid({
       nodeNetworkGroups: this.props.cluster.get('nodeNetworkGroups')
     });
+  },
+  componentDidMount() {
+    this.validateNetworkConfiguration();
     this.props.cluster.get('settings').isValid({models: this.state.configModels});
     this.props.cluster.get('tasks').on(
       'change:status change:unsaved',
@@ -704,9 +707,7 @@ var NetworkTab = React.createClass({
   revertChanges() {
     this.loadInitialConfiguration();
     this.loadInitialSettings();
-    this.props.cluster.get('networkConfiguration').isValid({
-      nodeNetworkGroups: this.props.cluster.get('nodeNetworkGroups')
-    });
+    this.validateNetworkConfiguration();
     this.setState({
       hideVerificationResult: true,
       key: _.now()
@@ -766,9 +767,7 @@ var NetworkTab = React.createClass({
       net_manager: value,
       fixed_networks_amount: value === 'FlatDHCPManager' ? 1 : fixedAmount
     });
-    networkConfiguration.isValid({
-      nodeNetworkGroups: this.props.cluster.get('nodeNetworkGroups')
-    });
+    this.validateNetworkConfiguration();
     this.setState({hideVerificationResult: true});
   },
   verifyNetworks() {
@@ -1005,6 +1004,7 @@ var NetworkTab = React.createClass({
             })
           )
           .then(() => {
+            this.validateNetworkConfiguration();
             this.updateInitialConfiguration();
             var defaultSubtab = this.constructor.getSubtabs(this.props)[0];
             app.navigate(
