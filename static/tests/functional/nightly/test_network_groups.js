@@ -583,10 +583,12 @@ define([
           .assertElementPropertyEquals(activeSelector, 'offsetWidth', '163',
             'Renamed node network group has correct width');
       },
-      'User can add and cannot rename new node network group after deployment': function() {
+      'User can add and rename new node network group after deployment': function() {
         this.timeout = 60000;
         var progressSelector = '.dashboard-block .progress';
+        var newName = 'Network_Group_2';
         return this.remote
+          // Can add new node network group after deployment
           .then(function() {
             return clusterPage.goToTab('Dashboard');
           })
@@ -601,8 +603,17 @@ define([
           .then(function() {
             return networksLib.createNetworkGroup('Network_Group_1');
           })
-          .assertElementNotExists(pencilSelector,
-            'It is not possible to rename new node network group after deployment');
+          // Can rename new node network group after deployment
+          .assertElementsAppear(pencilSelector, 1000, '"Pencil" icon appears')
+          .clickByCssSelector(pencilSelector)
+          .assertElementAppears(renameSelector, 1000, 'Node network group renaming control appears')
+          .findByCssSelector(renameSelector)
+            .clearValue()
+            .type(newName)
+            .type('\uE007')
+            .end()
+          .assertElementContainsText(networkGroupsSelector, newName, 'New subtab title is shown')
+          .assertElementTextEquals(nameSelector, newName, 'New network group name "link" is shown');
       }
     };
   });

@@ -158,23 +158,23 @@ define([
           .assertElementsExist('button.btn-add-nodes', '"Add Nodes" button exists')
           .clickByCssSelector('button.btn-add-nodes')
           // Check sorting
-          .assertElementsAppear(btnSortSelector, 1000, '"Sort Nodes" button is exists')
+          .assertElementsAppear(btnSortSelector, 1000, '"Sort Nodes" button exists')
           .clickByCssSelector(btnSortSelector)
-          .assertElementsAppear('div.sorters', 1000, '"Sort" pane is appears')
+          .assertElementsAppear('div.sorters', 1000, '"Sort" pane appears')
           .assertElementsExist(btnMoreSelector, '"More" sort button exists')
           .clickByCssSelector(btnMoreSelector)
-          .assertElementsAppear(popoverSelector, 1000, '"More" sort popover is appears')
+          .assertElementsAppear(popoverSelector, 1000, '"More" sort popover appears')
           .assertElementNotExists('input[label="' + itemName + '"]', 'No "' + itemName +
             '" item checkbox via sorting for unallocated nodes')
           .assertElementMatchesRegExp(popContentSelector, itemRegExp, 'No "' + itemName +
             '" item label via sorting for unallocated nodes')
           // Check filtering
-          .assertElementsAppear(btnFilterSelector, 1000, '"Filter Nodes" button is exists')
+          .assertElementsAppear(btnFilterSelector, 1000, '"Filter Nodes" button exists')
           .clickByCssSelector(btnFilterSelector)
-          .assertElementsAppear('div.filters', 1000, '"Filter" pane is appears')
+          .assertElementsAppear('div.filters', 1000, '"Filter" pane appears')
           .assertElementsExist(btnMoreSelector, '"More" filter button exists')
           .clickByCssSelector(btnMoreSelector)
-          .assertElementsAppear(popoverSelector, 1000, '"More" filter popover is appears')
+          .assertElementsAppear(popoverSelector, 1000, '"More" filter popover appears')
           .assertElementNotExists('input[label="' + itemName + '"]', 'No "' + itemName +
             '" item checkbox via filtering for unallocated nodes')
           .assertElementMatchesRegExp(popContentSelector, itemRegExp, 'No "' + itemName +
@@ -184,18 +184,18 @@ define([
         var nodeSelector = 'div.node ';
         var btnEditSelector = 'button.btn-edit-roles';
         var btnApplySelector = 'button.btn-apply';
+        var roleBaseOsSelector = 'div.role-block.base-os';
         var rolesRegExp = RegExp('[\\s\\S]*(controller.*|base-os.*){2}[\\s\\S]*', 'i');
         return this.remote
           .then(function() {
             return common.addNodesToCluster(1, ['Controller']);
           })
-          .assertElementsExist(nodeSelector + 'input', '"Controller" node exists')
+          .assertElementsAppear(nodeSelector + 'input', 1000, '"Controller" node appears')
           .clickByCssSelector(nodeSelector + 'input')
           .assertElementsExist(btnEditSelector, '"Edit Roles" button exists')
           .clickByCssSelector(btnEditSelector)
-          .then(function() {
-            return clusterPage.checkNodeRoles(['Operating System']);
-          })
+          .assertElementsAppear(roleBaseOsSelector, 1000, '"Operating System" role appears')
+          .clickByCssSelector(roleBaseOsSelector)
           .assertElementsExist(btnApplySelector, '"Apply Changes" button exists')
           .clickByCssSelector(btnApplySelector)
           .waitForElementDeletion(btnApplySelector, 2000)
