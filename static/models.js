@@ -973,9 +973,7 @@ models.Interface = Backbone.DeepModel
       ) networkErrors.push(i18n(ns + 'vlan_range_intersection'));
 
       var sriov = this.get('interface_properties').sriov;
-      if (sriov && sriov.enabled &&
-        networks.length &&
-        attrs.networkingParameters.segmentation_type !== 'vlan') {
+      if (sriov && sriov.enabled && networks.length) {
         networkErrors.push(i18n(ns + 'sriov_placement_error'));
       }
 
