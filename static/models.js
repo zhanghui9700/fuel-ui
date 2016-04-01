@@ -1000,6 +1000,8 @@ models.Interface = Backbone.DeepModel
       if (mtuValue) {
         if (_.isNaN(mtuValue) || mtuValue < 42 || mtuValue > 65536) {
           errors.mtu = i18n(ns + 'invalid_mtu');
+        } else if (interfaceProperties.dpdk.enabled && mtuValue > 1500) {
+          errors.mtu = i18n(ns + 'dpdk_mtu_error');
         }
       }
       _.extend(errors, this.validateSRIOV(options));
