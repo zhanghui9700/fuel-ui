@@ -3658,6 +3658,11 @@ input[type=range] {
             margin-right: @common-offset * 2;
             margin-left: -@common-offset;
             padding: @property-offset @property-offset * 2;
+            border-radius: 6px;
+            transition: background-color .35s ease;
+            &.active {
+              background-color: @ifc-container-light-color - 17%;
+            }
             .property-item {
               cursor: pointer;
               padding-top: 4px;
@@ -3665,10 +3670,6 @@ input[type=range] {
               padding-left: 0;
               margin-left: @property-offset;
             }
-          }
-          .active {
-            background-color: @ifc-container-light-color - 17%;
-            border-radius: 6px;
           }
         }
         .mtu-control {

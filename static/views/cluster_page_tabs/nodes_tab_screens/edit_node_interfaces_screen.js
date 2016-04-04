@@ -751,10 +751,10 @@ var NodeInterface = React.createClass({
     var ifcProperties = ifc.get('interface_properties');
     var errors = (this.props.errors || {}).interface_properties;
     var offloadingModes = ifc.get('offloading_modes') || [];
-    var {activeInterfaceSectionName} = this.state;
+    var {collapsed, activeInterfaceSectionName} = this.state;
     var offloadingTabClasses = {
       'property-item-container': true,
-      active: activeInterfaceSectionName === this.renderedIfcProperties[0]
+      active: !collapsed && activeInterfaceSectionName === this.renderedIfcProperties[0]
     };
     return (
       <div className='properties-list'>
@@ -762,7 +762,7 @@ var NodeInterface = React.createClass({
           {i18n(ns + 'offloading_modes') + ':'}
           <button
             className='btn btn-link property-item'
-            onClick={() => this.switchActiveSubtab('offloading_modes')}
+            onClick={() => this.switchActiveSubtab(this.renderedIfcProperties[0])}
           >
             {ifcProperties.disable_offloading ?
               i18n(ns + 'disable_offloading')
@@ -781,7 +781,7 @@ var NodeInterface = React.createClass({
               'text-danger': _.has(errors, propertyName),
               'property-item-container': true,
               [propertyName]: true,
-              active: activeInterfaceSectionName === propertyName
+              active: !collapsed && activeInterfaceSectionName === propertyName
             };
             var commonButtonProps = {
               className: 'btn btn-link property-item',
