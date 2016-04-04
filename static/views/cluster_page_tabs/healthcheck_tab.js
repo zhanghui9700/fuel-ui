@@ -116,8 +116,8 @@ var HealthcheckTabContent = React.createClass({
   },
   isLocked() {
     var cluster = this.props.cluster;
-    return cluster.get('status') !== 'operational' || !!cluster.task({group: 'deployment',
-      active: true});
+    return !_.contains(['operational', 'error'], cluster.get('status')) ||
+      !!cluster.task({group: 'deployment', active: true});
   },
   getNumberOfCheckedTests() {
     return this.props.tests.where({checked: true}).length;
