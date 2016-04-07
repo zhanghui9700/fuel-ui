@@ -370,6 +370,7 @@
                     "filter_results_amount": "Shown __count__ of __total__ result for ",
                     "filter_results_amount_plural": "Shown __count__ of __total__ results for ",
                     "assign_roles": "Assign Roles",
+                    "assign_roles_help": "Place the mouse cursor over a role to view description.",
                     "breadcrumbs": {
                         "add": "Add Nodes",
                         "edit": "Edit Roles",
