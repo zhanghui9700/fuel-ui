@@ -372,11 +372,11 @@ var EditNodeInterfacesScreen = React.createClass({
           mtu: null,
           disable_offloading: true,
           dpdk: {
-            enabled: !_.any(interfaces,
-              (ifc) => !ifc.get('interface_properties').dpdk.enabled
+            enabled: _.all(interfaces,
+              (ifc) => ifc.get('interface_properties').dpdk.enabled
             ),
-            available: !_.any(interfaces,
-              (ifc) => !ifc.get('interface_properties').dpdk.available
+            available: _.all(interfaces,
+              (ifc) => ifc.get('interface_properties').dpdk.available
             )
           }
         },
@@ -389,8 +389,8 @@ var EditNodeInterfacesScreen = React.createClass({
       bondName = bond.get('name');
 
       if (bondProperties.dpdk.enabled) {
-        bondProperties.dpdk.enabled = !_.any(interfaces,
-          (ifc) => !ifc.get('interface_properties').dpdk.enabled
+        bondProperties.dpdk.enabled = _.all(interfaces,
+          (ifc) => ifc.get('interface_properties').dpdk.enabled
         );
       }
       bond.set({
@@ -741,7 +741,13 @@ var NodeInterface = React.createClass({
       }
     })
   ],
-  renderedIfcProperties: ['offloading_modes', 'mtu', 'sriov', 'dpdk'],
+  getRenderableIfcProperties() {
+    var properties = ['offloading_modes', 'mtu', 'sriov'];
+    if (_.contains(app.version.get('feature_groups'), 'experimental')) {
+      properties.push('dpdk');
+    }
+    return properties;
+  },
   getInitialState() {
     return {
       activeInterfaceSectionName: null,
@@ -884,10 +890,11 @@ var NodeInterface = React.createClass({
     var offloadingModes = ifc.get('offloading_modes') || [];
     var {collapsed, activeInterfaceSectionName} = this.state;
     var offloadingRestricted = !limitations.offloading_modes.equal;
+    var renderableIfcProperties = this.getRenderableIfcProperties();
     var offloadingTabClasses = {
       forbidden: offloadingRestricted,
       'property-item-container': true,
-      active: !collapsed && activeInterfaceSectionName === this.renderedIfcProperties[0]
+      active: !collapsed && activeInterfaceSectionName === renderableIfcProperties[0]
     };
     return (
       <div className='properties-list'>
@@ -896,7 +903,7 @@ var NodeInterface = React.createClass({
           {i18n(ns + 'offloading_modes') + ':'}
           <button
             className='btn btn-link property-item'
-            onClick={() => this.switchActiveSubtab(this.renderedIfcProperties[0])}
+            onClick={() => this.switchActiveSubtab(renderableIfcProperties[0])}
             disabled={offloadingRestricted}
           >
               {offloadingRestricted ?
@@ -921,7 +928,7 @@ var NodeInterface = React.createClass({
 
           if (_.isPlainObject(propertyValue) && !propertyShown) return null;
 
-          if (_.contains(this.renderedIfcProperties, propertyName)) {
+          if (_.contains(renderableIfcProperties, propertyName)) {
             var classes = {
               'text-danger': _.has(errors, propertyName),
               'property-item-container': true,
@@ -1143,7 +1150,8 @@ var NodeInterface = React.createClass({
       'glyphicon glyphicon-menu-down': true,
       rotate: !this.state.collapsed
     });
-    var defaultSubtab = _.find(this.renderedIfcProperties, (ifcProperty) => {
+    var renderableIfcProperties = this.getRenderableIfcProperties();
+    var defaultSubtab = _.find(renderableIfcProperties, (ifcProperty) => {
       var limitation = _.get(this.props.limitations, ifcProperty);
       return limitation && limitation.equal && !!limitation.shown;
     });
