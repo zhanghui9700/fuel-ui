@@ -1132,7 +1132,10 @@ export var ShowNodeInfoDialog = React.createClass({
     this.setState({actionInProgress: true});
     nodeAttributesModel.fetch()
       .always(() => {
-        var configModels = this.props.cluster && {settings: this.props.cluster.get('settings')};
+        var configModels = this.props.cluster && {
+          settings: this.props.cluster.get('settings'),
+          version: app.version
+        };
         nodeAttributesModel.isValid({models: configModels});
         this.setState({
           actionInProgress: false,
@@ -1358,9 +1361,14 @@ export var ShowNodeInfoDialog = React.createClass({
     );
   },
   renderNodeAttributes() {
-    var {nodeAttributes, configModels, nodeAttributesError, savingError} = this.state;
-    var attributesToDisplay = ['nova', 'dpdk'];
-    var isLocked = !this.props.node.get('pending_addition') || this.state.actionInProgress;
+    var {node, cluster} = this.props;
+    var {
+      nodeAttributes, initialNodeAttributes, nodeAttributesError, savingError,
+      actionInProgress, configModels
+    } = this.state;
+
+    var renderableAttributes = ['nova', 'dpdk'];
+    var isLocked = !node.get('pending_addition') || actionInProgress;
 
     var attributes = _.chain(_.keys(nodeAttributes.attributes))
       .filter(
@@ -1376,20 +1384,25 @@ export var ShowNodeInfoDialog = React.createClass({
       .map(
         (sectionName) => {
           var metadata = nodeAttributes.get(utils.makePath(sectionName, 'metadata'));
+          var settingsToDisplay = _.filter(renderableAttributes,
+            (attribute) => !nodeAttributes.checkRestrictions(
+              configModels,
+              'hide',
+              nodeAttributes.get(utils.makePath(sectionName, attribute))
+            ).result
+          );
           return (
             <SettingSection
-              configModels={this.state.configModels}
-              initialAttributes={this.state.initialNodeAttributes}
+              {... {sectionName, settingsToDisplay, cluster, configModels}}
               key={sectionName}
-              cluster={this.props.cluster}
-              sectionName={sectionName}
-              settingsToDisplay={attributesToDisplay}
+              initialAttributes={initialNodeAttributes}
               onChange={_.partial(this.onNodeAttributesChange, sectionName)}
               settings={nodeAttributes}
-              locked={isLocked ||
-                nodeAttributes.checkRestrictions(configModels, 'disable', metadata).result}
-              checkRestrictions={_.partial(this.state.nodeAttributes.checkRestrictions,
-                this.state.configModels)}
+              locked={
+                isLocked ||
+                nodeAttributes.checkRestrictions(configModels, 'disable', metadata).result
+              }
+              checkRestrictions={_.partial(nodeAttributes.checkRestrictions, configModels)}
             />
           );
         }
