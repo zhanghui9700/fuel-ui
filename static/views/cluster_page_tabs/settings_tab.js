@@ -138,29 +138,31 @@ var SettingsTab = React.createClass({
     .fetch({
       url: _.result(this.props.cluster, 'url') + '/attributes/defaults'
     })
-    .done(() => {
-      this.props.cluster.get('settings').updateSettings(
-        defaultSettings,
-        this.state.configModels,
-        false
-      );
-      this.setState({
-        actionInProgress: false,
-        key: _.now()
-      });
-    })
-    .fail((response) => {
-      this.setState({actionInProgress: false});
-      var ns = 'cluster_page.settings_tab.settings_error';
-      utils.showErrorDialog({
-        title: i18n(ns + 'title'),
-        message: i18n(ns + 'load_settings_warning'),
-        response
-      });
-    });
+    .then(
+      () => {
+        this.props.cluster.get('settings').updateAttributes(
+          defaultSettings,
+          this.state.configModels,
+          false
+        );
+        this.setState({
+          actionInProgress: false,
+          key: _.now()
+        });
+      },
+      (response) => {
+        this.setState({actionInProgress: false});
+        var ns = 'cluster_page.settings_tab.settings_error';
+        utils.showErrorDialog({
+          title: i18n(ns + 'title'),
+          message: i18n(ns + 'load_settings_warning'),
+          response
+        });
+      }
+    );
   },
   loadDeployedSettings() {
-    this.props.cluster.get('settings').updateSettings(
+    this.props.cluster.get('settings').updateAttributes(
       this.props.cluster.get('deployedSettings'),
       this.state.configModels,
       false
