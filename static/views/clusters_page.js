@@ -79,7 +79,7 @@ ClusterList = React.createClass({
       <div className='row'>
         {this.props.clusters.map((cluster) => {
           return <Cluster key={cluster.id} cluster={cluster} />;
-        }, this)}
+        })}
         <div key='create-cluster' className='col-xs-3'>
           <button className='btn-link create-cluster' onClick={this.createCluster}>
             <span>{i18n('clusters_page.create_cluster_text')}</span>

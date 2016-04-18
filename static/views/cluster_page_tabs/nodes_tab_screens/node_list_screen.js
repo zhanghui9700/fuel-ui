@@ -224,7 +224,7 @@ NodeListScreen = React.createClass({
           }
         }
         return filter;
-      }, this);
+      });
       if (
         !_.isEqual(
           _.pluck(normalizedFilters, 'values'),
@@ -1212,7 +1212,7 @@ ManagementPanel = React.createClass({
                     <button
                       className='btn btn-default btn-configure-disks'
                       disabled={!nodes.length}
-                      onClick={_.bind(this.goToConfigurationScreen, this, 'disks', disksConflict)}
+                      onClick={() => this.goToConfigurationScreen('disks', disksConflict)}
                     >
                       {disksConflict && <i className='glyphicon glyphicon-danger-sign' />}
                       {i18n('dialog.show_node.disk_configuration' +
@@ -1222,9 +1222,7 @@ ManagementPanel = React.createClass({
                     <button
                       className='btn btn-default btn-configure-interfaces'
                       disabled={!nodes.length}
-                      onClick={_.bind(this.goToConfigurationScreen, this, 'interfaces',
-                        interfaceConflict)
-                      }
+                      onClick={() => this.goToConfigurationScreen('interfaces', interfaceConflict)}
                     >
                       {interfaceConflict && <i className='glyphicon glyphicon-danger-sign' />}
                       {i18n('dialog.show_node.network_configuration' +
@@ -1417,7 +1415,7 @@ ManagementPanel = React.createClass({
                               </span>
                             </div>
                           );
-                        }, this)}
+                        })}
                       </div>
                       <button
                         className='btn btn-link btn-reset-filters'
@@ -1670,7 +1668,7 @@ NodeLabelsPanel = React.createClass({
                   />
                 </div>
               );
-            }, this)}
+            })}
             <button
               className='btn btn-default btn-add-label'
               onClick={this.addLabel}
@@ -2182,7 +2180,7 @@ NodeGroup = React.createClass({
                 _.contains(nodesWithRestrictionsIds, node.id) ||
                 !this.props.nodeActionsAvailable && !node.get('online')
               }
-              onNodeSelection={_.bind(this.props.selectNodes, this.props, [node.id])}
+              onNodeSelection={_.partial(this.props.selectNodes, [node.id])}
             />;
           })}
         </div>

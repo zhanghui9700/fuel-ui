@@ -161,7 +161,7 @@ var HealthcheckTabContent = React.createClass({
               status: 'restarted'
             }));
             oldTestruns.add(new models.TestRun(testrunConfig));
-          }, this);
+          });
         } else {
           _.extend(testrunConfig, {
             testset: testsetId,

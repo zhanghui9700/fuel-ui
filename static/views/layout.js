@@ -308,7 +308,7 @@ var NotificationsPopover = React.createClass({
         return notificationsToMark.map((notification) => {
           notification.set({status: 'read'});
           return _.pick(notification.attributes, 'id', 'status');
-        }, this);
+        });
       };
       Backbone.sync('update', notificationsToMark);
     }

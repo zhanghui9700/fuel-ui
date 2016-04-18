@@ -128,7 +128,7 @@ customControls.custom_repo_configuration = React.createClass({
     return (
       <button
         className='btn btn-link'
-        onClick={this.changeRepos.bind(this, 'delete', index)}
+        onClick={_.partial(this.changeRepos, 'delete', index)}
         disabled={this.props.disabled}
       >
         <i className='glyphicon glyphicon-minus-sign' />
@@ -162,7 +162,7 @@ customControls.custom_repo_configuration = React.createClass({
                 defaultValue={repo.name}
                 error={error && error.name}
                 wrapperClassName='repo-name'
-                onChange={this.changeRepos.bind(this, 'change_name')}
+                onChange={_.partial(this.changeRepos, 'change_name')}
                 label={index === 0 && i18n(ns + 'labels.name')}
                 debounce
               />
@@ -170,7 +170,7 @@ customControls.custom_repo_configuration = React.createClass({
                 {...props}
                 defaultValue={this.constructor.repoToString(repo, os)}
                 error={error && (error.uri ? error.name ? '' : error.uri : null)}
-                onChange={this.changeRepos.bind(this, null)}
+                onChange={_.partial(this.changeRepos, null)}
                 label={index === 0 && i18n(ns + 'labels.uri')}
                 wrapperClassName='repo-uri'
                 debounce
@@ -182,7 +182,7 @@ customControls.custom_repo_configuration = React.createClass({
                   error && (error.priority ? (error.name || error.uri) ? '' : error.priority : null)
                 }
                 wrapperClassName='repo-priority'
-                onChange={this.changeRepos.bind(this, 'change_priority')}
+                onChange={_.partial(this.changeRepos, 'change_priority')}
                 extraContent={index > 0 && this.renderDeleteButton(index)}
                 label={index === 0 && i18n(ns + 'labels.priority')}
                 placeholder={i18n(ns + 'placeholders.priority')}
@@ -195,7 +195,7 @@ customControls.custom_repo_configuration = React.createClass({
           <button
             key='addExtraRepo'
             className='btn btn-default btn-add-repo'
-            onClick={this.changeRepos.bind(this, 'add')}
+            onClick={_.partial(this.changeRepos, 'add')}
             disabled={this.props.disabled}
           >
             {i18n(ns + 'add_repo_button')}

@@ -725,7 +725,7 @@ models.Settings = Backbone.DeepModel
           this.attributes[sectionName] = _.extend(_.pick(section, 'metadata'),
             _.omit(chosenVersionData, 'metadata'));
         }
-      }, this);
+      });
     },
     toJSON() {
       var settings = this._super('toJSON', arguments);
