@@ -21,12 +21,12 @@ function usage {
   echo "Run Fuel UI functional tests"
   echo ""
   echo "  -h, --help                  Print this usage message"
-  echo "      --no-ui-compression     Skip UI compression"
+  echo "      --no-ui-build           Skip UI build"
   echo "      --no-nailgun-start      Skip Nailgun start"
   exit
 }
 
-no_ui_compression=0
+no_ui_build=0
 no_nailgun_start=0
 tests=
 
@@ -34,7 +34,7 @@ function process_options {
   for arg in $@; do
     case "$arg" in
       -h|--help) usage;;
-      --no-ui-compression) no_ui_compression=1;;
+      --no-ui-build) no_ui_build=1;;
       --no-nailgun-start) no_nailgun_start=1;;
       -*);;
       *) tests="$tests $arg"
@@ -84,19 +84,19 @@ function run_ui_func_tests {
     TESTS=$@
   fi
 
-  if [ $no_ui_compression -ne 1 ]; then
-    echo "Compressing UI... "
+  if [ $no_ui_build -ne 1 ]; then
+    echo "Building UI..."
     ${GULP} build --no-sourcemaps --extra-entries=sinon --static-dir=$NAILGUN_STATIC
-    if [ $? -ne 0 ]; then
-      return 1
-    fi
   else
-    echo "Using compressed UI from $NAILGUN_STATIC"
+    echo "Using pre-built UI from $NAILGUN_STATIC"
     if [ ! -f "$NAILGUN_STATIC/index.html" ]; then
-      echo "Cannot find compressed UI. Don't use --no-ui-compression key"
+      echo "Cannot find pre-built UI. Don't use --no-ui-build key"
       return 1
     fi
   fi
+
+  echo "Building tests..."
+  ${GULP} intern:transpile
 
   if [ $no_nailgun_start -ne 1 ]; then
       pushd "$FUEL_WEB_ROOT" > /dev/null
@@ -119,7 +119,7 @@ function run_ui_func_tests {
 
     SERVER_PORT=$NAILGUN_PORT \
     ARTIFACTS=$ARTIFACTS \
-    ${GULP} functional-tests --suites=$testcase || result=1
+    ${GULP} functional-tests --no-transpile --suites=$testcase || result=1
 
     if [ $no_nailgun_start -ne 1 ]; then
         pushd "$FUEL_WEB_ROOT" > /dev/null
