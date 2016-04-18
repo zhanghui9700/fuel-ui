@@ -162,10 +162,11 @@ gulp.task('intern:run', runIntern(
 ));
 
 gulp.task('functional-tests', function(cb) {
-  runSequence('selenium', 'intern:transpile', 'intern:run', function(err) {
+  var tasks = ['selenium', argv.transpile === false ? null : 'intern:transpile', 'intern:run'];
+  runSequence.apply(this, _.compact(tasks).concat(function(err) {
     shutdownSelenium();
     cb(err);
-  });
+  }));
 });
 
 gulp.task('jison', function() {
