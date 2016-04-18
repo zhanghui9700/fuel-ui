@@ -238,7 +238,7 @@ var EditNodeInterfacesScreen = React.createClass({
     this.setState({actionInProgress: true});
     $.when(this.props.interfaces.fetch({
       url: _.result(this.props.nodes.at(0), 'url') + '/interfaces/default_assignment', reset: true
-    }, this)).done(() => {
+    })).done(() => {
       this.setState({actionInProgress: false});
     }).fail((response) => {
       var errorNS = ns + 'configuration_error.';

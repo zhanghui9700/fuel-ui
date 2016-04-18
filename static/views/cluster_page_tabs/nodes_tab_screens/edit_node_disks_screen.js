@@ -44,7 +44,7 @@ var EditNodeDisksScreen = React.createClass({
       return $.when(...nodes.map((node) => {
         node.disks = new models.Disks();
         return node.disks.fetch({url: _.result(node, 'url') + '/disks'});
-      }, this).concat(volumes.fetch()))
+      }).concat(volumes.fetch()))
         .then(() => {
           var disks = new models.Disks(_.cloneDeep(nodes.at(0).disks.toJSON()), {parse: true});
           return {
@@ -247,8 +247,8 @@ var NodeDisk = React.createClass({
   },
   componentDidMount() {
     $('.disk-details', ReactDOM.findDOMNode(this))
-      .on('show.bs.collapse', this.setState.bind(this, {collapsed: true}, null))
-      .on('hide.bs.collapse', this.setState.bind(this, {collapsed: false}, null));
+      .on('show.bs.collapse', () => this.setState({collapsed: true}, null))
+      .on('hide.bs.collapse', () => this.setState({collapsed: false}, null));
   },
   updateDisk(name, value) {
     var size = parseInt(value, 10) || 0;

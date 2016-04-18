@@ -1586,7 +1586,7 @@ export var ShowNodeInfoDialog = React.createClass({
                 className='panel-heading'
                 role='tab'
                 id={'heading' + group}
-                onClick={this.toggle.bind(this, groupIndex)}
+                onClick={() => this.toggle(groupIndex)}
               >
                 <div className='panel-title'>
                   <div
@@ -1897,7 +1897,7 @@ export var ChangePasswordDialog = React.createClass({
             type='password'
             label={i18n(ns + translationKeys[index])}
             maxLength='50'
-            onChange={this.handleChange.bind(this, (name === 'currentPassword'))}
+            onChange={_.partial(this.handleChange, (name === 'currentPassword'))}
             onKeyDown={this.handleKeyDown}
             disabled={this.state.actionInProgress}
             toggleable={name === 'currentPassword'}

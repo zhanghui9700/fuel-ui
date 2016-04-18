@@ -649,7 +649,7 @@ var CreateClusterWizard = React.createClass({
       if ((paneIndex <= maxIndex) && (paneIndex > currentIndex) && pane.componentType) {
         panesTypes.push(pane.componentType);
       }
-    }, this);
+    });
     return panesTypes;
   },
   updateState(nextState) {

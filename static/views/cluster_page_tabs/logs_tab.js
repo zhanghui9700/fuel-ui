@@ -238,7 +238,7 @@ var LogFilterBar = React.createClass({
       if (!source.get('remote')) {
         return <option value={source.id} key={source.id}>{source.get('name')}</option>;
       }
-    }, this);
+    });
   },
   getRemoteSources() {
     var options = {};
@@ -261,7 +261,7 @@ var LogFilterBar = React.createClass({
           });
           options[group] = group ? <optgroup label={group}>{option}</optgroup> : option;
         }
-      }, this);
+      });
     }
     return ReactFragment(options);
   },
@@ -435,7 +435,7 @@ var LogsTable = React.createClass({
                       return <button
                         key={count}
                         className='btn btn-link show-more-entries'
-                        onClick={_.bind(this.handleShowMoreClick, this, count)}
+                        onClick={() => this.handleShowMoreClick(count)}
                       >
                         {count}
                       </button>;

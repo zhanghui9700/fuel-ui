@@ -147,7 +147,7 @@ var DashboardLinks = React.createClass({
                   </div>
                 );
               }
-            }, this)}
+            })}
           </div>
         </div>
       </div>
@@ -250,8 +250,8 @@ var DeploymentResult = React.createClass({
   },
   componentDidMount() {
     $('.result-details', ReactDOM.findDOMNode(this))
-      .on('show.bs.collapse', this.setState.bind(this, {collapsed: true}, null))
-      .on('hide.bs.collapse', this.setState.bind(this, {collapsed: false}, null));
+      .on('show.bs.collapse', () => this.setState({collapsed: true}, null))
+      .on('hide.bs.collapse', () => this.setState({collapsed: false}, null));
   },
   render() {
     var {task} = this.props;
@@ -985,7 +985,7 @@ var ClusterInfo = React.createClass({
             </div>
           </div>
         );
-      }, this)
+      })
     );
   },
   renderClusterCapacity() {

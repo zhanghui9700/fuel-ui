@@ -174,7 +174,7 @@ var AvailabilityZone = BaseModel.extend({
       if (VmWareModels.isRegularField(field)) {
         result[field.name] = response[field.name];
       }
-    }, this);
+    });
 
     // nova_computes
     var novaMetadata = _.find(metadata, {name: 'nova_computes'});

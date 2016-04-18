@@ -321,7 +321,7 @@ var SettingSection = React.createClass({
                     disabled: locked || processedGroupRestrictions.result ||
                       (metadata.toggleable && !metadata.enabled)
                   };
-                }, this)}
+                })}
                 onChange={this.onPluginVersionChange}
               />
             </div>
