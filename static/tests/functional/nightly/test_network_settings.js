@@ -27,7 +27,7 @@ registerSuite(function() {
 
   return {
     name: 'Neutron VLAN segmentation',
-    setup: function() {
+    setup() {
       common = new Common(this.remote);
       clusterPage = new ClusterPage(this.remote);
       networksLib = new NetworksLib(this.remote);
@@ -50,7 +50,7 @@ registerSuite(function() {
           return clusterPage.goToTab('Settings');
         });
     },
-    'Check no network settings on "Settings" tab': function() {
+    'Check no network settings on "Settings" tab'() {
       return this.remote
         .assertElementExists('div.settings-tab div.general', '"Settings" tab is not empty')
         .assertElementNotExists('div.network-tab div.network-tab-content',
@@ -59,7 +59,7 @@ registerSuite(function() {
         .assertElementDisabled('button.btn-revert-changes', 'Cancel Changes button is disabled')
         .assertElementDisabled('button.btn-apply-changes', 'Save Settings button is disabled');
     },
-    'User returns to the selected segment on "Networks" tab': function() {
+    'User returns to the selected segment on "Networks" tab'() {
       return this.remote
         .then(function() {
           return clusterPage.goToTab('Networks');
@@ -89,7 +89,7 @@ registerSuite(function() {
         .assertElementTextEquals('h3.networks', 'Neutron L2 Configuration',
           '"Neutron L2" subtab is opened');
     },
-    'Check "Node Network Groups" segment on "Networks" tab': function() {
+    'Check "Node Network Groups" segment on "Networks" tab'() {
       return this.remote
         .then(function() {
           return networksLib.checkNetworkInitialState('Public');
@@ -101,19 +101,19 @@ registerSuite(function() {
           return networksLib.checkNetworkInitialState('Management');
         });
     },
-    'Check "Settings" segment on "Networks" tab': function() {
+    'Check "Settings" segment on "Networks" tab'() {
       return this.remote
         .then(function() {
           return networksLib.checkNetrworkSettingsSegment('VLAN');
         });
     },
-    'Check "Network Verification" segment on "Networks" tab': function() {
+    'Check "Network Verification" segment on "Networks" tab'() {
       return this.remote
         .then(function() {
           return networksLib.checkNetrworkVerificationSegment();
         });
     },
-    'Success network verification exists only on "Network Verification" segment': function() {
+    'Success network verification exists only on "Network Verification" segment'() {
       return this.remote
         .clickByCssSelector('.subtab-link-network_verification')
         .assertElementEnabled('.verify-networks-btn', '"Verify Networks" is enabled')
@@ -146,7 +146,7 @@ registerSuite(function() {
         .assertElementContainsText('div.alert-success', 'Your network is configured correctly',
           'True msg observed');
     },
-    'Failed network verification presents on each subtab on "Networks" tab': function() {
+    'Failed network verification presents on each subtab on "Networks" tab'() {
       var gatewayValue = '172.16.0.2';
       return this.remote
         .then(function() {
@@ -205,7 +205,7 @@ registerSuite(function() {
 
   return {
     name: 'Neutron tunneling segmentation',
-    setup: function() {
+    setup() {
       common = new Common(this.remote);
       clusterPage = new ClusterPage(this.remote);
       clusterName = common.pickRandomName('Tunneling Cluster');
@@ -219,7 +219,7 @@ registerSuite(function() {
           return common.createCluster(
             clusterName,
             {
-              'Networking Setup': function() {
+              'Networking Setup'() {
                 return this.remote
                   .clickByCssSelector('input[value*="neutron"][value$=":vlan"]')
                   .clickByCssSelector('input[value*="neutron"][value$=":tun"]');
@@ -231,7 +231,7 @@ registerSuite(function() {
           return clusterPage.goToTab('Networks');
         });
     },
-    'Check "Node Network Groups" segment on "Networks" tab': function() {
+    'Check "Node Network Groups" segment on "Networks" tab'() {
       return this.remote
         .assertElementExists('a[class*="network"][class*="active"]', '"Networks" tab is opened')
         .assertElementExists('div.network-tab div.network-tab-content',
@@ -253,13 +253,13 @@ registerSuite(function() {
           return networksLib.checkNetworkInitialState('Private');
         });
     },
-    'Check "Settings" segment on "Networks" tab': function() {
+    'Check "Settings" segment on "Networks" tab'() {
       return this.remote
         .then(function() {
           return networksLib.checkNetrworkSettingsSegment('Tunnel');
         });
     },
-    'Check "Network Verification" segment on "Networks" tab': function() {
+    'Check "Network Verification" segment on "Networks" tab'() {
       return this.remote
         .then(function() {
           return networksLib.checkNetrworkVerificationSegment();

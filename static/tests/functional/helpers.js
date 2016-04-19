@@ -19,7 +19,7 @@ import assert from 'intern/chai!assert';
 import Command from 'intern/dojo/node!leadfoot/Command';
 
 _.defaults(Command.prototype, {
-  clickLinkByText: function(text) {
+  clickLinkByText(text) {
     return new this.constructor(this, function() {
       return this.parent
         .findByLinkText(text)
@@ -27,7 +27,7 @@ _.defaults(Command.prototype, {
           .end();
     });
   },
-  clickByCssSelector: function(cssSelector) {
+  clickByCssSelector(cssSelector) {
     return new this.constructor(this, function() {
       return this.parent
         .findByCssSelector(cssSelector)
@@ -35,7 +35,7 @@ _.defaults(Command.prototype, {
           .end();
     });
   },
-  waitForCssSelector: function(cssSelector, timeout) {
+  waitForCssSelector(cssSelector, timeout) {
     return new this.constructor(this, function() {
       var currentTimeout;
       return this.parent
@@ -55,7 +55,7 @@ _.defaults(Command.prototype, {
         });
     });
   },
-  waitForElementDeletion: function(cssSelector, timeout) {
+  waitForElementDeletion(cssSelector, timeout) {
     return new this.constructor(this, function() {
       var currentTimeout;
       return this.parent
@@ -74,7 +74,7 @@ _.defaults(Command.prototype, {
         });
     });
   },
-  setInputValue: function(cssSelector, value) {
+  setInputValue(cssSelector, value) {
     return new this.constructor(this, function() {
       return this.parent
         .findByCssSelector(cssSelector)
@@ -86,7 +86,7 @@ _.defaults(Command.prototype, {
   // Drag-n-drop helpers
   // Taken from not yet accepted pull request to leadfoot from
   // https://github.com/theintern/leadfoot/pull/16
-  dragFrom: function(element, x, y) {
+  dragFrom(element, x, y) {
     if (typeof element === 'number') {
       y = x;
       x = element;
@@ -100,7 +100,7 @@ _.defaults(Command.prototype, {
       };
     });
   },
-  dragTo: function(element, x, y) {
+  dragTo(element, x, y) {
     if (typeof element === 'number') {
       y = x;
       x = element;
@@ -174,19 +174,19 @@ _.defaults(Command.prototype, {
             if (!dataTransfer) {
               dataTransfer = {
                 data: options.dragData || {},
-                setData: function(eventName, val) {
+                setData(eventName, val) {
                   if (typeof val === 'string') {
                     this.data[eventName] = val;
                   }
                 },
-                getData: function(eventName) {
+                getData(eventName) {
                   return this.data[eventName];
                 },
-                clearData: function() {
+                clearData() {
                   this.data = {};
                   return true;
                 },
-                setDragImage: function() {}
+                setDragImage() {}
               };
             }
 
@@ -271,7 +271,7 @@ _.defaults(Command.prototype, {
     });
   },
   // assertion helpers
-  assertElementsExist: function(cssSelector, amount, message) {
+  assertElementsExist(cssSelector, amount, message) {
     return new this.constructor(this, function() {
       return this.parent
         .findAllByCssSelector(cssSelector)
@@ -287,17 +287,17 @@ _.defaults(Command.prototype, {
           .end();
     });
   },
-  assertElementExists: function(cssSelector, message) {
+  assertElementExists(cssSelector, message) {
     return new this.constructor(this, function() {
       return this.parent.assertElementsExist(cssSelector, 1, message);
     });
   },
-  assertElementNotExists: function(cssSelector, message) {
+  assertElementNotExists(cssSelector, message) {
     return new this.constructor(this, function() {
       return this.parent.assertElementsExist(cssSelector, 0, message);
     });
   },
-  assertElementAppears: function(cssSelector, timeout, message) {
+  assertElementAppears(cssSelector, timeout, message) {
     return new this.constructor(this, function() {
       return this.parent
         .waitForCssSelector(cssSelector, timeout)
@@ -305,7 +305,7 @@ _.defaults(Command.prototype, {
         .assertElementExists(cssSelector, message);
     });
   },
-  assertElementsAppear: function(cssSelector, timeout, message) {
+  assertElementsAppear(cssSelector, timeout, message) {
     return new this.constructor(this, function() {
       return this.parent
         .waitForCssSelector(cssSelector, timeout)
@@ -313,7 +313,7 @@ _.defaults(Command.prototype, {
         .assertElementsExist(cssSelector, message);
     });
   },
-  assertElementDisappears: function(cssSelector, timeout, message) {
+  assertElementDisappears(cssSelector, timeout, message) {
     return new this.constructor(this, function() {
       return this.parent
         .waitForElementDeletion(cssSelector, timeout)
@@ -321,7 +321,7 @@ _.defaults(Command.prototype, {
         .assertElementNotExists(cssSelector, message);
     });
   },
-  assertElementEnabled: function(cssSelector, message) {
+  assertElementEnabled(cssSelector, message) {
     return new this.constructor(this, function() {
       return this.parent
         .findByCssSelector(cssSelector)
@@ -330,7 +330,7 @@ _.defaults(Command.prototype, {
           .end();
     });
   },
-  assertElementDisabled: function(cssSelector, message) {
+  assertElementDisabled(cssSelector, message) {
     return new this.constructor(this, function() {
       return this.parent
         .findByCssSelector(cssSelector)
@@ -339,7 +339,7 @@ _.defaults(Command.prototype, {
           .end();
     });
   },
-  assertElementDisplayed: function(cssSelector, message) {
+  assertElementDisplayed(cssSelector, message) {
     return new this.constructor(this, function() {
       return this.parent
         .findByCssSelector(cssSelector)
@@ -348,7 +348,7 @@ _.defaults(Command.prototype, {
           .end();
     });
   },
-  assertElementNotDisplayed: function(cssSelector, message) {
+  assertElementNotDisplayed(cssSelector, message) {
     return new this.constructor(this, function() {
       return this.parent
         .findByCssSelector(cssSelector)
@@ -357,7 +357,7 @@ _.defaults(Command.prototype, {
           .end();
     });
   },
-  assertElementTextEquals: function(cssSelector, expectedText, message) {
+  assertElementTextEquals(cssSelector, expectedText, message) {
     return new this.constructor(this, function() {
       return this.parent
         .findByCssSelector(cssSelector)
@@ -366,7 +366,7 @@ _.defaults(Command.prototype, {
           .end();
     });
   },
-  assertElementContainsText: function(cssSelector, text, message) {
+  assertElementContainsText(cssSelector, text, message) {
     return new this.constructor(this, function() {
       return this.parent
         .findByCssSelector(cssSelector)
@@ -375,7 +375,7 @@ _.defaults(Command.prototype, {
           .end();
     });
   },
-  assertElementMatchesRegExp: function(cssSelector, regExp, message) {
+  assertElementMatchesRegExp(cssSelector, regExp, message) {
     return new this.constructor(this, function() {
       return this.parent
         .findByCssSelector(cssSelector)
@@ -384,7 +384,7 @@ _.defaults(Command.prototype, {
           .end();
     });
   },
-  assertElementNotContainsText: function(cssSelector, text, message) {
+  assertElementNotContainsText(cssSelector, text, message) {
     return new this.constructor(this, function() {
       return this.parent
         .findByCssSelector(cssSelector)
@@ -393,7 +393,7 @@ _.defaults(Command.prototype, {
           .end();
     });
   },
-  assertElementPropertyEquals: function(cssSelector, attribute, expectedText, message) {
+  assertElementPropertyEquals(cssSelector, attribute, expectedText, message) {
     return new this.constructor(this, function() {
       return this.parent
         .findByCssSelector(cssSelector)
@@ -402,7 +402,7 @@ _.defaults(Command.prototype, {
           .end();
     });
   },
-  assertElementPropertyNotEquals: function(cssSelector, attribute, textToCheck, message) {
+  assertElementPropertyNotEquals(cssSelector, attribute, textToCheck, message) {
     return new this.constructor(this, function() {
       return this.parent
         .findByCssSelector(cssSelector)
@@ -411,7 +411,7 @@ _.defaults(Command.prototype, {
           .end();
     });
   },
-  assertElementPropertyContains: function(cssSelector, attribute, text, message) {
+  assertElementPropertyContains(cssSelector, attribute, text, message) {
     return new this.constructor(this, function() {
       return this.parent
         .findByCssSelector(cssSelector)
@@ -420,7 +420,7 @@ _.defaults(Command.prototype, {
           .end();
     });
   },
-  assertElementSelected: function(cssSelector, message) {
+  assertElementSelected(cssSelector, message) {
     return new this.constructor(this, function() {
       return this.parent
         .findByCssSelector(cssSelector)
@@ -429,7 +429,7 @@ _.defaults(Command.prototype, {
           .end();
     });
   },
-  assertElementNotSelected: function(cssSelector, message) {
+  assertElementNotSelected(cssSelector, message) {
     return new this.constructor(this, function() {
       return this.parent
         .findByCssSelector(cssSelector)
@@ -438,7 +438,7 @@ _.defaults(Command.prototype, {
           .end();
     });
   },
-  assertIsIntegerContentPositive: function(cssSelector, attributeName) {
+  assertIsIntegerContentPositive(cssSelector, attributeName) {
     return new this.constructor(this, function() {
       return this.parent
         .findByCssSelector(cssSelector)

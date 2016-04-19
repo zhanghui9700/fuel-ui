@@ -28,7 +28,7 @@ function ClusterPage(remote) {
 
 ClusterPage.prototype = {
   constructor: ClusterPage,
-  goToTab: function(tabName) {
+  goToTab(tabName) {
     return this.remote
       .findByCssSelector('.cluster-page .tabs')
         .clickLinkByText(tabName)
@@ -41,7 +41,7 @@ ClusterPage.prototype = {
         )
       );
   },
-  removeCluster: function(clusterName) {
+  removeCluster(clusterName) {
     return this.remote
       .clickLinkByText('Dashboard')
       .clickByCssSelector('button.delete-environment-btn')
@@ -60,12 +60,12 @@ ClusterPage.prototype = {
       .waitForCssSelector('.clusters-page', 2000)
       .waitForDeletedByCssSelector('.clusterbox', 20000);
   },
-  searchForNode: function(nodeName) {
+  searchForNode(nodeName) {
     return this.remote
       .clickByCssSelector('button.btn-search')
       .setInputValue('input[name=search]', nodeName);
   },
-  checkNodeRoles: function(assignRoles) {
+  checkNodeRoles(assignRoles) {
     return this.remote
       .findAllByCssSelector('.role-panel .role-block .role')
       .then(
@@ -84,7 +84,7 @@ ClusterPage.prototype = {
         )
       );
   },
-  checkNodes: function(amount, status) {
+  checkNodes(amount, status) {
     status = status || 'discover';
     return this.remote
       .then(() => _.range(amount).reduce(
@@ -98,7 +98,7 @@ ClusterPage.prototype = {
         )
       );
   },
-  resetEnvironment: function(clusterName) {
+  resetEnvironment(clusterName) {
     return this.remote
       .clickByCssSelector('button.reset-environment-btn')
       .then(() => this.modal.waitToOpen())
@@ -116,13 +116,13 @@ ClusterPage.prototype = {
       .then(() => this.modal.waitToClose())
       .waitForElementDeletion('div.progress-bar', 20000);
   },
-  isTabLocked: function(tabName) {
+  isTabLocked(tabName) {
     return this.remote
       .then(() => this.goToTab(tabName))
       .waitForCssSelector('div.tab-content div.row.changes-locked', 2000)
         .then(_.constant(true), _.constant(false));
   },
-  deployEnvironment: function() {
+  deployEnvironment() {
     return this.remote
       .then(() => this.goToTab('Dashboard'))
       .then(() => this.dashboardPage.startDeployment())

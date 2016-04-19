@@ -1,6 +1,4 @@
 ---
-  rules:
-    object-shorthand: 0
   env:
     node: true
   globals:

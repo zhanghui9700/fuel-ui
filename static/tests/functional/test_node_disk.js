@@ -27,7 +27,7 @@ registerSuite(() => {
 
   return {
     name: 'Node Disk',
-    setup: function() {
+    setup() {
       common = new Common(this.remote);
       clusterName = common.pickRandomName('Test Cluster');
       sdaDisk = '.disk-box[data-disk=sda]';
@@ -54,13 +54,13 @@ registerSuite(() => {
           )
           .end();
     },
-    'Testing nodes disks layout': function() {
+    'Testing nodes disks layout'() {
       return this.remote
         .assertElementDisabled(cancelButtonSelector, 'Cancel button is disabled')
         .assertElementDisabled(applyButtonSelector, 'Apply button is disabled')
         .assertElementEnabled(loadDefaultsButtonSelector, 'Load Defaults button is enabled');
     },
-    'Check SDA disk layout': function() {
+    'Check SDA disk layout'() {
       return this.remote
         .clickByCssSelector(sdaDisk + ' .disk-visual [data-volume=os] .toggle')
         .findByCssSelector(sdaDisk + ' .disk-utility-box [data-volume=os] input')
@@ -83,7 +83,7 @@ registerSuite(() => {
           ' .disk-details [data-volume=os] .volume-group-notice.text-info',
           'Notice about "Minimal size" is present');
     },
-    'Testing Apply and Load Defaults buttons behaviour': function() {
+    'Testing Apply and Load Defaults buttons behaviour'() {
       return this.remote
         .setInputValue(sdaDisk + ' input[type=number][name=image]', '5')
         .assertElementEnabled(cancelButtonSelector, 'Cancel button is enabled')
@@ -98,7 +98,7 @@ registerSuite(() => {
         .assertElementEnabled(applyButtonSelector, 'Apply button is enabled')
         .clickByCssSelector(applyButtonSelector);
     },
-    'Testing volume group deletion and Cancel button': function() {
+    'Testing volume group deletion and Cancel button'() {
       return this.remote
         .findByCssSelector(sdaDisk + ' .disk-visual [data-volume=image]')
           // check that visualisation div for Image Storage present and has positive width
@@ -142,7 +142,7 @@ registerSuite(() => {
           initialImageSize, 'Image Storage volume control contains correct value')
         .assertElementDisabled(applyButtonSelector, 'Apply button is disabled');
     },
-    'Test volume size validation': function() {
+    'Test volume size validation'() {
       return this.remote
         // reduce Image Storage volume size to free space on the disk
         .setInputValue(sdaDisk + ' input[type=number][name=image]', '5')

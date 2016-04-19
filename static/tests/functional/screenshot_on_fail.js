@@ -21,7 +21,7 @@ var ScreenshotOnFailReporter = function() {
 };
 
 ScreenshotOnFailReporter.prototype = {
-  saveScreenshot: function(testOrSuite) {
+  saveScreenshot(testOrSuite) {
     var remote = this.remotes[testOrSuite.sessionId];
     if (remote) {
       remote.takeScreenshot().then((buffer) => {
@@ -36,14 +36,14 @@ ScreenshotOnFailReporter.prototype = {
       });
     }
   },
-  sessionStart: function(remote) {
+  sessionStart(remote) {
     var sessionId = remote._session._sessionId;
     this.remotes[sessionId] = remote;
   },
-  suiteError: function(suite) {
+  suiteError(suite) {
     this.saveScreenshot(suite);
   },
-  testFail: function(test) {
+  testFail(test) {
     this.saveScreenshot(test);
   }
 };

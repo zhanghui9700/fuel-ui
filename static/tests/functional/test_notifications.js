@@ -24,13 +24,13 @@ registerSuite(() => {
 
   return {
     name: 'Notifications',
-    setup: function() {
+    setup() {
       common = new Common(this.remote);
       modal = new ModalWindow(this.remote);
 
       return this.remote.then(() => common.getIn());
     },
-    'Notification Page': function() {
+    'Notification Page'() {
       return this.remote
         .assertElementDisplayed('.notifications-icon .badge',
           'Badge notification indicator is shown in navigation')
@@ -45,7 +45,7 @@ registerSuite(() => {
         .assertElementNotDisplayed('.notifications-icon .badge',
           'Badge notification indicator is hidden');
     },
-    'Notification badge behaviour': function() {
+    'Notification badge behaviour'() {
       var clusterName = common.pickRandomName('Test Cluster');
       return this.remote
         .then(() => common.createCluster(clusterName))

@@ -29,7 +29,7 @@ registerSuite(() => {
 
   return {
     name: 'Node management panel on cluster nodes page: search, sorting, filtering',
-    setup: function() {
+    setup() {
       common = new Common(this.remote);
       clusterPage = new ClusterPage(this.remote);
       clusterName = common.pickRandomName('Test Cluster');
@@ -39,7 +39,7 @@ registerSuite(() => {
         .then(() => common.createCluster(clusterName))
         .then(() => clusterPage.goToTab('Nodes'));
     },
-    'Test management controls state in new environment': function() {
+    'Test management controls state in new environment'() {
       return this.remote
         .assertElementDisabled(searchButtonSelector,
           'Search button is locked if there are no nodes in environment')
@@ -51,20 +51,20 @@ registerSuite(() => {
           'Applied sorters and filters are not shown for empty environment');
     },
     'Test management controls behaviour': {
-      setup: function() {
+      setup() {
         dashboardPage = new DashboardPage(this.remote);
       },
-      beforeEach: function() {
+      beforeEach() {
         return this.remote
           .then(() => common.addNodesToCluster(3, ['Controller']))
           .then(() => common.addNodesToCluster(1, ['Compute'], 'error'));
       },
-      afterEach: function() {
+      afterEach() {
         return this.remote
           .then(() => clusterPage.goToTab('Dashboard'))
           .then(() => dashboardPage.discardChanges());
       },
-      'Test search control': function() {
+      'Test search control'() {
         var searchInputSelector = '.node-management-panel [name=search]';
         return this.remote
           .clickByCssSelector(searchButtonSelector)
@@ -84,7 +84,7 @@ registerSuite(() => {
           .assertElementExists(searchButtonSelector,
             'Empty search control is closed when clicking outside the input');
       },
-      'Test node list sorting': function() {
+      'Test node list sorting'() {
         var activeSortersPanelSelector = '.active-sorters';
         var moreControlSelector = '.sorters .more-control';
         var firstNodeName;
@@ -145,7 +145,7 @@ registerSuite(() => {
           .findByCssSelector('.sorters')
             .end();
       },
-      'Test node list filtering': function() {
+      'Test node list filtering'() {
         var activeFiltersPanelSelector = '.active-filters';
         var moreControlSelector = '.filters .more-control';
         return this.remote

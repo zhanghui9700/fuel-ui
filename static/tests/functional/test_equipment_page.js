@@ -26,7 +26,7 @@ registerSuite(() => {
 
   return {
     name: 'Equipment Page',
-    setup: function() {
+    setup() {
       common = new Common(this.remote);
       node = new NodeComponent(this.remote);
       modal = new ModalWindow(this.remote);
@@ -47,13 +47,13 @@ registerSuite(() => {
         .clickLinkByText('Equipment')
         .waitForCssSelector('.equipment-page', 5000);
     },
-    'Equipment page is rendered correctly': function() {
+    'Equipment page is rendered correctly'() {
       return this.remote
         .assertElementsExist('.node', 8, 'All Fuel nodes are presented')
         .assertElementNotExists('.control-buttons-box .btn', 'No management buttons presented')
         .assertElementsExist('.nodes-group', 4, 'The page has default sorting by node status');
     },
-    'Check action buttons': function() {
+    'Check action buttons'() {
       return this.remote
         .assertElementNotExists('.node .btn-discard', 'No discard changes button on a node')
         .assertElementExists('.node.offline .node-remove-button',

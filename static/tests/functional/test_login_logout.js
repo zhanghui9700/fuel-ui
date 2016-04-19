@@ -23,20 +23,20 @@ registerSuite(() => {
   var loginPage, common;
   return {
     name: 'Login page',
-    setup: function() {
+    setup() {
       loginPage = new LoginPage(this.remote);
       common = new Common(this.remote);
     },
-    beforeEach: function() {
+    beforeEach() {
       this.remote.then(() => common.getOut());
     },
-    'Login with incorrect credentials': function() {
+    'Login with incorrect credentials'() {
       return this.remote
         .then(() => loginPage.login('login', '*****'))
         .assertElementAppears('div.login-error', 1000,
           'Error message is expected to get displayed');
     },
-    'Login with proper credentials': function() {
+    'Login with proper credentials'() {
       return this.remote
         .then(() => loginPage.login())
         .assertElementDisappears('.login-btn', 2000,

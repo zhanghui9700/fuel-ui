@@ -25,7 +25,7 @@ function ClustersPage(remote) {
 
 ClustersPage.prototype = {
   constructor: ClustersPage,
-  createCluster: function(clusterName, stepsMethods) {
+  createCluster(clusterName, stepsMethods) {
     var stepMethod = (stepName) => _.bind(_.get(stepsMethods, stepName, _.noop), this);
     return this.remote
       .clickByCssSelector('.create-cluster')
@@ -51,7 +51,7 @@ ClustersPage.prototype = {
       .then(() => this.modal.waitToClose());
   },
   clusterSelector: '.clusterbox div.name',
-  goToEnvironment: function(clusterName) {
+  goToEnvironment(clusterName) {
     return this.remote
       .waitForCssSelector(this.clusterSelector, 5000)
       .findAllByCssSelector(this.clusterSelector)

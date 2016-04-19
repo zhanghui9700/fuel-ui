@@ -29,7 +29,7 @@ registerSuite(() => {
   var applyButtonSelector = '.apply-btn';
   return {
     name: 'Networks page Neutron tests',
-    setup: function() {
+    setup() {
       common = new Common(this.remote);
       clusterPage = new ClusterPage(this.remote);
       dashboardPage = new DashboardPage(this.remote);
@@ -40,7 +40,7 @@ registerSuite(() => {
           () => common.createCluster(
             'Test Cluster #1',
             {
-              'Networking Setup': function() {
+              'Networking Setup'() {
                 return this.remote
                   .clickByCssSelector('input[value=network\\:neutron\\:ml2\\:vlan]')
                   .clickByCssSelector('input[value=network\\:neutron\\:ml2\\:tun]');
@@ -50,7 +50,7 @@ registerSuite(() => {
         )
         .then(() => clusterPage.goToTab('Networks'));
     },
-    afterEach: function() {
+    afterEach() {
       return this.remote
         .findByCssSelector('.btn-revert-changes')
           .then(
@@ -61,7 +61,7 @@ registerSuite(() => {
           )
           .end();
     },
-    'Network Tab is rendered correctly': function() {
+    'Network Tab is rendered correctly'() {
       return this.remote
         .assertElementsExist('.network-tab h3', 4, 'All networks are present')
         .getCurrentUrl()
@@ -84,7 +84,7 @@ registerSuite(() => {
           .clickLinkByText('default')
           .end();
     },
-    'Testing cluster networks: Save button interactions': function() {
+    'Testing cluster networks: Save button interactions'() {
       var cidrInitialValue;
       var cidrElementSelector = '.storage input[name=cidr]';
       return this.remote
@@ -103,7 +103,7 @@ registerSuite(() => {
         .assertElementAppears(applyButtonSelector + ':disabled', 200,
           'Save changes button is disabled again if there are no changes');
     },
-    'Testing cluster networks: network notation change': function() {
+    'Testing cluster networks: network notation change'() {
       return this.remote
         .then(() => networkPage.goToNodeNetworkGroup('default'))
         .assertElementAppears('.storage', 2000, 'Storage network is shown')
@@ -115,7 +115,7 @@ registerSuite(() => {
         .assertElementNotExists('.storage .ip_ranges input[type=text]:disabled',
           'Network notation was changed to "ip_ranges"');
     },
-    'Testing cluster networks: save network changes': function() {
+    'Testing cluster networks: save network changes'() {
       var cidrElementSelector = '.storage .cidr input[type=text]';
       return this.remote
         .setInputValue(cidrElementSelector, '192.168.1.0/26')
@@ -125,7 +125,7 @@ registerSuite(() => {
         .assertElementDisabled(applyButtonSelector,
           'Save changes button is disabled again after successful settings saving');
     },
-    'Testing cluster networks: verification': function() {
+    'Testing cluster networks: verification'() {
       this.timeout = 100000;
       return this.remote
         .clickByCssSelector('.subtab-link-network_verification')
@@ -162,7 +162,7 @@ registerSuite(() => {
         .then(() => dashboardPage.discardChanges())
         .then(() => clusterPage.goToTab('Networks'));
     },
-    'Check VlanID field validation': function() {
+    'Check VlanID field validation'() {
       return this.remote
         .then(() => networkPage.goToNodeNetworkGroup('default'))
         .assertElementAppears('.management', 2000, 'Management network appears')
@@ -171,7 +171,7 @@ registerSuite(() => {
         .assertElementExists('.management .has-error input[name=vlan_start]',
           'Field validation has worked properly in case of empty value');
     },
-    'Testing cluster networks: data validation on invalid settings': function() {
+    'Testing cluster networks: data validation on invalid settings'() {
       return this.remote
         .then(() => networkPage.goToNodeNetworkGroup('default'))
         .setInputValue('.public input[name=cidr]', 'blablabla')
@@ -192,7 +192,7 @@ registerSuite(() => {
         .assertElementNotExists('.add-nodegroup-btn .glyphicon-danger-sign', 1000,
           'Warning icon for Add Node Network Group disappears');
     },
-    'Add ranges manipulations': function() {
+    'Add ranges manipulations'() {
       var rangeSelector = '.public .ip_ranges ';
       return this.remote
         .clickByCssSelector(rangeSelector + '.ip-ranges-add')
@@ -204,7 +204,7 @@ registerSuite(() => {
         .assertElementNotExists(rangeSelector + '.ip-ranges-delete',
           'Remove button is absent for only one range');
     },
-    'Segmentation types differences': function() {
+    'Segmentation types differences'() {
       return this.remote
         .then(() => networkPage.goToNodeNetworkGroup('default'))
         // Tunneling segmentation tests
@@ -221,7 +221,7 @@ registerSuite(() => {
         .assertElementTextEquals('.segmentation-type', '(Neutron with VLAN segmentation)',
           'Segmentation type is correct for VLAN segmentation');
     },
-    'Other settings validation error': function() {
+    'Other settings validation error'() {
       return this.remote
         .clickByCssSelector('.subtab-link-network_settings')
         .setInputValue('input[name=dns_list]', 'blablabla')

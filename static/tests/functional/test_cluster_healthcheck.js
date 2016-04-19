@@ -29,7 +29,7 @@ registerSuite(() => {
 
   return {
     name: 'Healthcheck page',
-    setup: function() {
+    setup() {
       common = new Common(this.remote);
       clusterPage = new ClusterPage(this.remote);
       clustersPage = new ClustersPage(this.remote);
@@ -40,13 +40,13 @@ registerSuite(() => {
         .then(() => common.createCluster(clusterName))
         .then(() => common.addNodesToCluster(1, ['Controller']));
     },
-    afterEach: function() {
+    afterEach() {
       return this.remote
         .then(() => healthCheckPage.restoreServer())
         .clickLinkByText('Environments')
         .then(() => clustersPage.goToEnvironment(clusterName));
     },
-    'Health Check tests are rendered if response received': function() {
+    'Health Check tests are rendered if response received'() {
       return this.remote
         .then(() => healthCheckPage.createFakeServerForNotRunnedTests())
         .then(() => clusterPage.goToTab('Health Check'))
@@ -63,7 +63,7 @@ registerSuite(() => {
         'Stop tests button is not shown in new OpenStack environment');
     },
     //@TODO (morale): imitate tests stop
-    'Check Healthcheck tab manipulations after deploy': function() {
+    'Check Healthcheck tab manipulations after deploy'() {
       this.timeout = 100000;
       return this.remote
         .then(() => clusterPage.deployEnvironment())
@@ -87,7 +87,7 @@ registerSuite(() => {
         .assertElementEnabled('.run-tests-btn',
           '"Run Tests" button is enabled if there are checked tests');
     },
-    'Check running tests': function() {
+    'Check running tests'() {
       return this.remote
         .then(() => healthCheckPage.createFakeServerForRunningTests())
         .then(() => clusterPage.goToTab('Health Check'))
@@ -100,7 +100,7 @@ registerSuite(() => {
         .assertElementsAppear('.healthcheck-status-skipped', 1000, 'Skipped status is reflected')
         .assertElementsAppear('.healthcheck-status-stopped', 1000, 'Stopped status is reflected');
     },
-    'Check finished tests': function() {
+    'Check finished tests'() {
       return this.remote
         .then(() => healthCheckPage.createFakeServerForFinishedTests())
         .then(() => clusterPage.goToTab('Health Check'))

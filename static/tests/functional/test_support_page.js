@@ -25,7 +25,7 @@ registerSuite(() => {
 
   return {
     name: 'Support Page',
-    setup: function() {
+    setup() {
       common = new Common(this.remote);
       modal = new ModalWindow(this.remote);
       saveStatisticsSettingsButton = '.tracking .btn';
@@ -35,7 +35,7 @@ registerSuite(() => {
         .then(() => common.getIn())
         .clickLinkByText('Support');
     },
-    'Support page is rendered correctly': function() {
+    'Support page is rendered correctly'() {
       return this.remote
         .assertElementExists('.documentation-link', 'Fuel Documentation block is present')
         .assertElementExists('.snapshot', 'Diagnostic Snapshot block is present')
@@ -45,12 +45,12 @@ registerSuite(() => {
         .assertElementDisabled(saveStatisticsSettingsButton,
           '"Save changes" button is disabled until statistics checkbox uncheck');
     },
-    'Diagnostic snapshot link generation': function() {
+    'Diagnostic snapshot link generation'() {
       return this.remote
         .clickByCssSelector('.snapshot .btn')
         .assertElementAppears('.snapshot .ready', 5000, 'Diagnostic snapshot link is shown');
     },
-    'Usage statistics option saving': function() {
+    'Usage statistics option saving'() {
       return this.remote
         // Uncheck "Send usage statistics" checkbox
         .clickByCssSelector(sendStatisticsCheckbox)
@@ -61,7 +61,7 @@ registerSuite(() => {
         .assertElementDisabled(saveStatisticsSettingsButton,
           '"Save changes" button is disabled after saving changes');
     },
-    'Discard changes': function() {
+    'Discard changes'() {
       return this.remote
         // Check the "Send usage statistics" checkbox
         .clickByCssSelector(sendStatisticsCheckbox)

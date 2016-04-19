@@ -25,7 +25,7 @@ function DashboardPage(remote) {
 
 DashboardPage.prototype = {
   constructor: DashboardPage,
-  startDeployment: function() {
+  startDeployment() {
     return this.remote
       .clickByCssSelector(this.deployButtonSelector)
       .then(() => this.modal.waitToOpen())
@@ -33,7 +33,7 @@ DashboardPage.prototype = {
       .then(() => this.modal.clickFooterButton('Deploy'))
       .then(() => this.modal.waitToClose());
   },
-  stopDeployment: function() {
+  stopDeployment() {
     return this.remote
       .clickByCssSelector('button.stop-deployment-btn')
       .then(() => this.modal.waitToOpen())
@@ -41,11 +41,11 @@ DashboardPage.prototype = {
       .then(() => this.modal.clickFooterButton('Stop'))
       .then(() => this.modal.waitToClose());
   },
-  startClusterRenaming: function() {
+  startClusterRenaming() {
     return this.remote
       .clickByCssSelector('.cluster-info-value.name .glyphicon-pencil');
   },
-  setClusterName: function(name) {
+  setClusterName(name) {
     return this.remote
       .then(() => this.startClusterRenaming())
       .findByCssSelector('.rename-block input[type=text]')
@@ -56,7 +56,7 @@ DashboardPage.prototype = {
         .end()
       .waitForElementDeletion('.rename-block input[type=text]', 2000);
   },
-  discardChanges: function() {
+  discardChanges() {
     return this.remote
       .clickByCssSelector('.btn-discard-changes')
       .then(() => this.modal.waitToOpen())

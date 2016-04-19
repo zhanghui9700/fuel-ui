@@ -29,7 +29,7 @@ registerSuite(() => {
 
   return {
     name: 'Dashboard tab',
-    setup: function() {
+    setup() {
       common = new Common(this.remote);
       clusterPage = new ClusterPage(this.remote);
       clustersPage = new ClustersPage(this.remote);
@@ -40,11 +40,11 @@ registerSuite(() => {
         .then(() => common.getIn())
         .then(() => common.createCluster(clusterName));
     },
-    beforeEach: function() {
+    beforeEach() {
       return this.remote
         .then(() => clusterPage.goToTab('Dashboard'));
     },
-    'Renaming cluster works': function() {
+    'Renaming cluster works'() {
       var initialName = clusterName;
       var newName = clusterName + '!!!';
       var renameInputSelector = '.rename-block input[type=text]';
@@ -85,7 +85,7 @@ registerSuite(() => {
         .clickLinkByText('Environments')
         .then(() => clustersPage.goToEnvironment(initialName));
     },
-    'Provision VMs button availability': function() {
+    'Provision VMs button availability'() {
       return this.remote
         .then(() => common.addNodesToCluster(1, ['Virtual']))
         .then(() => clusterPage.goToTab('Dashboard'))
@@ -98,7 +98,7 @@ registerSuite(() => {
         .clickByCssSelector('.actions-panel .dropdown .dropdown-menu li.deploy button')
         .then(() => dashboardPage.discardChanges());
     },
-    'Network validation error warning': function() {
+    'Network validation error warning'() {
       return this.remote
         .then(() => common.addNodesToCluster(1, ['Controller']))
         .then(() => clusterPage.goToTab('Networks'))
@@ -116,7 +116,7 @@ registerSuite(() => {
         )
         .then(() => dashboardPage.discardChanges());
     },
-    'No controller warning': function() {
+    'No controller warning'() {
       return this.remote
         .then(() => common.addNodesToCluster(1, ['Compute']))
         .then(() => clusterPage.goToTab('Dashboard'))
@@ -132,7 +132,7 @@ registerSuite(() => {
         )
         .then(() => dashboardPage.discardChanges());
     },
-    'Capacity table tests': function() {
+    'Capacity table tests'() {
       return this.remote
         .then(() => common.addNodesToCluster(1, ['Controller', 'Cinder']))
         .then(() => common.addNodesToCluster(2, ['Compute']))
@@ -142,7 +142,7 @@ registerSuite(() => {
         .assertIsIntegerContentPositive('.capacity-items .ram .capacity-value', 'RAM')
         .then(() => dashboardPage.discardChanges());
     },
-    'Test statistics update': function() {
+    'Test statistics update'() {
       this.timeout = 120000;
       var controllerNodes = 3;
       var storageCinderNodes = 1;

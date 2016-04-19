@@ -24,7 +24,7 @@ function ModalWindow(remote) {
 ModalWindow.prototype = {
   constructor: ModalWindow,
   modalSelector: '#modal-container > .modal',
-  waitToOpen: function() {
+  waitToOpen() {
     return this.remote
       .waitForCssSelector(this.modalSelector, 2000)
       .then(
@@ -35,17 +35,17 @@ ModalWindow.prototype = {
         )
       );
   },
-  checkTitle: function(expectedTitle) {
+  checkTitle(expectedTitle) {
     return this.remote
       .assertElementContainsText(this.modalSelector + ' h4.modal-title', expectedTitle,
         'Unexpected modal window title');
   },
-  close: function() {
+  close() {
     return this.remote
       .clickByCssSelector(this.modalSelector + ' .modal-header button.close')
       .then(() => this.waitToClose());
   },
-  clickFooterButton: function(buttonText) {
+  clickFooterButton(buttonText) {
     return this.remote
       .findAllByCssSelector(this.modalSelector + ' .modal-footer button')
         .then(
@@ -68,7 +68,7 @@ ModalWindow.prototype = {
           )
         );
   },
-  waitToClose: function() {
+  waitToClose() {
     return this.remote
       .waitForElementDeletion(this.modalSelector, 5000);
   }

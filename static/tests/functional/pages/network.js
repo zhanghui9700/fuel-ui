@@ -24,7 +24,7 @@ function NetworkPage(remote) {
 
 NetworkPage.prototype = {
   constructor: NetworkPage,
-  addNodeNetworkGroup: function(name) {
+  addNodeNetworkGroup(name) {
     return this.remote
       .clickByCssSelector('.add-nodegroup-btn')
       .then(() => this.modal.waitToOpen())
@@ -33,7 +33,7 @@ NetworkPage.prototype = {
       .then(() => this.modal.waitToClose())
       .waitForCssSelector('.network-group-name[data-name=' + name + ']', 2000);
   },
-  renameNodeNetworkGroup: function(oldName, newName) {
+  renameNodeNetworkGroup(oldName, newName) {
     return this.remote
       .then(() => this.goToNodeNetworkGroup(oldName))
       .clickByCssSelector('.glyphicon-pencil')
@@ -46,14 +46,14 @@ NetworkPage.prototype = {
         .end()
       .waitForCssSelector('.network-group-name[data-name=' + newName + ']', 2000);
   },
-  goToNodeNetworkGroup: function(name) {
+  goToNodeNetworkGroup(name) {
     return this.remote
       .findByCssSelector('ul.node_network_groups')
         .clickLinkByText(name)
         .end()
       .waitForCssSelector('.network-group-name[data-name=' + name + ']', 2000);
   },
-  removeNodeNetworkGroup: function(name) {
+  removeNodeNetworkGroup(name) {
     return this.remote
       .clickByCssSelector('.network-group-name[data-name=' + name + '] .glyphicon-remove')
       .then(() => this.modal.waitToOpen())

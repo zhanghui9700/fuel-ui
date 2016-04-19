@@ -28,7 +28,7 @@ registerSuite(() => {
 
   return {
     name: 'Node view tests',
-    setup: function() {
+    setup() {
       common = new Common(this.remote);
       node = new NodeComponent(this.remote);
       modal = new ModalWindow(this.remote);
@@ -40,7 +40,7 @@ registerSuite(() => {
         .then(() => common.getIn())
         .then(() => common.createCluster(clusterName));
     },
-    'Standard node panel': function() {
+    'Standard node panel'() {
       return this.remote
         .then(() => common.addNodesToCluster(1, ['Controller']))
         .assertElementExists('label.standard.active', 'Standard mode chosen by default')
@@ -59,7 +59,7 @@ registerSuite(() => {
         .then(() => node.discardNode())
         .assertElementNotExists('.node', 'Node has been removed');
     },
-    'Node pop-up': function() {
+    'Node pop-up'() {
       var newHostname = 'node-123';
       return this.remote
         .then(() => common.addNodesToCluster(1, ['Controller']))
@@ -83,7 +83,7 @@ registerSuite(() => {
           'Node hostname has been updated')
         .then(() => modal.close());
     },
-    'Compact node panel': function() {
+    'Compact node panel'() {
       return this.remote
         // switch to compact view mode
         .clickByCssSelector('label.compact')
@@ -97,7 +97,7 @@ registerSuite(() => {
         .assertElementNotExists('.compact-node .role-list',
           'Role list is not shown on node compact panel');
     },
-    'Compact node extended view': function() {
+    'Compact node extended view'() {
       var newName = 'Node new new name';
       return this.remote
         .then(() => node.openCompactNodeExtendedView())
@@ -119,7 +119,7 @@ registerSuite(() => {
         .then(() => node.discardNode(true))
         .assertElementNotExists('.node', 'Node has been removed');
     },
-    'Additional tests for Node Attributes': function() {
+    'Additional tests for Node Attributes'() {
       return this.remote
         .then(() => common.addNodesToCluster(1, ['Controller']))
         .then(() => clusterPage.goToTab('Settings'))
@@ -148,7 +148,7 @@ registerSuite(() => {
           'Cancel changes button is disabled after changes were saved successfully')
         .then(() => modal.close());
     },
-    'Additional tests for unallocated node': function() {
+    'Additional tests for unallocated node'() {
       return this.remote
         .clickByCssSelector('.btn-add-nodes')
         .waitForElementDeletion('.btn-add-nodes', 3000)
