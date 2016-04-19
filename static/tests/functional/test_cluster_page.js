@@ -27,7 +27,7 @@ registerSuite(() => {
 
   return {
     name: 'Cluster page',
-    setup: function() {
+    setup() {
       common = new Common(this.remote);
       clusterPage = new ClusterPage(this.remote);
       clusterName = common.pickRandomName('Test Cluster');
@@ -37,7 +37,7 @@ registerSuite(() => {
         .then(() => common.createCluster(clusterName))
         .then(() => clusterPage.goToTab('Nodes'));
     },
-    'Add Cluster Nodes': function() {
+    'Add Cluster Nodes'() {
       return this.remote
         .assertElementExists(
           '.node-list .alert-warning',
@@ -92,7 +92,7 @@ registerSuite(() => {
         )
         .assertElementExists('.nodes-group', 'One node group is present');
     },
-    'Edit cluster node roles': function() {
+    'Edit cluster node roles'() {
       return this.remote
         .then(() => common.addNodesToCluster(1, ['Cinder']))
         .assertElementsExist('.nodes-group', 2, 'Two node groups are present')
@@ -122,7 +122,7 @@ registerSuite(() => {
           'One node was removed from cluster after editing roles'
         );
     },
-    'Remove Cluster': function() {
+    'Remove Cluster'() {
       return this.remote
         .then(() => common.doesClusterExist(clusterName))
         .then((result) => assert.ok(result, 'Cluster exists'))

@@ -25,7 +25,7 @@ registerSuite(() => {
 
   return {
     name: 'Logs Tab',
-    setup: function() {
+    setup() {
       common = new Common(this.remote);
       clusterPage = new ClusterPage(this.remote);
       clusterName = common.pickRandomName('Test Cluster');
@@ -36,7 +36,7 @@ registerSuite(() => {
         .then(() => common.addNodesToCluster(1, ['Controller']))
         .then(() => clusterPage.goToTab('Logs'));
     },
-    '"Show" button availability and logs displaying': function() {
+    '"Show" button availability and logs displaying'() {
       var showLogsButtonSelector = '.sticker button';
       return this.remote
         .assertElementsExist('.sticker select[name=source] > option',

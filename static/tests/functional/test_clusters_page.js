@@ -26,27 +26,27 @@ registerSuite(() => {
 
   return {
     name: 'Clusters page',
-    setup: function() {
+    setup() {
       common = new Common(this.remote);
       clusterName = common.pickRandomName('Test Cluster');
 
       return this.remote
         .then(() => common.getIn());
     },
-    beforeEach: function() {
+    beforeEach() {
       return this.remote
         .then(() => common.createCluster(clusterName));
     },
-    afterEach: function() {
+    afterEach() {
       return this.remote
         .then(() => common.removeCluster(clusterName));
     },
-    'Create Cluster': function() {
+    'Create Cluster'() {
       return this.remote
         .then(() => common.doesClusterExist(clusterName))
         .then((result) => assert.ok(result, 'Newly created cluster found in the list'));
     },
-    'Attempt to create cluster with duplicate name': function() {
+    'Attempt to create cluster with duplicate name'() {
       return this.remote
         .clickLinkByText('Environments')
         .waitForCssSelector('.clusters-page', 2000)
@@ -69,7 +69,7 @@ registerSuite(() => {
           )
         );
     },
-    'Testing cluster list page': function() {
+    'Testing cluster list page'() {
       return this.remote
         .clickLinkByText('Environments')
         .assertElementAppears('.clusters-page .clusterbox', 2000, 'Cluster container exists')

@@ -27,7 +27,7 @@ registerSuite(function() {
 
   return {
     name: 'Settings Tab Segment',
-    setup: function() {
+    setup() {
       common = new Common(this.remote);
       clusterPage = new ClusterPage(this.remote);
       settingsLib = new SettingsLib(this.remote);
@@ -44,7 +44,7 @@ registerSuite(function() {
           return clusterPage.goToTab('Settings');
         });
     },
-    'Check "General" segment': function() {
+    'Check "General" segment'() {
       var pageTitleSelector = 'div.title';
       var segmentSelector = 'li.active a.subtab-link-general';
       return this.remote
@@ -60,7 +60,7 @@ registerSuite(function() {
         .assertElementDisabled('button.btn-revert-changes', '"Cancel Changes" button is disabled')
         .assertElementDisabled('button.btn-apply-changes', '"Save Settings" button is disabled');
     },
-    'Check "Security" segment': function() {
+    'Check "Security" segment'() {
       var segmentName = 'Security';
       return this.remote
         .then(function() {
@@ -70,7 +70,7 @@ registerSuite(function() {
           return settingsLib.checkSecuritySegment();
         });
     },
-    'Check "Compute" segment': function() {
+    'Check "Compute" segment'() {
       var segmentName = 'Compute';
       return this.remote
         .then(function() {
@@ -80,7 +80,7 @@ registerSuite(function() {
           return settingsLib.checkComputeSegment();
         });
     },
-    'Check "Storage" segment': function() {
+    'Check "Storage" segment'() {
       var segmentName = 'Storage';
       return this.remote
         .then(function() {
@@ -90,7 +90,7 @@ registerSuite(function() {
           return settingsLib.checkStorageSegment();
         });
     },
-    'Check "Logging" segment': function() {
+    'Check "Logging" segment'() {
       var segmentName = 'Logging';
       return this.remote
         .then(function() {
@@ -100,7 +100,7 @@ registerSuite(function() {
           return settingsLib.checkLoggingSegment();
         });
     },
-    'Check "OpenStack Services" segment': function() {
+    'Check "OpenStack Services" segment'() {
       var segmentName = 'OpenStack Services';
       return this.remote
         .then(function() {
@@ -110,7 +110,7 @@ registerSuite(function() {
           return settingsLib.checkOpenStackServicesSegment();
         });
     },
-    'Check "Other" segment': function() {
+    'Check "Other" segment'() {
       var segmentName = 'Other';
       return this.remote
         .then(function() {
@@ -120,7 +120,7 @@ registerSuite(function() {
           return settingsLib.checkOtherSegment();
         });
     },
-    'User returns to the selected segment on "Settings" tab': function() {
+    'User returns to the selected segment on "Settings" tab'() {
       return this.remote
         .then(function() {
           return clusterPage.goToTab('Nodes');
@@ -139,7 +139,7 @@ registerSuite(function() {
           return settingsLib.checkOtherSegment();
         });
     },
-    'No "Node network group" item via sorting/filtering for unallocated nodes': function() {
+    'No "Node network group" item via sorting/filtering for unallocated nodes'() {
       var itemName = 'Node network group';
       var itemRegExp = RegExp('[\\s\\S]*[^(' + itemName + ')][\\s\\S]*', 'i');
       var btnSortSelector = 'button.btn-sorters:enabled';
@@ -177,7 +177,7 @@ registerSuite(function() {
         .assertElementMatchesRegExp(popContentSelector, itemRegExp, 'No "' + itemName +
           '" item label via filtering for unallocated nodes');
     },
-    'Check node roles edition': function() {
+    'Check node roles edition'() {
       var nodeSelector = 'div.node ';
       var btnEditSelector = 'button.btn-edit-roles';
       var btnApplySelector = 'button.btn-apply';

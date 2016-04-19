@@ -22,7 +22,7 @@ function SettingsPage(remote) {
 
 SettingsPage.prototype = {
   constructor: SettingsPage,
-  waitForRequestCompleted: function() {
+  waitForRequestCompleted() {
     return this.remote
       // Load Defaults button is locked during any request is in progress on the tab
       // so this is a hacky way to track request state

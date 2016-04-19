@@ -23,7 +23,7 @@ function GenericLib(remote) {
 GenericLib.prototype = {
   constructor: GenericLib,
 
-  gotoPage: function(pageName) {
+  gotoPage(pageName) {
     var pageSelector = {Environments: 'clusters-page', Equipment: 'equipment-page',
       Releases: 'releases-page', Plugins: 'plugins-page', Support: 'support-page'};
     var pageTitle = {Environments: /My OpenStack Environments/i, Equipment: /Equipment/i,

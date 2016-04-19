@@ -26,7 +26,7 @@ EquipmentLib.prototype = {
   constructor: EquipmentLib,
   nodeSelector: 'div.node',
 
-  checkNodesSegmentation: function(nodeView, nodesQuantity, provisioningFlag) {
+  checkNodesSegmentation(nodeView, nodesQuantity, provisioningFlag) {
     // Input array: Nodes quantity by groups.
     // [Total, Pending Addition (Provisioning), Discover, Error, Offline]
     var nodeSel = this.nodeSelector;
@@ -55,7 +55,7 @@ EquipmentLib.prototype = {
       .assertElementsExist(nodeSel + tempSelector + 'offline', nodesQuantity[4],
         '"Offline" nodes are observed in "' + nodeView + '"" view');
   },
-  renameNode: function(nodeSelector, newName) {
+  renameNode(nodeSelector, newName) {
     var nodeNameSelector = 'div.name p';
     var inputSelector = 'input.node-name-input';
     return this.remote
@@ -73,7 +73,7 @@ EquipmentLib.prototype = {
         .assertElementTextEquals(nodeNameSelector, newName, 'Node name is changed successfully')
         .end();
   },
-  checkSearchPageSwitching: function(pageName, nodeName) {
+  checkSearchPageSwitching(pageName, nodeName) {
     var self = this;
     return this.remote
       .then(function() {
@@ -89,7 +89,7 @@ EquipmentLib.prototype = {
       .assertElementContainsText(this.nodeSelector + ' div.name p', nodeName,
         'Search result is correct after switching to "' + pageName + '"" page');
   },
-  checkSortingPageSwitching: function(pageName, nodesQuantity) {
+  checkSortingPageSwitching(pageName, nodesQuantity) {
     // Input array: Nodes quantity by groups.
     // [Total, Pending Addition, Discover]
     var self = this;
@@ -119,7 +119,7 @@ EquipmentLib.prototype = {
         nodesQuantity[2], 'Default quantity of "Discovered" nodes is observed after' +
         'switching to "' + pageName + '"" page');
   },
-  checkDefaultSorting: function(sortDirection, nodesQuantity) {
+  checkDefaultSorting(sortDirection, nodesQuantity) {
     // Input array: Nodes quantity by groups.
     // [Total, Pending Addition, Discover, Error, Offline]
     var groupSelector = 'div.nodes-group:nth-child(';
@@ -161,7 +161,7 @@ EquipmentLib.prototype = {
       .assertElementsExist(groupSelector + sortOrder[3] + ') div.node.offline',
         nodesQuantity[4], 'Default quantity of "Offline" nodes is observed');
   },
-  uncheckNodeRoles: function() {
+  uncheckNodeRoles() {
     var selectedRolesSelector = '.role-panel .role-block .role i.glyphicon-selected-role';
     return this.remote
       .findAllByCssSelector(selectedRolesSelector)

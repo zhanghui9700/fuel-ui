@@ -31,15 +31,15 @@ function CommonMethods(remote) {
 
 CommonMethods.prototype = {
   constructor: CommonMethods,
-  pickRandomName: function(prefix) {
+  pickRandomName(prefix) {
     return _.uniqueId((prefix || 'Item') + ' #');
   },
-  getOut: function() {
+  getOut() {
     return this.remote
       .then(() => this.welcomePage.skip())
       .then(() => this.loginPage.logout());
   },
-  getIn: function() {
+  getIn() {
     return this.remote
       .then(() => this.loginPage.logout())
       .then(() => this.loginPage.login())
@@ -48,13 +48,13 @@ CommonMethods.prototype = {
       .waitForCssSelector('.navbar-nav', 1000)
       .clickByCssSelector('.global-alert.alert-warning .close');
   },
-  createCluster: function(clusterName, stepsMethods) {
+  createCluster(clusterName, stepsMethods) {
     return this.remote
       .clickLinkByText('Environments')
       .waitForCssSelector('.clusters-page', 2000)
       .then(() => this.clustersPage.createCluster(clusterName, stepsMethods));
   },
-  removeCluster: function(clusterName, suppressErrors) {
+  removeCluster(clusterName, suppressErrors) {
     return this.remote
       .clickLinkByText('Environments')
       .waitForCssSelector('.clusters-page', 2000)
@@ -66,7 +66,7 @@ CommonMethods.prototype = {
         }
       });
   },
-  doesClusterExist: function(clusterName) {
+  doesClusterExist(clusterName) {
     return this.remote
       .clickLinkByText('Environments')
       .waitForCssSelector('.clusters-page', 2000)
@@ -80,7 +80,7 @@ CommonMethods.prototype = {
           )
         );
   },
-  addNodesToCluster: function(nodesAmount, nodesRoles, nodeStatus, nodeNameFilter) {
+  addNodesToCluster(nodesAmount, nodesRoles, nodeStatus, nodeNameFilter) {
     return this.remote
       .then(() => this.clusterPage.goToTab('Nodes'))
       .waitForCssSelector('.btn-add-nodes', 3000)

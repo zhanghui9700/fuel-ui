@@ -31,7 +31,7 @@ registerSuite(() => {
 
   return {
     name: 'Settings tab',
-    setup: function() {
+    setup() {
       common = new Common(this.remote);
       clusterPage = new ClusterPage(this.remote);
       settingsPage = new SettingsPage(this.remote);
@@ -45,7 +45,7 @@ registerSuite(() => {
         // go to Storage subtab to use checkboxes for tests
         .clickLinkByText('Storage');
     },
-    'Settings tab is rendered correctly': function() {
+    'Settings tab is rendered correctly'() {
       return this.remote
         .getCurrentUrl()
           .then((url) => {
@@ -67,7 +67,7 @@ registerSuite(() => {
         .assertElementDisabled('.btn-revert-changes', 'Cancel Changes button is disabled')
         .assertElementDisabled('.btn-apply-changes', 'Save Settings button is disabled');
     },
-    'Check Save Settings button': function() {
+    'Check Save Settings button'() {
       return this.remote
         // introduce change
         .clickByCssSelector('input[type=checkbox]')
@@ -78,7 +78,7 @@ registerSuite(() => {
         .assertElementAppears('.btn-apply-changes:disabled', 200,
           'Save Settings button is disabled if there are no changes');
     },
-    'Check Cancel Changes button': function() {
+    'Check Cancel Changes button'() {
       return this.remote
         // introduce change
         .clickByCssSelector('input[type=checkbox]')
@@ -93,7 +93,7 @@ registerSuite(() => {
         .assertElementDisabled('.btn-apply-changes',
           'Save Settings button is disabled after changes were cancelled');
     },
-    'Check changes saving': function() {
+    'Check changes saving'() {
       return this.remote
         .clickByCssSelector('input[type=checkbox]')
         .waitForCssSelector('.btn-apply-changes:not(:disabled)', 200)
@@ -102,7 +102,7 @@ registerSuite(() => {
         .assertElementDisabled('.btn-revert-changes',
           'Cancel Changes button is disabled after changes were saved successfully');
     },
-    'Check loading of defaults': function() {
+    'Check loading of defaults'() {
       return this.remote
         .clickByCssSelector('.btn-load-defaults')
         .then(() => settingsPage.waitForRequestCompleted())
@@ -112,8 +112,7 @@ registerSuite(() => {
           'Cancel Changes button is enabled after defaults were loaded')
         .clickByCssSelector('.btn-revert-changes');
     },
-    'The choice of subgroup is preserved when user navigates through the cluster tabs':
-    function() {
+    'The choice of subgroup is preserved when user navigates through the cluster tabs'() {
       return this.remote
         .clickLinkByText('Logging')
         .then(() => clusterPage.goToTab('Dashboard'))
@@ -121,7 +120,7 @@ registerSuite(() => {
         .assertElementExists('.nav-pills li.active a.subtab-link-logging',
           'The choice of subgroup is preserved when user navigates through the cluster tabs');
     },
-    'The page reacts on invalid input': function() {
+    'The page reacts on invalid input'() {
       return this.remote
         .clickLinkByText('General')
         // "nova" is forbidden username
@@ -139,7 +138,7 @@ registerSuite(() => {
         .assertElementNotExists('.settings-tab .nav-pills > li.active i.glyphicon-danger-sign',
           'Subgroup menu has default layout after resetting changes');
     },
-    'Test repositories custom control': function() {
+    'Test repositories custom control'() {
       var repoAmount;
       return this.remote
         .clickLinkByText('General')

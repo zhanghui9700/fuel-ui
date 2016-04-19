@@ -29,7 +29,7 @@ NetworksLib.prototype = {
   btnVerifySelector: 'button.verify-networks-btn',
   defaultPlaceholder: '127.0.0.1',
 
-  gotoNodeNetworkSubTab: function(groupName) {
+  gotoNodeNetworkSubTab(groupName) {
     var networkSubtabSelector = 'div[id="network-subtabs"]';
     return this.remote
       .assertElementAppears(networkSubtabSelector, 1000, 'Network subtab list exists')
@@ -41,7 +41,7 @@ NetworksLib.prototype = {
         .assertElementContainsText('li.active', groupName, '"' + groupName + '" link is opened')
         .end();
   },
-  checkNetworkInitialState: function(networkName) {
+  checkNetworkInitialState(networkName) {
     var chain = this.remote;
     var self = this;
     var mainDiv = 'div.' + networkName.toLowerCase() + ' ';
@@ -174,7 +174,7 @@ NetworksLib.prototype = {
     }
     return chain;
   },
-  checkNetrworkSettingsSegment: function(neutronType) {
+  checkNetrworkSettingsSegment(neutronType) {
     var chain = this.remote;
     // Check Neutron L2 subtab
     chain = chain.clickByCssSelector('.subtab-link-neutron_l2')
@@ -270,7 +270,7 @@ NetworksLib.prototype = {
     .assertElementEnabled('input[name="ntp_list"]', '"NTP server list" textfield enabled');
     return chain;
   },
-  checkNetrworkVerificationSegment: function() {
+  checkNetrworkVerificationSegment() {
     var connectSelector = 'div.connect-';
     var verifyNodeSelector = 'div.verification-node-';
     var descriptionConnectivityCheck = RegExp(
@@ -308,7 +308,7 @@ NetworksLib.prototype = {
       .assertElementExists(this.btnCancelSelector, '"Cancel Changes" button is disabled')
       .assertElementExists(this.btnSaveSelector, '"Save Settings" button is disabled');
   },
-  checkNetrworkIpRanges: function(networkName, correctIpRange, newIpRange) {
+  checkNetrworkIpRanges(networkName, correctIpRange, newIpRange) {
     var self = this;
     var netSelector = 'div.' + networkName.toLowerCase() + ' ';
     var ipStartSelector = netSelector + 'div.ip_ranges input[name*="range-start"]';
@@ -354,7 +354,7 @@ NetworksLib.prototype = {
         return self.checkIpRanges(networkName);
       });
   },
-  checkIncorrectValueInput: function(inputSelector, value, errorSelector, errorMessage) {
+  checkIncorrectValueInput(inputSelector, value, errorSelector, errorMessage) {
     var self = this;
     return this.remote
       .assertElementEnabled(inputSelector, '"' + inputSelector + '" is enabled')
@@ -367,7 +367,7 @@ NetworksLib.prototype = {
         return self.checkMultirackVerification();
       });
   },
-  checkMultirackVerification: function() {
+  checkMultirackVerification() {
     var self = this;
     return this.remote
       .assertElementDisabled(this.btnSaveSelector, '"Save Settings" button is disabled')
@@ -379,21 +379,21 @@ NetworksLib.prototype = {
         return self.gotoNodeNetworkSubTab('default');
       });
   },
-  saveSettings: function() {
+  saveSettings() {
     return this.remote
       .assertElementEnabled(this.btnSaveSelector, '"Save Settings" button is enabled')
       .clickByCssSelector(this.btnSaveSelector)
       .assertElementDisabled(this.btnSaveSelector, '"Save Settings" button is disabled')
       .assertElementNotExists('div.has-error', 'Settings saved successfully');
   },
-  cancelChanges: function() {
+  cancelChanges() {
     return this.remote
       .assertElementEnabled(this.btnCancelSelector, '"Cancel Changes" button is enabled')
       .clickByCssSelector(this.btnCancelSelector)
       .assertElementDisabled(this.btnCancelSelector, '"Cancel Changes" button is disabled')
       .assertElementNotExists('div.has-error', 'Settings canceled successfully');
   },
-  createNetworkGroup: function(groupName) {
+  createNetworkGroup(groupName) {
     var self = this;
     return this.remote
       .assertElementEnabled('button.add-nodegroup-btn',
@@ -428,7 +428,7 @@ NetworksLib.prototype = {
         throw new Error('Unexpected error via network group creation: ' + error);
       });
   },
-  deleteNetworkGroup: function(groupName) {
+  deleteNetworkGroup(groupName) {
     var self = this;
     return this.remote
       .then(function() {
@@ -457,7 +457,7 @@ NetworksLib.prototype = {
         throw new Error('Unexpected error via network group deletion: ' + error);
       });
   },
-  checkNeutronL3ForBaremetal: function() {
+  checkNeutronL3ForBaremetal() {
     return this.remote
       .assertElementNotExists('div.baremetal div.has-error', 'No Baremetal errors are observed')
       .assertElementExists('a[class$="neutron_l3"]', '"Neutron L3" link is existed')
@@ -469,7 +469,7 @@ NetworksLib.prototype = {
       .assertElementEnabled('input[name="baremetal_gateway"]',
         '"Ironic gateway " textfield is enabled');
   },
-  checkBaremetalIntersection: function(networkName, intersectionValues) {
+  checkBaremetalIntersection(networkName, intersectionValues) {
     // Input array: Values to raise baremetal intersection: [Baremetal CIDR, Baremetal Start IP,
     // Baremetal End IP, Ironic Start IP, Ironic End IP, Ironic Gateway]
     var self = this;
@@ -512,7 +512,7 @@ NetworksLib.prototype = {
         return self.cancelChanges();
       });
   },
-  checkDefaultNetGroup: function() {
+  checkDefaultNetGroup() {
     return this.remote
       .assertElementContainsText('ul.node_network_groups', 'default',
         '"default" network group is shown and name is correct')
@@ -521,7 +521,7 @@ NetworksLib.prototype = {
       .assertElementTextEquals('ul.node_network_groups  li[role="presentation"]', 'default',
         '"default" network group is on top');
   },
-  checkGateways: function(groupName, neutronType) {
+  checkGateways(groupName, neutronType) {
     var chain = this.remote;
     chain = chain.assertElementDisabled('div.storage input[name="gateway"]',
       'Storage "Gateway" field exists and disabled for "' + groupName + '" network group')
@@ -533,7 +533,7 @@ NetworksLib.prototype = {
     }
     return chain;
   },
-  checkVLANs: function(groupName, neutronType) {
+  checkVLANs(groupName, neutronType) {
     var chain = this.remote;
     chain = chain.assertElementPropertyEquals('div.storage div.vlan_start input[type="text"]',
       'value', '102', 'Storage "Use VLAN tagging" textfield has default value for "' +
@@ -551,7 +551,7 @@ NetworksLib.prototype = {
     .assertElementNotExists('div.has-error', 'No errors are observed');
     return chain;
   },
-  checkCidrOption: function(networkName) {
+  checkCidrOption(networkName) {
     var self = this;
     var netSelector = 'div.' + networkName.toLowerCase() + ' ';
     var cidrSelector = netSelector + 'div.cidr input[type="checkbox"]';
@@ -577,7 +577,7 @@ NetworksLib.prototype = {
       .assertElementNotExists(netSelector + 'div.has-error',
         'No ' + networkName + ' errors are observed');
   },
-  selectCidrWay: function(networkName, cidrStatus, cidrSelector, ipStartSelector, ipEndSelector) {
+  selectCidrWay(networkName, cidrStatus, cidrSelector, ipStartSelector, ipEndSelector) {
     var chain = this.remote;
     chain = chain.clickByCssSelector(cidrSelector)
     .assertElementEnabled(cidrSelector,
@@ -599,7 +599,7 @@ NetworksLib.prototype = {
     }
     return chain;
   },
-  addNewIpRange: function(networkName, newIpRange) {
+  addNewIpRange(networkName, newIpRange) {
     // Works only with last range!
     // Input array "newIpRange": [Start IP, End IP]
     var self = this;
@@ -638,7 +638,7 @@ NetworksLib.prototype = {
       'No ' + networkName + ' errors are observed');
     return chain;
   },
-  deleteIpRange: function(networkName, rangeRow) {
+  deleteIpRange(networkName, rangeRow) {
     var self = this;
     var netSelector = 'div.' + networkName.toLowerCase() + ' ';
     var rowRangeSelector = netSelector + 'div.range-row';
@@ -659,13 +659,13 @@ NetworksLib.prototype = {
       .assertElementNotExists(netSelector + 'div.has-error',
         'No ' + networkName + ' errors are observed');
   },
-  checkIpRange: function(addremoveRangeSelector, rowRangeSelector, numRanges) {
+  checkIpRange(addremoveRangeSelector, rowRangeSelector, numRanges) {
     return this.remote
       .clickByCssSelector(addremoveRangeSelector)
       .sleep(500)
       .assertElementsExist(rowRangeSelector, numRanges, 'Correct number of IP ranges exists');
   },
-  checkIpRanges: function(networkName) {
+  checkIpRanges(networkName) {
     var self = this;
     var netSelector = 'div.' + networkName.toLowerCase() + ' ';
     var cidrSelector = netSelector + 'div.cidr input[type="text"]';
@@ -748,7 +748,7 @@ NetworksLib.prototype = {
         return self.cancelChanges();
       });
   },
-  checkNerworksIntersection: function(networkNameToEdit, networkName, editValues) {
+  checkNerworksIntersection(networkNameToEdit, networkName, editValues) {
     // Input array "editValues": [CIDR, Start IP, End IP]
     var self = this;
     var netSelector1 = 'div.' + networkNameToEdit.toLowerCase() + ' ';

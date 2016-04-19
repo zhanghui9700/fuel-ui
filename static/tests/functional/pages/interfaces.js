@@ -23,7 +23,7 @@ function InterfacesPage(remote) {
 
 InterfacesPage.prototype = {
   constructor: InterfacesPage,
-  findInterfaceElement: function(ifcName) {
+  findInterfaceElement(ifcName) {
     return this.remote
       .findAllByCssSelector('div.ifc-inner-container')
         .then(
@@ -41,7 +41,7 @@ InterfacesPage.prototype = {
           )
         );
   },
-  findInterfaceElementInBond: function(bondName, ifcName) {
+  findInterfaceElementInBond(bondName, ifcName) {
     return this.remote
       .findAllByCssSelector('.' + bondName + ' .ifc-info-block')
         .then(
@@ -57,7 +57,7 @@ InterfacesPage.prototype = {
           )
         );
   },
-  removeInterfaceFromBond: function(bondName, ifcName) {
+  removeInterfaceFromBond(bondName, ifcName) {
     return this.remote
       .then(() => this.findInterfaceElementInBond(bondName, ifcName))
       .then(
@@ -66,7 +66,7 @@ InterfacesPage.prototype = {
             .then((btnRemove) => btnRemove.click())
       );
   },
-  assignNetworkToInterface: function(networkName, ifcName) {
+  assignNetworkToInterface(networkName, ifcName) {
     return this.remote
       .findAllByCssSelector('div.network-block')
         .then(
@@ -83,7 +83,7 @@ InterfacesPage.prototype = {
         .then(() => this.findInterfaceElement(ifcName))
         .then((ifcElement) => this.remote.dragTo(ifcElement));
   },
-  selectInterface: function(ifcName) {
+  selectInterface(ifcName) {
     return this.remote
       .then(() => this.findInterfaceElement(ifcName))
       .then((ifcElement) => {
@@ -93,13 +93,13 @@ InterfacesPage.prototype = {
             .then((ifcCheckbox) => ifcCheckbox.click());
       });
   },
-  bondInterfaces: function(ifc1, ifc2) {
+  bondInterfaces(ifc1, ifc2) {
     return this.remote
       .then(() => this.selectInterface(ifc1))
       .then(() => this.selectInterface(ifc2))
       .clickByCssSelector('.btn-bond');
   },
-  checkBondInterfaces: function(bondName, ifcsNames) {
+  checkBondInterfaces(bondName, ifcsNames) {
     return this.remote
       .then(() => this.findInterfaceElement(bondName))
       .then(

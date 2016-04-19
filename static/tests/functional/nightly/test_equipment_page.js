@@ -51,7 +51,7 @@ registerSuite(function() {
 
   return {
     name: 'Nodes across environment',
-    setup: function() {
+    setup() {
       common = new Common(this.remote);
       clusterPage = new ClusterPage(this.remote);
       clusterName = common.pickRandomName('VLAN Cluster');
@@ -75,7 +75,7 @@ registerSuite(function() {
           return common.addNodesToCluster(nodesCompute, ['Compute']);
         });
     },
-    'Node settings pop-up contains environment and node network group names': function() {
+    'Node settings pop-up contains environment and node network group names'() {
       var summarySelector = 'div.node-summary ';
       var descriptionClusterNode = RegExp(
         'Environment.*' + clusterName + '[\\s\\S]*' +
@@ -144,7 +144,7 @@ registerSuite(function() {
           return modal.close();
         });
     },
-    'Standard and Compact Node view support': function() {
+    'Standard and Compact Node view support'() {
       var preSelector = 'input[name="view_mode"][value="';
       var compactSelector = preSelector + 'compact"]';
       var standardSelector = preSelector + 'standard"]';
@@ -166,7 +166,7 @@ registerSuite(function() {
           return equipmentLib.checkNodesSegmentation('standard', inputArray, false);
         });
     },
-    'Quick Search support for "Equipment" page': function() {
+    'Quick Search support for "Equipment" page'() {
       var nodeNameSelector = clusterSelector + ' div.name p';
       var btnClearSelector = 'button.btn-clear-search';
       var txtSearchSelector = 'input[name="search"]';
@@ -220,7 +220,7 @@ registerSuite(function() {
         .assertElementTextEquals(nodeNameSelector, computeName,
           'Compute node is searched correctly');
     },
-    'Quick Search results saved after refreshing of page': function() {
+    'Quick Search results saved after refreshing of page'() {
       return this.remote
         .then(function() {
           return command.refresh();
@@ -229,7 +229,7 @@ registerSuite(function() {
           return equipmentLib.checkSearchPageSwitching('Equipment', computeName);
         });
     },
-    'Quick Search results saved after switching to other page': function() {
+    'Quick Search results saved after switching to other page'() {
       return this.remote
         .then(function() {
           return equipmentLib.checkSearchPageSwitching('Environments', computeName);
@@ -245,7 +245,7 @@ registerSuite(function() {
         })
         .clickByCssSelector('button.btn-clear-search');
     },
-    'Labels support for "Equipment" page': function() {
+    'Labels support for "Equipment" page'() {
       var labelName = 'BOOST_LABEL';
       var labelValue = '1.5';
       var btnLabelsSelector = 'button.btn-labels';
@@ -284,7 +284,7 @@ registerSuite(function() {
         .clickByCssSelector(btnApplySelector)
         .assertElementDisappears(labelSelector, 2000, '"Controller" node label dissappears');
     },
-    'Sorting support for "Equipment" page': function() {
+    'Sorting support for "Equipment" page'() {
       return this.remote
         .assertElementsExist('button.btn-sorters', '"Sort Nodes" button is exists')
         .clickByCssSelector('button.btn-sorters')
@@ -297,7 +297,7 @@ registerSuite(function() {
           return equipmentLib.checkDefaultSorting('up', inputArray);
         });
     },
-    'Filtering support for "Equipment" page': function() {
+    'Filtering support for "Equipment" page'() {
       var filterSelector = 'div.filter-by-status';
       return this.remote
         .assertElementsExist('button.btn-filters', '"Filter Nodes" button is exists')
@@ -318,7 +318,7 @@ registerSuite(function() {
           return equipmentLib.checkSortingPageSwitching('Equipment', filterArray);
         });
     },
-    'Sorting and Filtering results saved after refreshing of page': function() {
+    'Sorting and Filtering results saved after refreshing of page'() {
       return this.remote
         .then(function() {
           return command.refresh();
@@ -327,7 +327,7 @@ registerSuite(function() {
           return equipmentLib.checkSortingPageSwitching('Equipment', filterArray);
         });
     },
-    'Sorting and Filtering results saved after switching to other page': function() {
+    'Sorting and Filtering results saved after switching to other page'() {
       return this.remote
         .then(function() {
           return equipmentLib.checkSortingPageSwitching('Environments', filterArray);
@@ -343,7 +343,7 @@ registerSuite(function() {
         })
         .clickByCssSelector('button.btn-reset-filters');
     },
-    'Node groups segmentation on "Equipment" page': function() {
+    'Node groups segmentation on "Equipment" page'() {
       return this.remote
         .then(function() {
           return genericLib.gotoPage('Environments');
@@ -365,7 +365,7 @@ registerSuite(function() {
           return equipmentLib.checkNodesSegmentation('standard', inputArray, true);
         });
     },
-    '"Offline" node deletion from "Equipment" page': function() {
+    '"Offline" node deletion from "Equipment" page'() {
       var offlineSelector = nodeSelector + '.offline';
       return this.remote
         .assertElementsExist(offlineSelector, '"Offline" node is observed')

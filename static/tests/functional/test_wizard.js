@@ -25,24 +25,24 @@ registerSuite(() => {
 
   return {
     name: 'Wizard Page',
-    setup: function() {
+    setup() {
       common = new Common(this.remote);
       modal = new Modal(this.remote);
       return this.remote
         .then(() => common.getIn());
     },
-    beforeEach: function() {
+    beforeEach() {
       var clusterName = common.pickRandomName('Temp');
       return this.remote
         .clickByCssSelector('.create-cluster')
         .then(() => modal.waitToOpen())
         .setInputValue('[name=name]', clusterName);
     },
-    afterEach: function() {
+    afterEach() {
       return this.remote
         .then(() => modal.close());
     },
-    'Test steps manipulations': function() {
+    'Test steps manipulations'() {
       return this.remote
         .assertElementExists('.wizard-step.active',
           'There is only one active and available step at the beginning')
@@ -62,7 +62,7 @@ registerSuite(() => {
         .assertElementExists('.wizard-step.available',
           'Only one step is available after changing hypervisor');
     },
-    'Test Compute pane: next button is disabled by when no hypervisor selected': function() {
+    'Test Compute pane: next button is disabled by when no hypervisor selected'() {
       return this.remote
         .pressKeys('\uE007')
         .clickByCssSelector('input[name=hypervisor\\:vmware]')

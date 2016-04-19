@@ -31,7 +31,7 @@ registerSuite(() => {
 
   return {
     name: 'Cluster deployment',
-    setup: function() {
+    setup() {
       common = new Common(this.remote);
       clusterPage = new ClusterPage(this.remote);
       dashboardPage = new DashboardPage(this.remote);
@@ -42,17 +42,17 @@ registerSuite(() => {
         .then(() => common.getIn())
         .then(() => common.createCluster(clusterName));
     },
-    beforeEach: function() {
+    beforeEach() {
       return this.remote
         .then(() => common.addNodesToCluster(1, ['Controller']))
         .then(() => clusterPage.goToTab('Dashboard'));
     },
-    afterEach: function() {
+    afterEach() {
       return this.remote
         .then(() => clusterPage.resetEnvironment(clusterName))
         .then(() => dashboardPage.discardChanges());
     },
-    'Provision nodes': function() {
+    'Provision nodes'() {
       this.timeout = 100000;
       return this.remote
         .clickByCssSelector('.actions-panel .dropdown button.dropdown-toggle')
@@ -150,7 +150,7 @@ registerSuite(() => {
         .assertElementsExist('.node.provisioned', 2, '2 of 3 nodes provisioned')
         .then(() => clusterPage.goToTab('Dashboard'));
     },
-    'Deploy nodes': function() {
+    'Deploy nodes'() {
       this.timeout = 100000;
       return this.remote
         .clickByCssSelector('.actions-panel .dropdown button.dropdown-toggle')
@@ -184,7 +184,7 @@ registerSuite(() => {
           'There are no changes to deploy in the environment'
         );
     },
-    'Start/stop deployment': function() {
+    'Start/stop deployment'() {
       this.timeout = 100000;
       return this.remote
         .then(() => dashboardPage.startDeployment())
@@ -211,7 +211,7 @@ registerSuite(() => {
           'Healthcheck link is not visible after stopped deploy'
         );
     },
-    'Test deployed cluster': function() {
+    'Test deployed cluster'() {
       this.timeout = 100000;
       var cidrCssSelector = '.storage input[name=cidr]';
       var cidrDeployedValue;

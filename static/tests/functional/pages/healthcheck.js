@@ -22,7 +22,7 @@ function HealthcheckPage(remote) {
 
 HealthcheckPage.prototype = {
   constructor: HealthcheckPage,
-  createFakeServerForNotRunnedTests: function() {
+  createFakeServerForNotRunnedTests() {
     return this.remote
       .execute(() => {
         window.server = sinon.fakeServer.create();
@@ -129,7 +129,7 @@ HealthcheckPage.prototype = {
         ]);
       });
   },
-  createFakeServerForRunningTests: function() {
+  createFakeServerForRunningTests() {
     return this.remote
       // running tests
       .execute(() => {
@@ -331,7 +331,7 @@ HealthcheckPage.prototype = {
         ]);
       });
   },
-  createFakeServerForFinishedTests: function() {
+  createFakeServerForFinishedTests() {
     return this.remote
       // running tests
       .execute(() => {
@@ -537,7 +537,7 @@ HealthcheckPage.prototype = {
         ]);
       });
   },
-  restoreServer: function() {
+  restoreServer() {
     return this.remote
       .execute(() => {
         window.server.restore();

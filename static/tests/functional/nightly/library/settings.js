@@ -23,7 +23,7 @@ function SettingsLib(remote) {
 SettingsLib.prototype = {
   constructor: SettingsLib,
 
-  gotoOpenStackSettings: function(settingsSegmentName) {
+  gotoOpenStackSettings(settingsSegmentName) {
     var segmentName = (settingsSegmentName.toLowerCase()).replace(' ', '_') + ' ';
     var listSelector = 'ul.nav-pills.nav-stacked ';
     var segmentSelector = 'a.subtab-link-' + segmentName;
@@ -42,7 +42,7 @@ SettingsLib.prototype = {
       .assertElementMatchesRegExp(activeSelector + segmentSelector, segmentDescription,
         settingsSegmentName + ' settings segment link name is correct');
   },
-  checkGeneralSegment: function() {
+  checkGeneralSegment() {
     var accessSelector = 'div.setting-section-access';
     var repositoriesSelector = 'div.setting-section-repo_setup';
     var kernelSelector = 'div.setting-section-kernel_params';
@@ -92,7 +92,7 @@ SettingsLib.prototype = {
         .assertElementEnabled('textarea[name="packages"]', '"Initial packages" textarea enabled')
         .end();
   },
-  checkSecuritySegment: function() {
+  checkSecuritySegment() {
     var publicTlsSelector = 'div.setting-section-public_ssl';
     var servicesName = 'TLS for OpenStack public endpoints';
     var horizonName = 'HTTPS for Horizon';
@@ -125,7 +125,7 @@ SettingsLib.prototype = {
           .end()
         .end();
   },
-  checkComputeSegment: function() {
+  checkComputeSegment() {
     var commonSelector = 'div.setting-section-common';
     var kvmSelector = 'input[value="kvm"]';
     var qemuSelector = 'input[value="qemu"]';
@@ -149,7 +149,7 @@ SettingsLib.prototype = {
           '"Resume guests state on host boot" checkbox is selected')
         .end();
   },
-  checkStorageSegment: function() {
+  checkStorageSegment() {
     var commonSelector = 'div.setting-section-common';
     var storageSelector = 'div.setting-section-storage';
     var lvmSelector = 'input[name="volumes_lvm"]';
@@ -200,7 +200,7 @@ SettingsLib.prototype = {
           '"Ceph object replication factor" textfield is enabled')
         .end();
   },
-  checkLoggingSegment: function() {
+  checkLoggingSegment() {
     var commonSelector = 'div.setting-section-common';
     var syslogSelector = 'div.setting-section-syslog';
     var puppetSelector = 'input[name="puppet_debug"]';
@@ -233,7 +233,7 @@ SettingsLib.prototype = {
         .assertElementSelected(tcpSelector, '"TCP" radiobutton is selected')
         .end();
   },
-  checkOpenStackServicesSegment: function() {
+  checkOpenStackServicesSegment() {
     var componentsSelector = 'div.setting-section-additional_components';
     var saharaSelector = 'input[name="sahara"]';
     var ceilometerSelector = 'input[name="ceilometer"]';
@@ -257,7 +257,7 @@ SettingsLib.prototype = {
         .assertElementNotSelected(ironicSelector, '"Install Ironic" checkbox is not selected')
         .end();
   },
-  checkOtherSegment: function() {
+  checkOtherSegment() {
     var vpnSelector = 'div.setting-section-VPNaaS';
     var zabbixSelector = 'div.setting-section-zabbix_monitoring';
     var loggingSelector = 'div.setting-section-logging';

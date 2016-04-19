@@ -27,7 +27,7 @@ registerSuite(() => {
 
   return {
     name: 'Plugin UI tests',
-    setup: function() {
+    setup() {
       common = new Common(this.remote);
       clusterPage = new ClusterPage(this.remote);
       settingsPage = new SettingsPage(this.remote);
@@ -36,19 +36,19 @@ registerSuite(() => {
         .then(() => common.getIn())
         .then(() => common.createCluster(clusterName));
     },
-    beforeEach: function() {
+    beforeEach() {
       return this.remote
         .then(() => clusterPage.goToTab('Settings'))
         .clickByCssSelector('.subtab-link-other');
     },
-    afterEach: function() {
+    afterEach() {
       return this.remote
         .clickByCssSelector('.btn-load-defaults')
         .then(() => settingsPage.waitForRequestCompleted())
         .clickByCssSelector('.btn-apply-changes')
         .then(() => settingsPage.waitForRequestCompleted());
     },
-    'Check plugin restrictions': function() {
+    'Check plugin restrictions'() {
       var loggingSectionSelector = '.setting-section-logging ';
       return this.remote
         // activate Logging plugin
@@ -68,7 +68,7 @@ registerSuite(() => {
         // reset changes
         .clickByCssSelector('.btn-revert-changes');
     },
-    'Check plugin in not deployed environment': function() {
+    'Check plugin in not deployed environment'() {
       var zabbixInitialVersion, zabbixTextInputValue;
       return this.remote
         .assertElementEnabled(zabbixSectionSelector + 'h3 input[type=checkbox]',
@@ -116,7 +116,7 @@ registerSuite(() => {
           )
         );
     },
-    'Check plugin in deployed environment': function() {
+    'Check plugin in deployed environment'() {
       this.timeout = 100000;
       var zabbixInitialVersion;
       return this.remote

@@ -27,7 +27,7 @@ registerSuite(() => {
 
   return {
     name: 'Node Interfaces',
-    setup: function() {
+    setup() {
       common = new Common(this.remote);
       interfacesPage = new InterfacesPage(this.remote);
       clusterName = common.pickRandomName('Test Cluster');
@@ -46,16 +46,16 @@ registerSuite(() => {
           )
         );
     },
-    afterEach: function() {
+    afterEach() {
       return this.remote
         .clickByCssSelector('.btn-defaults')
         .waitForCssSelector('.btn-defaults:enabled', 2000);
     },
-    teardown: function() {
+    teardown() {
       return this.remote
         .then(() => common.removeCluster(clusterName, true));
     },
-    'Configure interface properties manipulations': function() {
+    'Configure interface properties manipulations'() {
       return this.remote
         .clickByCssSelector('.mtu .btn-link')
         .assertElementExists(
@@ -83,13 +83,13 @@ registerSuite(() => {
           'MTU control is hidden after clicking MTU link again'
         );
     },
-    'Untagged networks error': function() {
+    'Untagged networks error'() {
       return this.remote
         .then(() => interfacesPage.assignNetworkToInterface('Public', 'eth0'))
         .assertElementExists('div.ifc-error',
           'Untagged networks can not be assigned to the same interface message should appear');
     },
-    'Bond interfaces with different speeds': function() {
+    'Bond interfaces with different speeds'() {
       return this.remote
         .then(() => interfacesPage.selectInterface('eth2'))
         .then(() => interfacesPage.selectInterface('eth3'))
@@ -97,7 +97,7 @@ registerSuite(() => {
           'Interfaces with different speeds bonding not recommended message should appear')
         .assertElementEnabled('.btn-bond', 'Bonding button should still be enabled');
     },
-    'Interfaces bonding': function() {
+    'Interfaces bonding'() {
       return this.remote
         .then(() => interfacesPage.bondInterfaces('eth1', 'eth2'))
         .then(() => interfacesPage.checkBondInterfaces('bond0', ['eth1', 'eth2']))
@@ -108,7 +108,7 @@ registerSuite(() => {
         // Removing interface from the bond
         .then(() => interfacesPage.checkBondInterfaces('bond0', ['eth1', 'eth5']));
     },
-    'Interfaces unbonding': function() {
+    'Interfaces unbonding'() {
       return this.remote
         .then(() => interfacesPage.bondInterfaces('eth1', 'eth2'))
         // Two interfaces bondin
@@ -117,7 +117,7 @@ registerSuite(() => {
         .then(() => interfacesPage.selectInterface('eth1'))
         .then(() => interfacesPage.selectInterface('eth2'));
     },
-    'Check that two bonds cannot be bonded': function() {
+    'Check that two bonds cannot be bonded'() {
       return this.remote
         .then(() => interfacesPage.bondInterfaces('eth0', 'eth2'))
         .then(() => interfacesPage.bondInterfaces('eth1', 'eth5'))

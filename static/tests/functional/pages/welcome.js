@@ -22,7 +22,7 @@ function WelcomePage(remote) {
 
 WelcomePage.prototype = {
   constructor: WelcomePage,
-  skip: function(strictCheck) {
+  skip(strictCheck) {
     return this.remote
       .waitForCssSelector('.welcome-page', 3000)
       .then(

@@ -25,11 +25,11 @@ registerSuite(() => {
 
   return {
     name: 'Welcome page',
-    setup: function() {
+    setup() {
       loginPage = new LoginPage(this.remote);
       welcomePage = new WelcomePage(this.remote);
     },
-    'Skip welcome page': function() {
+    'Skip welcome page'() {
       return this.remote
       .then(() => loginPage.login())
       .then(() => welcomePage.skip(true))

@@ -30,7 +30,7 @@ registerSuite(function() {
 
   return {
     name: 'Neutron tunneling segmentation',
-    setup: function() {
+    setup() {
       common = new Common(this.remote);
       clusterPage = new ClusterPage(this.remote);
       networksLib = new NetworksLib(this.remote);
@@ -44,7 +44,7 @@ registerSuite(function() {
           return common.createCluster(
             clusterName,
             {
-              'Networking Setup': function() {
+              'Networking Setup'() {
                 return this.remote
                   .clickByCssSelector('input[value*="neutron"][value$=":vlan"]')
                   .clickByCssSelector('input[value*="neutron"][value$=":tun"]');
@@ -62,7 +62,7 @@ registerSuite(function() {
           return clusterPage.goToTab('Networks');
         });
     },
-    'The same VLAN for different node network groups': function() {
+    'The same VLAN for different node network groups'() {
       return this.remote
         .then(function() {
           return networksLib.createNetworkGroup('Network_Group_1');
@@ -86,7 +86,7 @@ registerSuite(function() {
           return networksLib.checkVLANs('default', 'VLAN');
         });
     },
-    'Gateways appear for two or more node network groups': function() {
+    'Gateways appear for two or more node network groups'() {
       return this.remote
         .then(function() {
           return networksLib.gotoNodeNetworkSubTab('Network_Group_2');
@@ -147,7 +147,7 @@ registerSuite(function() {
 
   return {
     name: 'Neutron VLAN segmentation',
-    setup: function() {
+    setup() {
       common = new Common(this.remote);
       command = new Command(this.remote);
       modal = new ModalWindow(this.remote);
@@ -173,7 +173,7 @@ registerSuite(function() {
           return clusterPage.goToTab('Networks');
         });
     },
-    'Can not create node network group with the name of already existing group': function() {
+    'Can not create node network group with the name of already existing group'() {
       var errorHelpSelector = 'div.has-error.node-group-name span.help-block';
       return this.remote
         .then(function() {
@@ -199,7 +199,7 @@ registerSuite(function() {
           return modal.close();
         });
     },
-    'Node network group deletion': function() {
+    'Node network group deletion'() {
       return this.remote
         .then(function() {
           return networksLib.gotoNodeNetworkSubTab('default');
@@ -213,7 +213,7 @@ registerSuite(function() {
           return networksLib.deleteNetworkGroup('Network_Group_1');
         });
     },
-    'Default network group the first in a list': function() {
+    'Default network group the first in a list'() {
       this.timeout = 60000;
       return this.remote
         .then(function() {
@@ -247,7 +247,7 @@ registerSuite(function() {
           return networksLib.checkDefaultNetGroup();
         });
     },
-    'Deletion of several node network groups one after another': function() {
+    'Deletion of several node network groups one after another'() {
       this.timeout = 60000;
       var explanationSelector = '.network-group-name .explanation';
       return this.remote
@@ -285,7 +285,7 @@ registerSuite(function() {
         .assertElementNotContainsText(networkGroupsSelector, 'test',
           'Deletion of several node network groups one after another is successfull');
     },
-    'Can not create node network group without saving changes': function() {
+    'Can not create node network group without saving changes'() {
       var errorTextSelector = 'div.text-error';
       var ipRangeStart = '172.16.0.25';
       return this.remote
@@ -312,7 +312,7 @@ registerSuite(function() {
           return networksLib.cancelChanges();
         });
     },
-    'Switching between node network groups without saved changes': function() {
+    'Switching between node network groups without saved changes'() {
       var modalSelector = 'div.modal-dialog';
       var group1Name = 'Network_Group_1';
       var group2Name = 'Network_Group_2';
@@ -361,7 +361,7 @@ registerSuite(function() {
           return networksLib.cancelChanges();
         });
     },
-    'The same VLAN for different node network groups': function() {
+    'The same VLAN for different node network groups'() {
       return this.remote
         .then(function() {
           return networksLib.gotoNodeNetworkSubTab('Network_Group_1');
@@ -385,7 +385,7 @@ registerSuite(function() {
           return networksLib.checkVLANs('default', 'TUN');
         });
     },
-    'Gateways appear for two or more node network groups': function() {
+    'Gateways appear for two or more node network groups'() {
       return this.remote
         .then(function() {
           return networksLib.gotoNodeNetworkSubTab('Network_Group_2');
@@ -420,7 +420,7 @@ registerSuite(function() {
         .assertElementEnabled(gatewaySelector,
           'Public "Gateway" field exists and enabled for "default" network group');
     },
-    'Validation between default and non-default groups': function() {
+    'Validation between default and non-default groups'() {
       var networkAlertSelector = 'div.network-alert';
       var cidrValue = '192.168.12.0/24';
       var ipRangeStart = '192.168.12.2';
@@ -467,7 +467,7 @@ registerSuite(function() {
           return networksLib.cancelChanges();
         });
     },
-    'Validation Floating IP range with non-default group with other CIDR': function() {
+    'Validation Floating IP range with non-default group with other CIDR'() {
       var endIpSelector = ipRangesSelector + 'input[name*="range-end"] ';
       var cidrArray = ['172.16.5.0/24', '172.16.6.0/24', '172.16.7.0/24'];
       var ipRangeStart = ['172.16.5.2', '172.16.5.130'];
@@ -506,7 +506,7 @@ registerSuite(function() {
           return networksLib.saveSettings();
         });
     },
-    'Renaming of Default and non-default network groups': function() {
+    'Renaming of Default and non-default network groups'() {
       var errorRenameSelector = '.has-error.node-group-renaming ';
       return this.remote
         // Can rename "default" node network group
@@ -550,7 +550,7 @@ registerSuite(function() {
         .assertElementTextEquals(nameSelector, 'Network_Group_3',
           'New network group name "link" is shown');
     },
-    'Correct bahaviour of long name for node network group': function() {
+    'Correct bahaviour of long name for node network group'() {
       var oldName = 'Network_Group_3';
       var newName = 'fgbhsjdkgbhsdjkbhsdjkbhfjkbhfbjhgjbhsfjgbhsfjgbhsg';
       var activeSelector = networkGroupsSelector + ' li.active';
@@ -580,7 +580,7 @@ registerSuite(function() {
         .assertElementPropertyEquals(activeSelector, 'offsetWidth', '163',
           'Renamed node network group has correct width');
     },
-    'User can add and rename new node network group after deployment': function() {
+    'User can add and rename new node network group after deployment'() {
       this.timeout = 60000;
       var progressSelector = '.dashboard-block .progress';
       var newName = 'Network_Group_2';

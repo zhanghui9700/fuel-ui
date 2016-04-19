@@ -27,7 +27,7 @@ registerSuite(function() {
 
   return {
     name: 'Neutron VLAN segmentation',
-    setup: function() {
+    setup() {
       common = new Common(this.remote);
       clusterPage = new ClusterPage(this.remote);
       networksLib = new NetworksLib(this.remote);
@@ -50,7 +50,7 @@ registerSuite(function() {
           return clusterPage.goToTab('Networks');
         });
     },
-    'Storage Network "IP Ranges" testing': function() {
+    'Storage Network "IP Ranges" testing'() {
       this.timeout = 45000;
       var networkName = 'Storage';
       var correctIpRange = ['192.168.1.5', '192.168.1.10'];
@@ -63,7 +63,7 @@ registerSuite(function() {
           return networksLib.checkNetrworkIpRanges(networkName, correctIpRange, newIpRange);
         });
     },
-    'Management Network "IP Ranges" testing': function() {
+    'Management Network "IP Ranges" testing'() {
       this.timeout = 45000;
       var networkName = 'Management';
       var correctIpRange = ['192.168.0.55', '192.168.0.100'];
@@ -76,7 +76,7 @@ registerSuite(function() {
           return networksLib.checkNetrworkIpRanges(networkName, correctIpRange, newIpRange);
         });
     },
-    'Check intersections between all networks': function() {
+    'Check intersections between all networks'() {
       this.timeout = 45000;
       return this.remote
         // Storage and Management
@@ -116,7 +116,7 @@ registerSuite(function() {
 
   return {
     name: 'Neutron tunneling segmentation',
-    setup: function() {
+    setup() {
       common = new Common(this.remote);
       clusterPage = new ClusterPage(this.remote);
       networksLib = new NetworksLib(this.remote);
@@ -130,7 +130,7 @@ registerSuite(function() {
           return common.createCluster(
             clusterName,
             {
-              'Networking Setup': function() {
+              'Networking Setup'() {
                 return this.remote
                   .clickByCssSelector('input[value*="neutron"][value$=":vlan"]')
                   .clickByCssSelector('input[value*="neutron"][value$=":tun"]');
@@ -148,7 +148,7 @@ registerSuite(function() {
           return clusterPage.goToTab('Networks');
         });
     },
-    'Storage Network "IP Ranges" testing': function() {
+    'Storage Network "IP Ranges" testing'() {
       this.timeout = 45000;
       var networkName = 'Storage';
       var correctIpRange = ['192.168.1.5', '192.168.1.10'];
@@ -161,7 +161,7 @@ registerSuite(function() {
           return networksLib.checkNetrworkIpRanges(networkName, correctIpRange, newIpRange);
         });
     },
-    'Management Network "IP Ranges" testing': function() {
+    'Management Network "IP Ranges" testing'() {
       this.timeout = 45000;
       var networkName = 'Management';
       var correctIpRange = ['192.168.0.55', '192.168.0.100'];
@@ -174,7 +174,7 @@ registerSuite(function() {
           return networksLib.checkNetrworkIpRanges(networkName, correctIpRange, newIpRange);
         });
     },
-    'Private Network "IP Ranges" testing': function() {
+    'Private Network "IP Ranges" testing'() {
       this.timeout = 45000;
       var networkName = 'Private';
       var correctIpRange = ['192.168.2.190', '192.168.2.200'];
@@ -187,7 +187,7 @@ registerSuite(function() {
           return networksLib.checkNetrworkIpRanges(networkName, correctIpRange, newIpRange);
         });
     },
-    'Check intersections between all networks': function() {
+    'Check intersections between all networks'() {
       this.timeout = 60000;
       return this.remote
         // Storage and Management

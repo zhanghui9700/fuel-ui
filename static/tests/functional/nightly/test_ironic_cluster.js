@@ -40,7 +40,7 @@ registerSuite(function() {
 
   return {
     name: 'GUI support for Ironic',
-    setup: function() {
+    setup() {
       // Create cluster with additional service "Ironic"
       common = new Common(this.remote);
       clusterPage = new ClusterPage(this.remote);
@@ -58,11 +58,11 @@ registerSuite(function() {
           return common.createCluster(
             clusterName,
             {
-              'Storage Backends': function() {
+              'Storage Backends'() {
                 return this.remote
                   .clickByCssSelector('input[value$="block:ceph"]');
               },
-              'Additional Services': function() {
+              'Additional Services'() {
                 return this.remote
                   .clickByCssSelector('input[value$="ironic"]');
               }
@@ -70,7 +70,7 @@ registerSuite(function() {
           );
         });
     },
-    'Check Ironic item on Settings tab': function() {
+    'Check Ironic item on Settings tab'() {
       var ironicSelector = 'input[name=ironic]:enabled:checked';
       return this.remote
         // Check Ironic item on Settings tab
@@ -89,7 +89,7 @@ registerSuite(function() {
           return networksLib.checkNetworkInitialState(networkName);
         });
     },
-    'Baremetal Network "IP Ranges" correct changing': function() {
+    'Baremetal Network "IP Ranges" correct changing'() {
       var correctIpRange = ['192.168.3.15', '192.168.3.100'];
       return this.remote
         // Change network settings
@@ -100,7 +100,7 @@ registerSuite(function() {
           return networksLib.saveSettings();
         });
     },
-    'Baremetal Network "IP Ranges" adding and deleting additional fields': function() {
+    'Baremetal Network "IP Ranges" adding and deleting additional fields'() {
       var correctIpRange = ['192.168.3.1', '192.168.3.50'];
       var newIpRange = ['192.168.3.55', '192.168.3.70'];
       return this.remote
@@ -122,7 +122,7 @@ registerSuite(function() {
           return networksLib.saveSettings();
         });
     },
-    'Baremetal and other networks intersections': function() {
+    'Baremetal and other networks intersections'() {
       this.timeout = 45000;
       // [Baremetal CIDR, Baremetal Start IP, Baremetal End IP, Ironic Start IP,
       // Ironic End IP, Ironic Gateway]
@@ -143,7 +143,7 @@ registerSuite(function() {
           return networksLib.checkBaremetalIntersection('public', publicValues);
         });
     },
-    'Baremetal Network "Use VLAN tagging" option works': function() {
+    'Baremetal Network "Use VLAN tagging" option works'() {
       var chboxVlanSelector = baremetalSelector + 'div.vlan_start input[type="checkbox"]';
       var vlanTag = '104';
       return this.remote
@@ -171,7 +171,7 @@ registerSuite(function() {
           return networksLib.saveSettings();
         });
     },
-    'Baremetal Network "Use VLAN tagging" option validation': function() {
+    'Baremetal Network "Use VLAN tagging" option validation'() {
       var btnSaveSelector = 'button.apply-btn';
       var vlanTag = ['0', '10000', '4095', '', '1', '4094'];
       var errorMessage = 'Invalid VLAN ID';
@@ -207,7 +207,7 @@ registerSuite(function() {
           return networksLib.checkNetworkInitialState(networkName);
         });
     },
-    'Baremetal Network "CIDR" field validation': function() {
+    'Baremetal Network "CIDR" field validation'() {
       var cidrErrorSelector = baremetalSelector + 'div.cidr div.has-error span[class^="help"]';
       var l3Selector = 'a[class$="neutron_l3"] ';
       var cidrPart1 = '192.168.3.0/';
@@ -256,7 +256,7 @@ registerSuite(function() {
           return networksLib.checkNetworkInitialState(networkName);
         });
     },
-    'Baremetal Network "Use the whole CIDR" option works': function() {
+    'Baremetal Network "Use the whole CIDR" option works'() {
       return this.remote
         .then(function() {
           return networksLib.checkCidrOption(networkName);
@@ -265,7 +265,7 @@ registerSuite(function() {
           return networksLib.saveSettings();
         });
     },
-    'Combinations ironic role with other roles validation': function() {
+    'Combinations ironic role with other roles validation'() {
       var nodesAmount = 1;
       var addNodeButtonSelector = '.btn-add-nodes';
       var applyButtonSelector = 'button.btn-apply';
@@ -321,7 +321,7 @@ registerSuite(function() {
           return equipmentLib.uncheckNodeRoles();
         });
     },
-    'Disabling ironic service': function() {
+    'Disabling ironic service'() {
       var addNodeButtonSelector = '.btn-add-nodes';
       return this.remote
         .then(function() {

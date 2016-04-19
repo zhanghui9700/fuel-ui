@@ -22,7 +22,7 @@ function LoginPage(remote) {
 
 LoginPage.prototype = {
   constructor: LoginPage,
-  login: function(username, password) {
+  login(username, password) {
     username = username || Helpers.username;
     password = password || Helpers.password;
 
@@ -39,7 +39,7 @@ LoginPage.prototype = {
       .setInputValue('[name=password]', password)
       .clickByCssSelector('.login-btn');
   },
-  logout: function() {
+  logout() {
     return this.remote
       .getCurrentUrl()
       .then((url) => {
