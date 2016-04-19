@@ -389,8 +389,10 @@ var Compute = React.createClass({
             <div>
               {i18n('dialog.create_cluster_wizard.compute.vcenter_requires_network_backend')}
             </div>
-            <a href='https://www.mirantis.com/products/openstack-drivers-and-plugins/fuel-plugins/'
-              target='_blank'>
+            <a
+              href='http://stackalytics.com/report/driverlog?project_id=openstack%2Ffuel'
+              target='_blank'
+            >
               {i18n('dialog.create_cluster_wizard.compute.vcenter_plugins_page')}
             </a>
           </div>
