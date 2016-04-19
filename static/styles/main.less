@@ -1740,14 +1740,17 @@ input[type=range] {
       }
     }
     .search {
-      min-width: 224px;
+      min-width: 219px;
       position: relative;
       .form-group {
         margin: 0;
       }
       input {
         padding: 4px 24px 6px 10px;
-        font-size: @base-font-size - 1;
+        font-size: @base-font-size - 2;
+        animation-name: search;
+        animation-duration: 150ms;
+        animation-timing-function: ease-in;
       }
       .btn-clear-search {
         margin: 0;
@@ -2994,6 +2997,15 @@ input[type=range] {
   0%   {transform: rotate(0deg) scale(1);}
   50%  {transform: rotate(180deg) scale(1.1);}
   100% {transform: rotate(360deg) scale(1);}
+}
+
+@keyframes search {
+  from {
+    width: 0px;
+  }
+  to {
+    width: 100%;
+  }
 }
 
 .role-panel {
