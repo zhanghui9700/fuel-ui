@@ -120,7 +120,7 @@ ClusterPage.prototype = {
     return this.remote
       .then(() => this.goToTab(tabName))
       .waitForCssSelector('div.tab-content div.row.changes-locked', 2000)
-        .then(_.constant(true), _.constant(false));
+        .then(() => true, () => false);
   },
   deployEnvironment() {
     return this.remote
