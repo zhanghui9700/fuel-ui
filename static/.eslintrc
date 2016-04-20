@@ -2,19 +2,8 @@
   plugins:
     - react
   ecmaFeatures:
-    arrowFunctions: true
-    classes: true
-    defaultParams: true
-    destructuring: true
     jsx: true
     modules: true
-    objectLiteralComputedProperties: true
-    objectLiteralShorthandMethods: true
-    objectLiteralShorthandProperties: true
-    restParams: true
-    spread: true
-    superInFunctions: true
-    templateStrings: true
   rules:
     # es6
     arrow-parens: 2
@@ -52,6 +41,7 @@
     react/self-closing-comp: 2
     react/sort-comp: 0
   env:
+    es6: true
     browser: true
     node: false
   globals:
