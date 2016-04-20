@@ -1254,7 +1254,7 @@ export var ShowNodeInfoDialog = React.createClass({
     var node = this.props.node;
     var networkData = _.find(node.get('network_data'), {name: networkName});
     if ((networkData || {}).ip) return networkData.ip.split('/')[0];
-    var interfaceData = _.find(node.get('meta').interfaces, {name: networkData.dev});
+    var interfaceData = _.find(node.get('meta').interfaces, {name: (networkData || {}).dev});
     return (interfaceData || {}).ip || i18n('common.not_available');
   },
   renderNodeSummary() {
