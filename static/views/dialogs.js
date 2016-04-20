@@ -1889,6 +1889,9 @@ export var ChangePasswordDialog = React.createClass({
     var translationKeys = ['current_password', 'new_password', 'confirm_new_password'];
     return (
       <div className='forms-box'>
+        <div className='alert alert-warning'>
+          {i18n(ns + 'changing_password_warning')}
+        </div>
         {_.map(fields, (name, index) => {
           return <Input
             key={name}
