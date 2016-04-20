@@ -835,7 +835,7 @@ var ClusterActionButton = React.createClass({
   getInitialState() {
     return {
       // offline nodes should not be selected for the task
-      selectedNodeIds: _.pluck(this.props.nodes.filter({online: true}), 'id')
+      selectedNodeIds: _.map(this.props.nodes.filter({online: true}), 'id')
     };
   },
   getDefaultProps() {
