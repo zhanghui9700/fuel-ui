@@ -24,7 +24,7 @@ import models from 'models';
 import dispatcher from 'dispatcher';
 import {CreateNodeNetworkGroupDialog, RemoveNodeNetworkGroupDialog} from 'views/dialogs';
 import {backboneMixin, dispatcherMixin, unsavedChangesMixin, renamingMixin} from 'component_mixins';
-import {Input, RadioGroup, Table, Popover} from 'views/controls';
+import {Input, RadioGroup, Table, Popover, Tooltip} from 'views/controls';
 import customControls from 'views/custom_controls';
 import SettingSection from 'views/cluster_page_tabs/setting_section';
 import CSSTransitionGroup from 'react-addons-transition-group';
@@ -365,9 +365,9 @@ var VlanTagInput = React.createClass({
     return {pendingFocus: false};
   },
   componentDidUpdate() {
-    var value = this.props.value;
+    var {name, value} = this.props;
     if (!_.isNull(value) && this.state.pendingFocus) {
-      $(this.refs[this.props.name].getInputDOMNode()).focus();
+      $(this.refs[name].getInputDOMNode()).focus();
       this.setState({pendingFocus: false});
     }
   },
@@ -379,22 +379,35 @@ var VlanTagInput = React.createClass({
     this.setValue(attribute, value, {isInteger: true});
   },
   render() {
+    var {name, label, value, disabled, configurationTemplateExists} = this.props;
     return (
-      <div className={'vlan-tagging form-group ' + this.props.name}>
-        <label className='vlan-tag-label'>{this.props.label}</label>
+      <div className={utils.classNames('vlan-tagging form-group', name)}>
+        <label className='vlan-tag-label'>
+          {label}
+          {!disabled && configurationTemplateExists &&
+            <Tooltip
+              text={i18n('cluster_page.network_tab.network.locked_vlan_change')}
+              placement='right'
+            >
+              <i className='glyphicon tooltip-icon glyphicon-warning-sign' />
+            </Tooltip>
+          }
+        </label>
         <Input {...this.props}
           onChange={this.onTaggingChange}
           type='checkbox'
-          checked={!_.isNull(this.props.value)}
+          checked={!_.isNull(value)}
+          disabled={disabled || configurationTemplateExists}
           error={null}
           label={null}
         />
-        {!_.isNull(this.props.value) &&
+        {!_.isNull(value) &&
           <Input {...this.props}
-            ref={this.props.name}
+            ref={name}
             onChange={this.onInputChange}
             type='text'
             label={null}
+            disabled={disabled || configurationTemplateExists}
           />
         }
       </div>
@@ -1088,14 +1101,19 @@ var NetworkTab = React.createClass({
       isMultiRack ||
       notEnoughOnlineNodesForVerification;
 
+    var configurationTemplateExists = !_.isEmpty(
+      networkingParameters.get('configuration_template')
+    );
+
     var currentNodeNetworkGroup = nodeNetworkGroups.get(activeNetworkSectionName.split('/')[1]);
     var nodeNetworkGroupProps = {
-      cluster: cluster,
+      cluster,
+      validationError,
+      nodeNetworkGroups,
+      configurationTemplateExists,
       locked: isLocked,
       actionInProgress: this.state.actionInProgress,
       verificationErrors: this.getVerificationErrors(),
-      validationError: validationError,
-      nodeNetworkGroups: nodeNetworkGroups,
       removeNodeNetworkGroup: this.removeNodeNetworkGroup
     };
     return (
@@ -1250,7 +1268,8 @@ var NetworkTab = React.createClass({
 var NodeNetworkGroup = React.createClass({
   render() {
     var {
-      cluster, networks, nodeNetworkGroup, verificationErrors, validationError, locked
+      cluster, networks, nodeNetworkGroup, verificationErrors, validationError, locked,
+      configurationTemplateExists
     } = this.props;
     return (
       <div>
@@ -1268,6 +1287,7 @@ var NodeNetworkGroup = React.createClass({
               cluster={cluster}
               validationError={(validationError || {}).networks}
               disabled={locked}
+              configurationTemplateExists={configurationTemplateExists}
               verificationErrorField={
                 _.pluck(_.where(verificationErrors, {network: network.id}), 'field')
               }
@@ -1505,10 +1525,11 @@ var Network = React.createClass({
     if (value) this.autoUpdateParameters(this.props.network.get('cidr'));
   },
   render() {
-    var meta = this.props.network.get('meta');
+    var {network, verificationErrorField, configurationTemplateExists} = this.props;
+    var meta = network.get('meta');
     if (!meta.configurable) return null;
 
-    var networkName = this.props.network.get('name');
+    var networkName = network.get('name');
 
     var ipRangeProps = this.composeProps('ip_ranges', true);
     var gatewayProps = this.composeProps('gateway');
@@ -1529,7 +1550,7 @@ var Network = React.createClass({
           {...ipRangeProps}
           disabled={ipRangeProps.disabled || meta.notation === 'cidr'}
           rowsClassName='ip-ranges-rows'
-          verificationError={_.contains(this.props.verificationErrorField, 'ip_ranges')}
+          verificationError={_.contains(verificationErrorField, 'ip_ranges')}
         />
         {meta.use_gateway &&
           <Input
@@ -1539,9 +1560,10 @@ var Network = React.createClass({
           />
         }
         <VlanTagInput
-          {...this.composeProps('vlan_start')}
+          {... this.composeProps('vlan_start')}
           label={i18n(networkTabNS + 'network.use_vlan_tagging')}
-          value={this.props.network.get('vlan_start')}
+          value={network.get('vlan_start')}
+          configurationTemplateExists={configurationTemplateExists}
         />
       </div>
     );
