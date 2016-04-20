@@ -18,6 +18,7 @@ import React from 'react';
 import utils from 'utils';
 import {backboneMixin} from 'component_mixins';
 import statisticsMixin from 'views/statistics_mixin';
+import {ProgressButton} from 'views/controls';
 
 var WelcomePage = React.createClass({
   mixins: [
@@ -34,22 +35,25 @@ var WelcomePage = React.createClass({
   },
   onStartButtonClick() {
     this.props.settings.set('statistics.user_choice_saved.value', true);
-    this.setState({locked: true});
+    this.setState({
+      actionInProgress: true
+    });
     this.saveSettings(this.getStatisticsSettingsToSave())
       .done(() => app.navigate('', {trigger: true}))
       .fail((response) => {
-        this.setState({locked: false, actionInProgress: false});
+        this.setState({actionInProgress: false});
         utils.showErrorDialog({response});
       });
   },
   render() {
     var ns = 'welcome_page.';
     var statsCollectorLink = 'https://stats.fuel-infra.org/';
-    var disabled = this.state.actionInProgress || this.state.locked;
+    var disabled = this.state.actionInProgress;
     var buttonProps = {
       disabled,
       onClick: this.onStartButtonClick,
-      className: 'btn btn-lg btn-block btn-success'
+      className: 'btn btn-lg btn-block btn-success',
+      progress: this.state.actionInProgress
     };
     return (
       <div className='welcome-page tracking'>
@@ -65,9 +69,9 @@ var WelcomePage = React.createClass({
           </div>
           <div className='welcome-button-box row'>
             <div className='col-xs-6 col-xs-offset-3'>
-              <button autoFocus {...buttonProps}>
+              <ProgressButton autoFocus {...buttonProps}>
                 {i18n(ns + 'start_fuel')}
-              </button>
+              </ProgressButton>
             </div>
           </div>
           <div className='welcome-text-box'>{i18n(ns + 'thanks')}</div>
