@@ -71,3 +71,12 @@ maintainers:
       - name:   Alexander Adamov
         email:  aadamov@mirantis.com
         IRC:    alexadamov
+  -
+    static/styles/: &visual_design_expert
+      - name:   Bogdan Dudko
+        email:  bdudko@mirantis.com
+        IRC:    bdudko
+  -
+    static/fonts/: *visual_design_expert
+  -
+    static/img/: *visual_design_expert
