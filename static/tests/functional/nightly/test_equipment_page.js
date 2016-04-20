@@ -98,16 +98,16 @@ registerSuite(() => {
         .assertElementMatchesRegExp(summarySelector, descriptionClusterNode,
           'Environment name and "default" node network group name are exist and correct')
         // Get IP and MAC for next tests
-        .findByCssSelector(summarySelector + '> div:nth-child(2) > div:nth-child(2) > span')
+        .findByCssSelector(summarySelector + '> div:nth-child(2) > div:nth-child(2)')
           .getVisibleText()
           .then((visibleText) => {
-            computeMac = visibleText;
+            computeMac = visibleText.split(': ')[1];
           })
           .end()
-        .findByCssSelector(summarySelector + 'div.management-ip > span')
+        .findByCssSelector(summarySelector + 'div.management-ip')
           .getVisibleText()
           .then((visibleText) => {
-            computeIp = visibleText;
+            computeIp = visibleText.split(': ')[1];
           })
           .end()
         .then(() => modal.close())
