@@ -302,8 +302,7 @@ var SettingSection = React.createClass({
             isPlugin && metadata.enabled && !metadata.hot_pluggable &&
             <div className='alert alert-warning'>
               {i18n(
-                'cluster_page.settings_tab.active_not_hot_pluggable_plugin',
-                {plugin: groupLabel}
+                'cluster_page.settings_tab.active_not_hot_pluggable_plugin'
               )}
             </div>
           }
