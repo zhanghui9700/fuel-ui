@@ -89,7 +89,7 @@ registerSuite(() => {
         .then(() => networksLib.saveSettings());
     },
     'Baremetal Network "IP Ranges" adding and deleting additional fields'() {
-      var correctIpRange = ['192.168.3.1', '192.168.3.50'];
+      var correctIpRange = ['192.168.3.2', '192.168.3.50'];
       var newIpRange = ['192.168.3.55', '192.168.3.70'];
       return this.remote
         // Change network settings
@@ -147,26 +147,14 @@ registerSuite(() => {
       var errorMessage = 'Invalid VLAN ID';
       return this.remote
         // Check "Use VLAN tagging" text field
-        .then(
-          () => networksLib.checkIncorrectValueInput(
-            vlanSelector, vlanTag[0], vlanErrorSelector, errorMessage
-          )
-        )
-        .then(
-          () => networksLib.checkIncorrectValueInput(
-            vlanSelector, vlanTag[1], vlanErrorSelector, errorMessage
-          )
-        )
-        .then(
-          () => networksLib.checkIncorrectValueInput(
-            vlanSelector, vlanTag[2], vlanErrorSelector, errorMessage
-          )
-        )
-        .then(
-          () => networksLib.checkIncorrectValueInput(
-            vlanSelector, vlanTag[3], vlanErrorSelector, errorMessage
-          )
-        )
+        .then(() => networksLib.checkIncorrectValueInput(vlanSelector, vlanTag[0],
+          vlanErrorSelector, errorMessage))
+        .then(() => networksLib.checkIncorrectValueInput(vlanSelector, vlanTag[1],
+          vlanErrorSelector, errorMessage))
+        .then(() => networksLib.checkIncorrectValueInput(vlanSelector, vlanTag[2],
+          vlanErrorSelector, errorMessage))
+        .then(() => networksLib.checkIncorrectValueInput(vlanSelector, vlanTag[3],
+          vlanErrorSelector, errorMessage))
         .setInputValue(vlanSelector, vlanTag[4])
         .assertElementNotExists(errorSelector, 'No Baremetal errors are observed')
         .assertElementEnabled(btnSaveSelector, 'Save Settings button is enabled')
@@ -185,31 +173,16 @@ registerSuite(() => {
       var errorMessage = 'Invalid CIDR';
       return this.remote
         // Check "CIDR" text field
-        .then(
-          () => networksLib.checkIncorrectValueInput(
-            cidrSelector, cidrPart1 + cidrPart2[0], cidrErrorSelector, errorMessage
-          )
-        )
-        .then(
-          () => networksLib.checkIncorrectValueInput(
-            cidrSelector, cidrPart1 + cidrPart2[1], cidrErrorSelector, errorMessage
-          )
-        )
-        .then(
-          () => networksLib.checkIncorrectValueInput(
-            cidrSelector, cidrPart1 + cidrPart2[2], cidrErrorSelector, 'Network is too large'
-          )
-        )
-        .then(
-          () => networksLib.checkIncorrectValueInput(
-            cidrSelector, cidrPart1 + cidrPart2[3], cidrErrorSelector, 'Network is too small'
-          )
-        )
-        .then(
-          () => networksLib.checkIncorrectValueInput(
-            cidrSelector, cidrPart1 + cidrPart2[4], cidrErrorSelector, errorMessage
-          )
-        )
+        .then(() => networksLib.checkIncorrectValueInput(cidrSelector, cidrPart1 + cidrPart2[0],
+          cidrErrorSelector, errorMessage))
+        .then(() => networksLib.checkIncorrectValueInput(cidrSelector, cidrPart1 + cidrPart2[1],
+          cidrErrorSelector, errorMessage))
+        .then(() => networksLib.checkIncorrectValueInput(cidrSelector, cidrPart1 + cidrPart2[2],
+          cidrErrorSelector, 'Network is too large'))
+        .then(() => networksLib.checkIncorrectValueInput(cidrSelector, cidrPart1 + cidrPart2[3],
+          cidrErrorSelector, 'Network is too small'))
+        .then(() => networksLib.checkIncorrectValueInput(cidrSelector, cidrPart1 + cidrPart2[4],
+          cidrErrorSelector, errorMessage))
         .setInputValue(cidrSelector, cidrPart1 + cidrPart2[5])
         .assertElementExists(l3Selector, '"Neutron L3" link exists')
         .assertElementExists(l3Selector + 'i.glyphicon-danger-sign',
