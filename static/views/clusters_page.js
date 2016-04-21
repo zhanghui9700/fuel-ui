@@ -38,19 +38,12 @@ ClustersPage = React.createClass({
 
       return $.when(clusters.fetch(), nodes.fetch(), tasks.fetch())
         .then(() => {
-          var requests = [];
           clusters.each((cluster) => {
             cluster.set('nodes', new models.Nodes(nodes.where({cluster: cluster.id})));
             cluster.set('tasks', new models.Tasks(tasks.where({cluster: cluster.id})));
-
-            var roles = new models.Roles();
-            roles.url = _.result(cluster, 'url') + '/roles';
-            cluster.set({roles: roles});
-            requests.push(cluster.get('roles').fetch());
           });
-          return $.when(...requests);
-        })
-        .then(() => ({clusters}));
+          return ({clusters});
+        });
     }
   },
   render() {
@@ -144,7 +137,6 @@ Cluster = React.createClass({
       !!cluster.task({name: 'cluster_deletion', status: 'ready'});
     var deploymentTask = cluster.task({group: 'deployment', active: true});
     var Tag = isClusterDeleting ? 'div' : 'a';
-    var capacity = cluster.getCapacity();
     return (
       <div className='col-xs-3'>
         <Tag
@@ -165,19 +157,19 @@ Cluster = React.createClass({
                 {i18n('clusters_page.cluster_hardware_cpu')}
               </div>,
               <div key='cpu-value' className='value'>
-                {capacity.cores} ({capacity.ht_cores})
+                {nodes.resources('cores')} ({nodes.resources('ht_cores')})
               </div>,
               <div key='ram-title' className='item'>
                 {i18n('clusters_page.cluster_hardware_ram')}
               </div>,
               <div key='ram-value' className='value'>
-                {utils.showSize(capacity.ram)}
+                {utils.showSize(nodes.resources('ram'))}
               </div>,
               <div key='hdd-title' className='item'>
                 {i18n('clusters_page.cluster_hardware_hdd')}
               </div>,
               <div key='hdd-value' className='value'>
-                {utils.showSize(capacity.hdd)}
+                {utils.showSize(nodes.resources('hdd'))}
               </div>
             ]}
           </div>

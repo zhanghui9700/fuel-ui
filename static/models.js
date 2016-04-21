@@ -359,33 +359,6 @@ models.Cluster = BaseModel.extend({
       !this.task({group: 'deployment', active: true}) &&
       (this.get('status') !== 'operational' || this.hasChanges({configModels}));
   },
-  getCapacity() {
-    var result = {
-      cores: 0,
-      ht_cores: 0,
-      ram: 0,
-      hdd: 0
-    };
-    if (!this.get('nodes').length) return result;
-    var resourceToRoleGroupMap = {
-      cores: 'compute',
-      ht_cores: 'compute',
-      ram: 'compute',
-      hdd: 'storage'
-    };
-    var groupedRoles = {};
-    _.each(['compute', 'storage'], (group) => {
-      groupedRoles[group] = this.get('roles')
-        .where({group: group})
-        .map((role) => role.get('name'));
-    });
-    this.get('nodes').each((node) => {
-      _.each(resourceToRoleGroupMap, (group, resourceName) => {
-        if (node.hasRole(groupedRoles[group])) result[resourceName] += node.resource(resourceName);
-      });
-    });
-    return result;
-  },
   isConfigurationChanged({configModels}) {
     var deployedSettings = this.get('deployedSettings');
     var deployedNetworkConfiguration = this.get('deployedNetworkConfiguration');
@@ -564,8 +537,7 @@ models.Nodes = BaseCollection.extend({
     return _.filter(this.nodesAfterDeployment(), (node) => node.hasRole(role));
   },
   resources(resourceName) {
-    var resources = this.map((node) => node.resource(resourceName));
-    return _.reduce(resources, (sum, n) => sum + n, 0);
+    return _.reduce(this.invoke('resource', resourceName), (sum, n) => sum + n, 0);
   },
   getLabelValues(label) {
     return this.invoke('getLabel', label);
