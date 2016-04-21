@@ -989,7 +989,7 @@ var ClusterInfo = React.createClass({
   },
   renderClusterCapacity() {
     var capacityNs = ns + 'cluster_info_fields.';
-    var capacity = this.props.cluster.getCapacity();
+    var nodes = this.props.cluster.get('nodes');
 
     return (
       <div className='row capacity-block content-elements'>
@@ -997,15 +997,21 @@ var ClusterInfo = React.createClass({
         <div className='col-xs-12 capacity-items'>
           <div className='col-xs-4 cpu'>
             <span>{i18n(capacityNs + 'cpu_cores')}</span>
-            <span className='capacity-value'>{capacity.cores} ({capacity.ht_cores})</span>
+            <span className='capacity-value'>
+              {nodes.resources('cores')} ({nodes.resources('ht_cores')})
+            </span>
           </div>
           <div className='col-xs-4 ram'>
             <span>{i18n(capacityNs + 'ram')}</span>
-            <span className='capacity-value'>{utils.showSize(capacity.ram)}</span>
+            <span className='capacity-value'>
+              {utils.showSize(nodes.resources('ram'))}
+            </span>
           </div>
           <div className='col-xs-4 hdd'>
             <span>{i18n(capacityNs + 'hdd')}</span>
-            <span className='capacity-value'>{utils.showSize(capacity.hdd)}</span>
+            <span className='capacity-value'>
+              {utils.showSize(nodes.resources('hdd'))}
+            </span>
           </div>
         </div>
       </div>
