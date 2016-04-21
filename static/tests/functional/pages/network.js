@@ -17,13 +17,12 @@
 import ModalWindow from 'tests/functional/pages/modal';
 import 'tests/functional/helpers';
 
-function NetworkPage(remote) {
-  this.remote = remote;
-  this.modal = new ModalWindow(this.remote);
-}
+class NetworkPage {
+  constructor(remote) {
+    this.remote = remote;
+    this.modal = new ModalWindow(this.remote);
+  }
 
-NetworkPage.prototype = {
-  constructor: NetworkPage,
   addNodeNetworkGroup(name) {
     return this.remote
       .clickByCssSelector('.add-nodegroup-btn')
@@ -32,7 +31,8 @@ NetworkPage.prototype = {
       .then(() => this.modal.clickFooterButton('Add Group'))
       .then(() => this.modal.waitToClose())
       .waitForCssSelector('.network-group-name[data-name=' + name + ']', 2000);
-  },
+  }
+
   renameNodeNetworkGroup(oldName, newName) {
     return this.remote
       .then(() => this.goToNodeNetworkGroup(oldName))
@@ -45,14 +45,16 @@ NetworkPage.prototype = {
         .type('\uE007')
         .end()
       .waitForCssSelector('.network-group-name[data-name=' + newName + ']', 2000);
-  },
+  }
+
   goToNodeNetworkGroup(name) {
     return this.remote
       .findByCssSelector('ul.node_network_groups')
         .clickLinkByText(name)
         .end()
       .waitForCssSelector('.network-group-name[data-name=' + name + ']', 2000);
-  },
+  }
+
   removeNodeNetworkGroup(name) {
     return this.remote
       .clickByCssSelector('.network-group-name[data-name=' + name + '] .glyphicon-remove')
@@ -62,6 +64,6 @@ NetworkPage.prototype = {
       .waitForElementDeletion('.network-group-name[data-name=' + name + ']', 2000)
       .sleep(3000); // unconditionally sleep to wait until update_dnsmasq task is finished
   }
-};
+}
 
 export default NetworkPage;

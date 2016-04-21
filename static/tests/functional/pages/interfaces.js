@@ -17,12 +17,11 @@
 import _ from 'intern/dojo/node!lodash';
 import assert from 'intern/chai!assert';
 
-function InterfacesPage(remote) {
-  this.remote = remote;
-}
+class InterfacesPage {
+  constructor(remote) {
+    this.remote = remote;
+  }
 
-InterfacesPage.prototype = {
-  constructor: InterfacesPage,
   findInterfaceElement(ifcName) {
     return this.remote
       .findAllByCssSelector('div.ifc-inner-container')
@@ -40,7 +39,8 @@ InterfacesPage.prototype = {
             null
           )
         );
-  },
+  }
+
   findInterfaceElementInBond(bondName, ifcName) {
     return this.remote
       .findAllByCssSelector('.' + bondName + ' .ifc-info-block')
@@ -56,7 +56,8 @@ InterfacesPage.prototype = {
             null
           )
         );
-  },
+  }
+
   removeInterfaceFromBond(bondName, ifcName) {
     return this.remote
       .then(() => this.findInterfaceElementInBond(bondName, ifcName))
@@ -65,7 +66,8 @@ InterfacesPage.prototype = {
           .findByCssSelector('.btn-link')
             .then((btnRemove) => btnRemove.click())
       );
-  },
+  }
+
   assignNetworkToInterface(networkName, ifcName) {
     return this.remote
       .findAllByCssSelector('div.network-block')
@@ -82,7 +84,8 @@ InterfacesPage.prototype = {
         .then((networkElement) => this.remote.dragFrom(networkElement))
         .then(() => this.findInterfaceElement(ifcName))
         .then((ifcElement) => this.remote.dragTo(ifcElement));
-  },
+  }
+
   selectInterface(ifcName) {
     return this.remote
       .then(() => this.findInterfaceElement(ifcName))
@@ -92,13 +95,15 @@ InterfacesPage.prototype = {
           .findByCssSelector('input[type=checkbox]:not(:checked)')
             .then((ifcCheckbox) => ifcCheckbox.click());
       });
-  },
+  }
+
   bondInterfaces(ifc1, ifc2) {
     return this.remote
       .then(() => this.selectInterface(ifc1))
       .then(() => this.selectInterface(ifc2))
       .clickByCssSelector('.btn-bond');
-  },
+  }
+
   checkBondInterfaces(bondName, ifcsNames) {
     return this.remote
       .then(() => this.findInterfaceElement(bondName))
@@ -125,6 +130,6 @@ InterfacesPage.prototype = {
             })
       );
   }
-};
+}
 
 export default InterfacesPage;

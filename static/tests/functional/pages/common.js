@@ -21,24 +21,25 @@ import ClusterPage from 'tests/functional/pages/cluster';
 import ClustersPage from 'tests/functional/pages/clusters';
 import 'tests/functional/helpers';
 
-function CommonMethods(remote) {
-  this.remote = remote;
-  this.loginPage = new LoginPage(remote);
-  this.welcomePage = new WelcomePage(remote);
-  this.clusterPage = new ClusterPage(remote);
-  this.clustersPage = new ClustersPage(remote);
-}
+class CommonMethods {
+  constructor(remote) {
+    this.remote = remote;
+    this.loginPage = new LoginPage(remote);
+    this.welcomePage = new WelcomePage(remote);
+    this.clusterPage = new ClusterPage(remote);
+    this.clustersPage = new ClustersPage(remote);
+  }
 
-CommonMethods.prototype = {
-  constructor: CommonMethods,
   pickRandomName(prefix) {
     return _.uniqueId((prefix || 'Item') + ' #');
-  },
+  }
+
   getOut() {
     return this.remote
       .then(() => this.welcomePage.skip())
       .then(() => this.loginPage.logout());
-  },
+  }
+
   getIn() {
     return this.remote
       .then(() => this.loginPage.logout())
@@ -47,13 +48,15 @@ CommonMethods.prototype = {
       .then(() => this.welcomePage.skip())
       .waitForCssSelector('.navbar-nav', 1000)
       .clickByCssSelector('.global-alert.alert-warning .close');
-  },
+  }
+
   createCluster(clusterName, stepsMethods) {
     return this.remote
       .clickLinkByText('Environments')
       .waitForCssSelector('.clusters-page', 2000)
       .then(() => this.clustersPage.createCluster(clusterName, stepsMethods));
-  },
+  }
+
   removeCluster(clusterName, suppressErrors) {
     return this.remote
       .clickLinkByText('Environments')
@@ -65,7 +68,8 @@ CommonMethods.prototype = {
           throw new Error('Unable to delete cluster ' + clusterName + ': ' + e);
         }
       });
-  },
+  }
+
   doesClusterExist(clusterName) {
     return this.remote
       .clickLinkByText('Environments')
@@ -79,7 +83,8 @@ CommonMethods.prototype = {
             false
           )
         );
-  },
+  }
+
   addNodesToCluster(nodesAmount, nodesRoles, nodeStatus, nodeNameFilter) {
     return this.remote
       .then(() => this.clusterPage.goToTab('Nodes'))
@@ -95,6 +100,6 @@ CommonMethods.prototype = {
       .clickByCssSelector('.btn-apply')
       .waitForElementDeletion('.btn-apply', 3000);
   }
-};
+}
 
 export default CommonMethods;

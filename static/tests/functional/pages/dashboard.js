@@ -17,14 +17,13 @@
 import ModalWindow from 'tests/functional/pages/modal';
 import 'tests/functional/helpers';
 
-function DashboardPage(remote) {
-  this.remote = remote;
-  this.modal = new ModalWindow(remote);
-  this.deployButtonSelector = '.actions-panel .deploy-btn';
-}
+class DashboardPage {
+  constructor(remote) {
+    this.remote = remote;
+    this.modal = new ModalWindow(remote);
+    this.deployButtonSelector = '.actions-panel .deploy-btn';
+  }
 
-DashboardPage.prototype = {
-  constructor: DashboardPage,
   startDeployment() {
     return this.remote
       .clickByCssSelector(this.deployButtonSelector)
@@ -32,7 +31,8 @@ DashboardPage.prototype = {
       .then(() => this.modal.checkTitle('Deploy Changes'))
       .then(() => this.modal.clickFooterButton('Deploy'))
       .then(() => this.modal.waitToClose());
-  },
+  }
+
   stopDeployment() {
     return this.remote
       .clickByCssSelector('button.stop-deployment-btn')
@@ -40,11 +40,13 @@ DashboardPage.prototype = {
       .then(() => this.modal.checkTitle('Stop Deployment'))
       .then(() => this.modal.clickFooterButton('Stop'))
       .then(() => this.modal.waitToClose());
-  },
+  }
+
   startClusterRenaming() {
     return this.remote
       .clickByCssSelector('.cluster-info-value.name .glyphicon-pencil');
-  },
+  }
+
   setClusterName(name) {
     return this.remote
       .then(() => this.startClusterRenaming())
@@ -55,7 +57,8 @@ DashboardPage.prototype = {
         .type('\uE007')
         .end()
       .waitForElementDeletion('.rename-block input[type=text]', 2000);
-  },
+  }
+
   discardChanges() {
     return this.remote
       .clickByCssSelector('.btn-discard-changes')
@@ -63,7 +66,6 @@ DashboardPage.prototype = {
       .then(() => this.modal.clickFooterButton('Discard'))
       .then(() => this.modal.waitToClose());
   }
-};
+}
 
 export default DashboardPage;
-
