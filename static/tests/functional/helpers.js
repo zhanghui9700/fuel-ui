@@ -301,7 +301,7 @@ _.defaults(Command.prototype, {
     return new this.constructor(this, function() {
       return this.parent
         .waitForCssSelector(cssSelector, timeout)
-        .catch(_.constant(true))
+        .catch(() => true)
         .assertElementExists(cssSelector, message);
     });
   },
@@ -309,7 +309,7 @@ _.defaults(Command.prototype, {
     return new this.constructor(this, function() {
       return this.parent
         .waitForCssSelector(cssSelector, timeout)
-        .catch(_.constant(true))
+        .catch(() => true)
         .assertElementsExist(cssSelector, message);
     });
   },
@@ -317,7 +317,7 @@ _.defaults(Command.prototype, {
     return new this.constructor(this, function() {
       return this.parent
         .waitForElementDeletion(cssSelector, timeout)
-        .catch(_.constant(true))
+        .catch(() => true)
         .assertElementNotExists(cssSelector, message);
     });
   },

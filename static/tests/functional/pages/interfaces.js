@@ -34,7 +34,7 @@ InterfacesPage.prototype = {
                   (ifcDiv) => ifcDiv
                     .getVisibleText()
                       .then(
-                        (currentIfcName) => _.trim(currentIfcName) === ifcName ? ifcElement : result
+                        (currentIfcName) => currentIfcName.trim() === ifcName ? ifcElement : result
                       )
                 ),
             null
@@ -116,7 +116,7 @@ InterfacesPage.prototype = {
                 (ifcNameElement) => ifcNameElement
                     .getVisibleText()
                       .then((name) => {
-                        name = _.trim(name);
+                        name = name.trim();
                         if (!_.contains(ifcsNames, name)) {
                           throw new Error('Unexpected name in bond: ' + name);
                         }

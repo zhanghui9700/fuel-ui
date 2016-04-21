@@ -26,7 +26,7 @@ function ClustersPage(remote) {
 ClustersPage.prototype = {
   constructor: ClustersPage,
   createCluster(clusterName, stepsMethods) {
-    var stepMethod = (stepName) => _.bind(_.get(stepsMethods, stepName, _.noop), this);
+    var stepMethod = (stepName) => _.get(stepsMethods, stepName, _.noop).bind(this);
     return this.remote
       .clickByCssSelector('.create-cluster')
       .then(() => this.modal.waitToOpen())
