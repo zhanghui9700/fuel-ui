@@ -259,7 +259,6 @@ var SettingsTab = React.createClass({
             var pickedSettings = _.compact(_.map(section, (setting, settingName) => {
               if (
                 settingName !== 'metadata' &&
-                setting.type !== 'hidden' &&
                 settings.sanitizeGroup(setting.group) === calculatedGroup &&
                 !this.checkRestrictions('hide', setting).result
               ) return settingName;
