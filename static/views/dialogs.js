@@ -1363,7 +1363,6 @@ export var ShowNodeInfoDialog = React.createClass({
       actionInProgress, configModels
     } = this.state;
 
-    var renderableAttributes = ['nova', 'dpdk'];
     var isLocked = !node.get('pending_addition') || actionInProgress;
 
     var attributes = _.chain(_.keys(nodeAttributes.attributes))
@@ -1380,13 +1379,17 @@ export var ShowNodeInfoDialog = React.createClass({
       .map(
         (sectionName) => {
           var metadata = nodeAttributes.get(utils.makePath(sectionName, 'metadata'));
-          var settingsToDisplay = _.filter(renderableAttributes,
-            (attribute) => !nodeAttributes.checkRestrictions(
-              configModels,
-              'hide',
-              nodeAttributes.get(utils.makePath(sectionName, attribute))
-            ).result
-          );
+          var settingsToDisplay = _.chain(_.keys(nodeAttributes.attributes[sectionName]))
+            .without('metadata')
+            .filter(
+              (attribute) => !nodeAttributes.checkRestrictions(
+                configModels,
+                'hide',
+                nodeAttributes.get(utils.makePath(sectionName, attribute))
+              ).result
+            )
+            .value();
+
           return (
             <SettingSection
               {... {sectionName, settingsToDisplay, cluster, configModels}}
