@@ -17,13 +17,12 @@
 import pollUntil from 'intern/dojo/node!leadfoot/helpers/pollUntil';
 import 'tests/functional/helpers';
 
-function ModalWindow(remote) {
-  this.remote = remote;
-}
+class ModalWindow {
+  constructor(remote) {
+    this.remote = remote;
+    this.modalSelector = '#modal-container > .modal';
+  }
 
-ModalWindow.prototype = {
-  constructor: ModalWindow,
-  modalSelector: '#modal-container > .modal',
   waitToOpen() {
     return this.remote
       .waitForCssSelector(this.modalSelector, 2000)
@@ -34,17 +33,20 @@ ModalWindow.prototype = {
           3000
         )
       );
-  },
+  }
+
   checkTitle(expectedTitle) {
     return this.remote
       .assertElementContainsText(this.modalSelector + ' h4.modal-title', expectedTitle,
         'Unexpected modal window title');
-  },
+  }
+
   close() {
     return this.remote
       .clickByCssSelector(this.modalSelector + ' .modal-header button.close')
       .then(() => this.waitToClose());
-  },
+  }
+
   clickFooterButton(buttonText) {
     return this.remote
       .findAllByCssSelector(this.modalSelector + ' .modal-footer button')
@@ -67,11 +69,12 @@ ModalWindow.prototype = {
             null
           )
         );
-  },
+  }
+
   waitToClose() {
     return this.remote
       .waitForElementDeletion(this.modalSelector, 5000);
   }
-};
+}
 
 export default ModalWindow;

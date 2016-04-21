@@ -16,12 +16,11 @@
 
 import Helpers from 'tests/functional/helpers';
 
-function LoginPage(remote) {
-  this.remote = remote;
-}
+class LoginPage {
+  constructor(remote) {
+    this.remote = remote;
+  }
 
-LoginPage.prototype = {
-  constructor: LoginPage,
   login(username, password) {
     username = username || Helpers.username;
     password = password || Helpers.password;
@@ -38,7 +37,8 @@ LoginPage.prototype = {
       .setInputValue('[name=username]', username)
       .setInputValue('[name=password]', password)
       .clickByCssSelector('.login-btn');
-  },
+  }
+
   logout() {
     return this.remote
       .getCurrentUrl()
@@ -58,6 +58,6 @@ LoginPage.prototype = {
         () => true
       );
   }
-};
+}
 
 export default LoginPage;

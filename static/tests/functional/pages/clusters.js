@@ -18,13 +18,14 @@ import _ from 'intern/dojo/node!lodash';
 import ModalWindow from 'tests/functional/pages/modal';
 import 'tests/functional/helpers';
 
-function ClustersPage(remote) {
-  this.remote = remote;
-  this.modal = new ModalWindow(remote);
-}
+class ClustersPage {
+  constructor(remote) {
+    this.remote = remote;
+    this.modal = new ModalWindow(remote);
+    this.clusterSelector = '.clusterbox div.name';
+    return this;
+  }
 
-ClustersPage.prototype = {
-  constructor: ClustersPage,
   createCluster(clusterName, stepsMethods) {
     var stepMethod = (stepName) => _.get(stepsMethods, stepName, _.noop).bind(this);
     return this.remote
@@ -49,8 +50,8 @@ ClustersPage.prototype = {
       // Finish
       .pressKeys('\uE007')
       .then(() => this.modal.waitToClose());
-  },
-  clusterSelector: '.clusterbox div.name',
+  }
+
   goToEnvironment(clusterName) {
     return this.remote
       .waitForCssSelector(this.clusterSelector, 5000)
@@ -77,6 +78,6 @@ ClustersPage.prototype = {
       .end()
       .waitForCssSelector('.dashboard-tab', 1000);
   }
-};
+}
 
 export default ClustersPage;

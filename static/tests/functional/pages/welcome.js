@@ -16,12 +16,11 @@
 
 import 'tests/functional/helpers';
 
-function WelcomePage(remote) {
-  this.remote = remote;
-}
+class WelcomePage {
+  constructor(remote) {
+    this.remote = remote;
+  }
 
-WelcomePage.prototype = {
-  constructor: WelcomePage,
   skip(strictCheck) {
     return this.remote
       .waitForCssSelector('.welcome-page', 3000)
@@ -36,6 +35,6 @@ WelcomePage.prototype = {
         () => !strictCheck
       );
   }
-};
+}
 
 export default WelcomePage;

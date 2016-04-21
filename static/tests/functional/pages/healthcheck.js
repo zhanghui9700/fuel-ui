@@ -16,12 +16,11 @@
 
 import 'tests/functional/helpers';
 
-function HealthcheckPage(remote) {
-  this.remote = remote;
-}
+class HealthcheckPage {
+  constructor(remote) {
+    this.remote = remote;
+  }
 
-HealthcheckPage.prototype = {
-  constructor: HealthcheckPage,
   createFakeServerForNotRunnedTests() {
     return this.remote
       .execute(() => {
@@ -128,7 +127,8 @@ HealthcheckPage.prototype = {
           '[]'
         ]);
       });
-  },
+  }
+
   createFakeServerForRunningTests() {
     return this.remote
       // running tests
@@ -330,7 +330,8 @@ HealthcheckPage.prototype = {
           )
         ]);
       });
-  },
+  }
+
   createFakeServerForFinishedTests() {
     return this.remote
       // running tests
@@ -536,14 +537,15 @@ HealthcheckPage.prototype = {
           )
         ]);
       });
-  },
+  }
+
   restoreServer() {
     return this.remote
       .execute(() => {
         window.server.restore();
       });
   }
-};
+}
 
 export default HealthcheckPage;
 

@@ -20,14 +20,13 @@ import DashboardPage from 'tests/functional/pages/dashboard';
 import pollUntil from 'intern/dojo/node!leadfoot/helpers/pollUntil';
 import 'tests/functional/helpers';
 
-function ClusterPage(remote) {
-  this.remote = remote;
-  this.modal = new ModalWindow(remote);
-  this.dashboardPage = new DashboardPage(remote);
-}
+class ClusterPage {
+  constructor(remote) {
+    this.remote = remote;
+    this.modal = new ModalWindow(remote);
+    this.dashboardPage = new DashboardPage(remote);
+  }
 
-ClusterPage.prototype = {
-  constructor: ClusterPage,
   goToTab(tabName) {
     return this.remote
       .findByCssSelector('.cluster-page .tabs')
@@ -40,7 +39,8 @@ ClusterPage.prototype = {
           3000
         )
       );
-  },
+  }
+
   removeCluster(clusterName) {
     return this.remote
       .clickLinkByText('Dashboard')
@@ -59,12 +59,14 @@ ClusterPage.prototype = {
       .then(() => this.modal.waitToClose())
       .waitForCssSelector('.clusters-page', 2000)
       .waitForDeletedByCssSelector('.clusterbox', 20000);
-  },
+  }
+
   searchForNode(nodeName) {
     return this.remote
       .clickByCssSelector('button.btn-search')
       .setInputValue('input[name=search]', nodeName);
-  },
+  }
+
   checkNodeRoles(assignRoles) {
     return this.remote
       .findAllByCssSelector('.role-panel .role-block .role')
@@ -83,7 +85,8 @@ ClusterPage.prototype = {
           false
         )
       );
-  },
+  }
+
   checkNodes(amount, status) {
     status = status || 'discover';
     return this.remote
@@ -97,7 +100,8 @@ ClusterPage.prototype = {
           true
         )
       );
-  },
+  }
+
   resetEnvironment(clusterName) {
     return this.remote
       .clickByCssSelector('button.reset-environment-btn')
@@ -115,13 +119,15 @@ ClusterPage.prototype = {
         .end()
       .then(() => this.modal.waitToClose())
       .waitForElementDeletion('div.progress-bar', 20000);
-  },
+  }
+
   isTabLocked(tabName) {
     return this.remote
       .then(() => this.goToTab(tabName))
       .waitForCssSelector('div.tab-content div.row.changes-locked', 2000)
         .then(() => true, () => false);
-  },
+  }
+
   deployEnvironment() {
     return this.remote
       .then(() => this.goToTab('Dashboard'))
@@ -129,6 +135,6 @@ ClusterPage.prototype = {
       .waitForElementDeletion('.dashboard-block .progress', 60000)
       .waitForCssSelector('.links-block', 5000);
   }
-};
+}
 
 export default ClusterPage;

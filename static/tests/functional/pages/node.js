@@ -17,13 +17,12 @@
 import ModalWindow from 'tests/functional/pages/modal';
 import 'tests/functional/helpers';
 
-function NodeComponent(remote) {
-  this.remote = remote;
-  this.modal = new ModalWindow(this.remote);
-}
+class NodeComponent {
+  constructor(remote) {
+    this.remote = remote;
+    this.modal = new ModalWindow(this.remote);
+  }
 
-NodeComponent.prototype = {
-  constructor: NodeComponent,
   openCompactNodeExtendedView() {
     return this.remote
       .findByCssSelector('div.compact-node .node-hardware p:not(.btn)')
@@ -35,7 +34,8 @@ NodeComponent.prototype = {
       .waitForCssSelector('.node-popover', 1000)
       // the following timeout as we have 0.3s transition for the popover
       .sleep(300);
-  },
+  }
+
   openNodePopup(fromExtendedView) {
     var cssSelector = fromExtendedView ? '.node-popover' : '.node';
     return this.remote
@@ -43,7 +43,8 @@ NodeComponent.prototype = {
         .clickByCssSelector('.node-settings')
         .end()
       .then(() => this.modal.waitToOpen());
-  },
+  }
+
   discardNode(fromExtendedView) {
     var cssSelector = fromExtendedView ? '.node-popover' : '.node';
     return this.remote
@@ -54,7 +55,8 @@ NodeComponent.prototype = {
       // confirm deletion
       .clickByCssSelector('div.modal-content button.btn-delete')
       .then(() => this.modal.waitToClose());
-  },
+  }
+
   renameNode(newName, fromExtendedView) {
     var cssSelector = fromExtendedView ? '.node-popover' : '.node';
     return this.remote
@@ -69,6 +71,6 @@ NodeComponent.prototype = {
         .waitForCssSelector('.name p', 1000)
         .end();
   }
-};
+}
 
 export default NodeComponent;
