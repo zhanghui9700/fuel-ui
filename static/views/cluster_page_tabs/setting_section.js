@@ -224,18 +224,16 @@ var SettingSection = React.createClass({
       })
       .compact()
       .value();
-    if (setting.type === 'radio') {
-      return (
-        <RadioGroup {...this.props}
-          key={settingKey}
-          name={settingName}
-          label={setting.label}
-          values={values}
-          error={error}
-          tooltipText={showSettingWarning && settingWarning}
-        />
-      );
-    }
+    return (
+      <RadioGroup {...this.props}
+        key={settingKey}
+        name={settingName}
+        label={setting.label}
+        values={values}
+        error={error}
+        tooltipText={showSettingWarning && settingWarning}
+      />
+    );
   },
   renderInput(options) {
     var {setting, settingKey, error, isSettingDisabled, showSettingWarning, settingWarning,
@@ -350,7 +348,7 @@ var SettingSection = React.createClass({
               return this.renderCustomControl(
                 _.extend(renderOptions, {CustomControl, path, settingName})
               );
-            } else if (setting.values) {
+            } else if (setting.type === 'radio') {
               return this.renderRadioGroup(_.extend(renderOptions, {settingName}));
             } else {
               return this.renderInput(_.extend(renderOptions, {settingName}));
