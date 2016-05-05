@@ -23,10 +23,7 @@ import Command from 'intern/dojo/node!leadfoot/Command';
 import NetworksLib from 'tests/functional/nightly/library/networks';
 
 registerSuite(() => {
-  var common,
-    clusterPage,
-    clusterName,
-    networksLib;
+  var common, clusterPage, clusterName, networksLib;
 
   return {
     name: 'Neutron tunneling segmentation',
@@ -83,13 +80,7 @@ registerSuite(() => {
 });
 
 registerSuite(() => {
-  var common,
-    command,
-    modal,
-    clusterPage,
-    clusterName,
-    networksLib,
-    dashboardPage;
+  var common, command, modal, clusterPage, clusterName, networksLib, dashboardPage;
   var networkName = 'Public';
   var publicSelector = 'div.' + networkName.toLowerCase() + ' ';
   var ipRangesSelector = publicSelector + 'div.ip_ranges ';
@@ -97,11 +88,12 @@ registerSuite(() => {
   var gatewaySelector = publicSelector + 'input[name="gateway"] ';
   var errorSelector = 'div.has-error';
   var networkGroupsSelector = 'ul.node_network_groups';
-  var btnSaveSelector = 'button.apply-btn';
-  var addGroupSelector = 'button.add-nodegroup-btn';
-  var pencilSelector = '.glyphicon-pencil';
-  var renameSelector = 'div.network-group-name input[type="text"]';
-  var nameSelector = 'div.network-group-name button.btn-link';
+  var btnSaveSelector = '.apply-btn';
+  var addGroupSelector = '.add-nodegroup-btn';
+  var pencilSelector = 'i.glyphicon-pencil';
+  var renameSelector = 'input[name="new-name"]';
+  var nameSelector = 'div.network-group-name .btn-link';
+  var allNetSelector = 'input.show-all-networks';
 
   return {
     name: 'Neutron VLAN segmentation',
@@ -117,7 +109,7 @@ registerSuite(() => {
       return this.remote
         .then(() => common.getIn())
         .then(() => common.createCluster(clusterName))
-        .then(() => common.addNodesToCluster(1, ['Controller']))
+        .then(() => common.addNodesToCluster(2, ['Controller']))
         .then(() => common.addNodesToCluster(1, ['Compute']))
         .then(() => clusterPage.goToTab('Networks'));
     },
@@ -147,14 +139,19 @@ registerSuite(() => {
         .assertElementContainsText('span.explanation',
           'This node network group uses a shared admin network and cannot be deleted',
           'Default node network group description presented')
+        .then(() => networksLib.selectAllNetworksCheckbox(true))
         .then(() => networksLib.deleteNetworkGroup('Network_Group_1'));
     },
     'Default network group the first in a list'() {
-      this.timeout = 60000;
+      this.timeout = 45000;
       return this.remote
         .then(() => networksLib.createNetworkGroup('test'))
         .then(() => networksLib.checkDefaultNetGroup())
+        .then(() => networksLib.selectAllNetworksCheckbox(true))
+        .then(() => networksLib.checkMergedNetworksGrouping(['default', 'test']))
         .then(() => networksLib.createNetworkGroup('abc'))
+        .then(() => networksLib.checkMergedNetworksGrouping(['default', 'test', 'abc']))
+        .then(() => networksLib.selectAllNetworksCheckbox(false))
         .then(() => networksLib.checkDefaultNetGroup())
         .then(() => networksLib.createNetworkGroup('1234'))
         .then(() => networksLib.checkDefaultNetGroup())
@@ -163,6 +160,90 @@ registerSuite(() => {
         .then(() => networksLib.createNetworkGroup('+-934847fdjfjdbh'))
         .then(() => networksLib.checkDefaultNetGroup());
     },
+    'Check that user returns to merged "All Networks" segment'() {
+      var networkNames = ['default', 'test', 'abc', '1234', 'yrter', '+-934847fdjfjdbh'];
+      var allNetworksSelector = 'li[class="all"]';
+      return this.remote
+        .then(() => networksLib.checkNetworksGrouping(networkNames))
+        .then(() => networksLib.selectAllNetworksCheckbox(true))
+        // Check after refreshing of page
+        .then(() => networksLib.checkMergedNetworksGrouping(networkNames))
+        .then(() => command.refresh())
+        .assertElementsAppear(allNetSelector, 5000, 'Page refreshed successfully')
+        .then(() => networksLib.checkMergedNetworksGrouping(networkNames))
+        // Check after switching between cluster tabs
+        .then(() => clusterPage.goToTab('Dashboard'))
+        .then(() => clusterPage.goToTab('Networks'))
+        .then(() => networksLib.checkMergedNetworksGrouping(networkNames))
+        .then(() => clusterPage.goToTab('Nodes'))
+        .then(() => clusterPage.goToTab('Networks'))
+        .then(() => networksLib.checkMergedNetworksGrouping(networkNames))
+        .then(() => clusterPage.goToTab('Settings'))
+        .then(() => clusterPage.goToTab('Networks'))
+        .then(() => networksLib.checkMergedNetworksGrouping(networkNames))
+        .then(() => clusterPage.goToTab('Logs'))
+        .then(() => clusterPage.goToTab('Networks'))
+        .then(() => networksLib.checkMergedNetworksGrouping(networkNames))
+        .then(() => clusterPage.goToTab('Health Check'))
+        .then(() => clusterPage.goToTab('Networks'))
+        .then(() => networksLib.checkMergedNetworksGrouping(networkNames))
+        // Check after switching between "Networks" segments
+        .then(() => networksLib.gotoNodeNetworkSubTab('Neutron L2'))
+        .assertElementsExist(allNetworksSelector, '"All Networks" segment exists and not selected')
+        .then(() => networksLib.gotoNodeNetworkSubTab('Neutron L3'))
+        .assertElementsExist(allNetworksSelector, '"All Networks" segment exists and not selected')
+        .then(() => networksLib.gotoNodeNetworkSubTab('Other'))
+        .assertElementsExist(allNetworksSelector, '"All Networks" segment exists and not selected')
+        .then(() => networksLib.gotoNodeNetworkSubTab('Connectivity Check'))
+        .assertElementsExist(allNetworksSelector, '"All Networks" segment exists and not selected')
+        .then(() => networksLib.selectAllNetworksCheckbox(false));
+    },
+    'Check that "Show All Networks" checkbox worked as expected'() {
+      var newIpRangeStart = '172.16.0.10';
+      var defaultPlaceholder = '127.0.0.1';
+      var testGroupSelector = 'div.col-xs-10 div:nth-child(2) ';
+      var rowRangeSelector = publicSelector + 'div.range-row';
+      var lastRangeSelector = rowRangeSelector + ':last-child ';
+      var addRangeSelector = lastRangeSelector + 'button.ip-ranges-add';
+      var ipStartSelector = lastRangeSelector + 'input[name*="range-start"]';
+      var ipEndSelector = lastRangeSelector + 'input[name*="range-end"]';
+      return this.remote
+        // Check default values
+        .then(() => networksLib.gotoNodeNetworkSubTab('default'))
+        .then(() => networksLib.checkNetworkInitialState(networkName))
+        .then(() => networksLib.checkNetworkInitialState('Storage'))
+        .then(() => networksLib.checkNetworkInitialState('Management'))
+        .then(() => networksLib.selectAllNetworksCheckbox(true))
+        .then(() => networksLib.checkNetworkInitialState(networkName))
+        .then(() => networksLib.checkNetworkInitialState('Storage'))
+        .then(() => networksLib.checkNetworkInitialState('Management'))
+        // Check changed settings
+        .setInputValue(startIpSelector, newIpRangeStart)
+        .assertElementPropertyEquals(startIpSelector, 'value', newIpRangeStart,
+          '"default" group Public "End IP Range" textfield  has correct new value at merged pane')
+        .clickByCssSelector(testGroupSelector + addRangeSelector)
+        .assertElementsExist(testGroupSelector + rowRangeSelector, 2,
+          'Correct number of IP ranges exists at merged pane')
+        .assertElementPropertyEquals(testGroupSelector + ipStartSelector, 'placeholder',
+          defaultPlaceholder,
+          '"test" group Public new "Start IP Range" txtfld has default placeholder at merged pane')
+        .assertElementPropertyEquals(testGroupSelector + ipEndSelector, 'placeholder',
+          defaultPlaceholder,
+          '"test" group Public new "End IP Range" textfield has default placeholder at merged pane')
+        .then(() => networksLib.selectAllNetworksCheckbox(false))
+        .assertElementPropertyEquals(startIpSelector, 'value', newIpRangeStart,
+          '"default" group Public "End IP Range" textfield  has correct new value')
+        .then(() => networksLib.gotoNodeNetworkSubTab('test'))
+        .assertElementsExist(rowRangeSelector, 2, 'Correct number of IP ranges exists')
+        .assertElementPropertyEquals(ipStartSelector, 'placeholder', defaultPlaceholder,
+          '"test" group Public new "Start IP Range" textfield has default placeholder')
+        .assertElementPropertyEquals(ipEndSelector, 'placeholder', defaultPlaceholder,
+          '"test" group Public new "End IP Range" textfield has default placeholder')
+        .then(() => networksLib.cancelChanges())
+        .then(() => networksLib.checkNetworkInitialState(networkName))
+        .then(() => networksLib.gotoNodeNetworkSubTab('default'))
+        .then(() => networksLib.checkNetworkInitialState(networkName));
+    },
     'Deletion of several node network groups one after another'() {
       this.timeout = 60000;
       var explanationSelector = '.network-group-name .explanation';
@@ -170,9 +251,13 @@ registerSuite(() => {
         .then(() => networksLib.deleteNetworkGroup('+-934847fdjfjdbh'))
         .then(() => networksLib.deleteNetworkGroup('yrter'))
         .then(() => networksLib.deleteNetworkGroup('1234'))
+        .then(() => networksLib.selectAllNetworksCheckbox(true))
         .then(() => networksLib.deleteNetworkGroup('abc'))
+        .then(() => networksLib.checkMergedNetworksGrouping(['default', 'test']))
+        .then(() => networksLib.selectAllNetworksCheckbox(false))
         .then(() => command.refresh())
         .assertElementsAppear(explanationSelector, 5000, 'Page refreshed successfully')
+        .then(() => networksLib.checkNetworksGrouping(['default', 'test']))
         .assertElementNotContainsText(networkGroupsSelector, '+-934847fdjfjdbh',
           'Network group deleted successfully')
         .assertElementNotContainsText(networkGroupsSelector, 'yrter',
@@ -343,28 +428,35 @@ registerSuite(() => {
         .then(() => networksLib.saveSettings());
     },
     'Renaming of Default and non-default network groups'() {
+      var newdefaultName = 'new_default';
+      var oldName = 'Network_Group_2';
+      var reName = 'Network_Group_3';
+      var networkNames = [newdefaultName, reName];
+      var groupDefaultSelector = 'div[data-name="default"] ';
+      var newGroupDefaultSelector = 'div[data-name="' + newdefaultName + '"] ';
+      var oldGroupSelector = 'div[data-name="' + oldName + '"] ';
+      var newGroupSelector = 'div[data-name="' + reName + '"] ';
       var errorRenameSelector = '.has-error.node-group-renaming ';
       return this.remote
+        .then(() => networksLib.selectAllNetworksCheckbox(true))
         // Can rename "default" node network group
-        .then(() => networksLib.gotoNodeNetworkSubTab('default'))
-        .clickByCssSelector(pencilSelector)
-        .assertElementAppears(renameSelector, 1000, 'Rename network group textfield appears')
-        .findByCssSelector(renameSelector)
+        .clickByCssSelector(groupDefaultSelector + pencilSelector)
+        .assertElementAppears(groupDefaultSelector + renameSelector, 1000,
+          '"default" rename network group textfield appears')
+        .findByCssSelector(groupDefaultSelector + renameSelector)
           .clearValue()
-          .type('new_default')
+          .type(newdefaultName)
           .type('\uE007')
           .end()
-        .assertElementContainsText(networkGroupsSelector, 'new_default',
-          'New subtab title is shown')
-        .assertElementTextEquals(nameSelector, 'new_default',
-          'It is possible to rename "default" node network group')
+        .assertElementsAppear(newGroupDefaultSelector, 1000,
+          'New "default": "' + newdefaultName + '"" network group name is shown')
         // Can not rename non-default node network group to "default" name
-        .then(() => networksLib.gotoNodeNetworkSubTab('Network_Group_2'))
-        .clickByCssSelector(pencilSelector)
-        .assertElementAppears(renameSelector, 1000, 'Node network group renaming control exists')
-        .findByCssSelector(renameSelector)
+        .clickByCssSelector(oldGroupSelector + pencilSelector)
+        .assertElementAppears(oldGroupSelector + renameSelector, 1000,
+          '"' + oldName + '" node network group renaming control exists')
+        .findByCssSelector(oldGroupSelector + renameSelector)
           .clearValue()
-          .type('new_default')
+          .type(newdefaultName)
           .type('\uE007')
           .end()
         .assertElementAppears(errorRenameSelector, 1000,
@@ -372,15 +464,17 @@ registerSuite(() => {
         .assertElementContainsText(errorRenameSelector + 'span.help-block',
           'This node network group name is already taken', 'True error message presents')
         // Rename non-default node network group
-        .findByCssSelector(renameSelector)
+        .findByCssSelector(oldGroupSelector + renameSelector)
           .clearValue()
-          .type('Network_Group_3')
+          .type(reName)
           .type('\uE007')
           .end()
-        .assertElementContainsText(networkGroupsSelector, 'Network_Group_3',
-          'New subtab title is shown')
-        .assertElementTextEquals(nameSelector, 'Network_Group_3',
-          'New network group name "link" is shown');
+        .assertElementsAppear(newGroupSelector, 1000,
+          'New "' + reName + '"" network group name is shown')
+        // Postcondition check
+        .then(() => networksLib.checkMergedNetworksGrouping(networkNames))
+        .then(() => networksLib.selectAllNetworksCheckbox(false))
+        .then(() => networksLib.checkNetworksGrouping(networkNames));
     },
     'Correct bahaviour of long name for node network group'() {
       var oldName = 'Network_Group_3';
@@ -412,27 +506,37 @@ registerSuite(() => {
     },
     'User can add and rename new node network group after deployment'() {
       this.timeout = 60000;
+      var newName = 'Network_Group_1';
+      var reName = 'Network_Group_2';
+      var netNames = ['new_default', 'fgbhsjdkgbhsdjkbhsdjkbhfjkbhfbjhgjbhsfjgbhsfjgbhsg', reName];
       var progressSelector = '.dashboard-block .progress';
-      var newName = 'Network_Group_2';
+      var groupSelector = 'div[data-name="' + newName + '"] ';
+      var newGroupSelector = 'div[data-name="' + reName + '"] ';
       return this.remote
-        // Can add new node network group after deployment
+        // Precondition
         .then(() => clusterPage.goToTab('Dashboard'))
         .then(() => dashboardPage.startDeployment())
         .assertElementExists(progressSelector, 'Deployment is started')
         .waitForElementDeletion(progressSelector, 45000)
         .then(() => clusterPage.goToTab('Networks'))
-        .then(() => networksLib.createNetworkGroup('Network_Group_1'))
+        .then(() => networksLib.selectAllNetworksCheckbox(true))
+        // Can add new node network group after deployment
+        .then(() => networksLib.createNetworkGroup(newName))
         // Can rename new node network group after deployment
-        .assertElementsAppear(pencilSelector, 1000, '"Pencil" icon appears')
-        .clickByCssSelector(pencilSelector)
-        .assertElementAppears(renameSelector, 1000, 'Node network group renaming control appears')
-        .findByCssSelector(renameSelector)
+        .assertElementsAppear(groupSelector + pencilSelector, 1000, '"Pencil" icon appears')
+        .clickByCssSelector(groupSelector + pencilSelector)
+        .assertElementAppears(groupSelector + renameSelector, 1000,
+          'Node network group renaming control appears')
+        .findByCssSelector(groupSelector + renameSelector)
           .clearValue()
-          .type(newName)
+          .type(reName)
           .type('\uE007')
           .end()
-        .assertElementContainsText(networkGroupsSelector, newName, 'New subtab title is shown')
-        .assertElementTextEquals(nameSelector, newName, 'New network group name "link" is shown');
+        .assertElementsAppear(newGroupSelector, 1000, 'New network group name is shown')
+        // Postcondition check
+        .then(() => networksLib.checkMergedNetworksGrouping(netNames))
+        .then(() => networksLib.selectAllNetworksCheckbox(false))
+        .then(() => networksLib.checkNetworksGrouping(netNames));
     }
   };
 });

@@ -16,22 +16,18 @@
 
 import registerSuite from 'intern!object';
 import Common from 'tests/functional/pages/common';
-import ClusterPage from 'tests/functional/pages/clusters';
+import ClustersPage from 'tests/functional/pages/clusters';
+import ClusterPage from 'tests/functional/pages/cluster';
 import DashboardPage from 'tests/functional/pages/dashboard';
 import ModalWindow from 'tests/functional/pages/modal';
 import Command from 'intern/dojo/node!leadfoot/Command';
 import GenericLib from 'tests/functional/nightly/library/generic';
 import EquipmentLib from 'tests/functional/nightly/library/equipment';
+import NetworksLib from 'tests/functional/nightly/library/networks';
 
 registerSuite(() => {
-  var common,
-    clusterPage,
-    clusterName,
-    dashboardPage,
-    modal,
-    command,
-    genericLib,
-    equipmentLib;
+  var common, clustersPage, clusterPage, clusterName, dashboardPage, modal, command, genericLib,
+    equipmentLib, networksLib;
   var controllerName = '###EpicBoost###_Node_1';
   var computeName = '###EpicBoost###_Node_2';
   var correlationName = '###EpicBoost###';
@@ -48,11 +44,17 @@ registerSuite(() => {
   var filterArray = [nodesCluster + nodesDiscover, nodesCluster, nodesDiscover, 0, 0];
   var nodeSelector = 'div.node';
   var clusterSelector = nodeSelector + '.pending_addition';
+  var toAllNodesSelector = 'input[name="assign_to_all_nodes"]:enabled';
+  var summarySelector = 'div.node-summary ';
+  var settingsSelector = 'div.node-settings';
+  var computeSettingsSelector = clusterSelector + ':last-child ' + settingsSelector;
+  var discoverSettingsSelector = nodeSelector + '.discover ' + settingsSelector;
 
   return {
     name: 'Nodes across environment',
     setup() {
       common = new Common(this.remote);
+      clustersPage = new ClustersPage(this.remote);
       clusterPage = new ClusterPage(this.remote);
       clusterName = common.pickRandomName('VLAN Cluster');
       dashboardPage = new DashboardPage(this.remote);
@@ -60,15 +62,19 @@ registerSuite(() => {
       command = new Command(this.remote);
       genericLib = new GenericLib(this.remote);
       equipmentLib = new EquipmentLib(this.remote);
+      networksLib = new NetworksLib(this.remote);
 
       return this.remote
         .then(() => common.getIn())
         .then(() => common.createCluster(clusterName))
         .then(() => common.addNodesToCluster(nodesController, ['Controller']))
-        .then(() => common.addNodesToCluster(nodesCompute, ['Compute']));
+        .then(() => common.addNodesToCluster(nodesCompute, ['Compute']))
+        .then(() => clusterPage.goToTab('Networks'))
+        .then(() => networksLib.gotoNodeNetworkSubTab('Other'))
+        .clickByCssSelector(toAllNodesSelector)
+        .then(() => networksLib.saveSettings());
     },
     'Node settings pop-up contains environment and node network group names'() {
-      var summarySelector = 'div.node-summary ';
       var descriptionClusterNode = RegExp(
         'Environment.*' + clusterName + '[\\s\\S]*' +
         'Node network group.*default[\\s\\S]*', 'i');
@@ -76,6 +82,8 @@ registerSuite(() => {
         '[\\s\\S]*[^(Environment)].*[^(' + clusterName + ')]' +
         '[\\s\\S]*[^(Node network group)].*[^(default)][\\s\\S]*', 'i');
       return this.remote
+        .assertElementsExist(toAllNodesSelector + ':checked',
+          '"Assign public network to all nodes" option is selected')
         .then(() => genericLib.gotoPage('Equipment'))
         .assertElementsExist('div.nodes-group div.node', '"Equipment" page is not empty')
         // Check correct nodes addiction
@@ -90,9 +98,9 @@ registerSuite(() => {
         .then(() => equipmentLib.renameNode(clusterSelector + ':first-child', controllerName))
         .then(() => equipmentLib.renameNode(clusterSelector + ':last-child', computeName))
         // Check "Pending Addition" node
-        .assertElementsExist(clusterSelector + ':last-child div.node-settings',
+        .assertElementsExist(computeSettingsSelector,
           'Node settings button for Compute node exists')
-        .clickByCssSelector(clusterSelector + ':last-child div.node-settings')
+        .clickByCssSelector(computeSettingsSelector)
         .then(() => modal.waitToOpen())
         .then(() => modal.checkTitle(computeName))
         .assertElementMatchesRegExp(summarySelector, descriptionClusterNode,
@@ -112,11 +120,28 @@ registerSuite(() => {
           .end()
         .then(() => modal.close())
         // Check clean "Discovered" node
-        .clickByCssSelector(nodeSelector + '.discover div.node-settings')
+        .clickByCssSelector(discoverSettingsSelector)
         .then(() => modal.waitToOpen())
         .assertElementMatchesRegExp(summarySelector, descriptionDiscoveredNode,
           'Environment name and "default" node network group name are not observed')
         .then(() => modal.close());
+    },
+    'Check management and public ip fields at unallocated and undeployed node details pop-up'() {
+      return this.remote
+        // Check "Pending Addition" "Controller" node
+        .then(() => equipmentLib.checkGenericIpValues(
+          clusterSelector + ':first-child ' + settingsSelector, 'Controller', false))
+        // Check "Pending Addition" "Compute" node
+        .then(() => equipmentLib.checkGenericIpValues(
+          computeSettingsSelector, 'Compute', false))
+        // Check "Discovered" node
+        .then(() => equipmentLib.checkNoIpValues(discoverSettingsSelector, 'Discovered'))
+        // Check "Error" node
+        .then(() => equipmentLib.checkNoIpValues(
+          nodeSelector + '.error ' + settingsSelector, 'Error'))
+        // Check "Offline" node
+        .then(() => equipmentLib.checkNoIpValues(
+          nodeSelector + '.offline ' + settingsSelector, 'Offline'));
     },
     'Standard and Compact Node view support'() {
       var preSelector = 'input[name="view_mode"][value="';
@@ -141,7 +166,7 @@ registerSuite(() => {
       var btnClearSelector = 'button.btn-clear-search';
       var txtSearchSelector = 'input[name="search"]';
       return this.remote
-        .assertElementsExist('button.btn-search', '"Quick Search" button is exists')
+        .assertElementsExist('button.btn-search', '"Quick Search" button exists')
         .clickByCssSelector('button.btn-search')
         .assertElementsAppear(txtSearchSelector, 1000, 'Textfield for search value appears')
         // Controller search
@@ -151,7 +176,7 @@ registerSuite(() => {
           controllerName + '" is observed')
         .assertElementTextEquals(nodeNameSelector, controllerName,
           'Controller node is searched correctly')
-        .assertElementsExist(btnClearSelector, '"Clear Search" button is exists')
+        .assertElementsExist(btnClearSelector, '"Clear Search" button exists')
         .clickByCssSelector(btnClearSelector)
         .assertElementsExist(nodeSelector, totalNodes, 'Default nodes quantity is observed')
         .assertElementPropertyEquals(txtSearchSelector, 'value', '',
@@ -244,7 +269,7 @@ registerSuite(() => {
     },
     'Sorting support for "Equipment" page'() {
       return this.remote
-        .assertElementsExist('button.btn-sorters', '"Sort Nodes" button is exists')
+        .assertElementsExist('button.btn-sorters', '"Sort Nodes" button exists')
         .clickByCssSelector('button.btn-sorters')
         .assertElementsAppear('div.sorters', 1000, '"Sort" pane is appears')
         .then(() => equipmentLib.checkDefaultSorting('down', inputArray))
@@ -254,7 +279,7 @@ registerSuite(() => {
     'Filtering support for "Equipment" page'() {
       var filterSelector = 'div.filter-by-status';
       return this.remote
-        .assertElementsExist('button.btn-filters', '"Filter Nodes" button is exists')
+        .assertElementsExist('button.btn-filters', '"Filter Nodes" button exists')
         .clickByCssSelector('button.btn-filters')
         .assertElementsAppear('div.filters', 1000, '"Filter" pane is appears')
         .then(() => equipmentLib.checkNodesSegmentation('standard', inputArray, false))
@@ -285,7 +310,7 @@ registerSuite(() => {
       return this.remote
         .then(() => genericLib.gotoPage('Environments'))
         // Start deployment
-        .then(() => clusterPage.goToEnvironment(clusterName))
+        .then(() => clustersPage.goToEnvironment(clusterName))
         .then(() => dashboardPage.startDeployment())
         .assertElementExists('.dashboard-block .progress', 'Deployment is started')
         // Check node groups segmentation
@@ -293,16 +318,34 @@ registerSuite(() => {
         .assertElementNotExists(clusterSelector, '"Pending Addition" node group is gone')
         .then(() => equipmentLib.checkNodesSegmentation('standard', inputArray, true));
     },
+    'Check management and public ip fields at node details pop-up after deployment starts'() {
+      return this.remote
+        // Check "Provisioning" "Controller" node
+        .then(() => equipmentLib.checkGenericIpValues(
+          nodeSelector + '.provisioning:first-child ' + settingsSelector,
+          'Provisioning Controller', false))
+        // Check "Provisioning" "Compute" node
+        .then(() => equipmentLib.checkGenericIpValues(
+          nodeSelector + '.provisioning:last-child ' + settingsSelector,
+          'Provisioning Compute', false))
+        .waitForCssSelector(nodeSelector + '.ready', 30000)
+        // Check "Ready" "Controller" node
+        .then(() => equipmentLib.checkGenericIpValues(
+          nodeSelector + '.ready:first-child ' + settingsSelector, 'Ready Controller', true))
+        // Check "Ready" "Compute" node
+        .then(() => equipmentLib.checkGenericIpValues(
+          nodeSelector + '.ready:last-child ' + settingsSelector, 'Ready Compute', true));
+    },
     '"Offline" node deletion from "Equipment" page'() {
       var offlineSelector = nodeSelector + '.offline';
       return this.remote
         .assertElementsExist(offlineSelector, '"Offline" node is observed')
         .assertElementsExist(offlineSelector + ' button.node-remove-button',
-          'Remove offline node button is exists')
+          'Remove offline node button exists')
         .clickByCssSelector(offlineSelector + ' button.node-remove-button')
         .then(() => modal.waitToOpen())
         .then(() => modal.checkTitle('Remove Node'))
-        .assertElementsExist('button.btn-danger.btn-delete', 'Remove button is exists')
+        .assertElementsExist('button.btn-danger.btn-delete', 'Remove button exists')
         .clickByCssSelector('button.btn-danger.btn-delete')
         .then(() => modal.waitToClose())
         .then(() => command.refresh())
