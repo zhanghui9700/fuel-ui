@@ -1021,7 +1021,7 @@ export var ShowNodeInfoDialog = React.createClass({
     renamingMixin('hostname')
   ],
   renderableAttributes: [
-    'cpu', 'disks', 'interfaces', 'memory', 'system', 'numa_topology', 'attributes'
+    'cpu', 'disks', 'interfaces', 'memory', 'system', 'numa_topology', 'config', 'attributes'
   ],
   getDefaultProps() {
     return {
@@ -1483,7 +1483,7 @@ export var ShowNodeInfoDialog = React.createClass({
         groups.push('attributes');
       }
     }
-
+    if (this.state.VMsConf) groups.push('config');
     return _.intersection(this.renderableAttributes, groups);
   },
   renderGroupContent(group, groupIndex) {
