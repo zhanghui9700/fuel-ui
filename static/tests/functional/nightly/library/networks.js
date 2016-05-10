@@ -27,6 +27,9 @@ NetworksLib.prototype = {
   btnSaveSelector: 'button.apply-btn',
   btnCancelSelector: 'button.btn-revert-changes',
   btnVerifySelector: 'button.verify-networks-btn',
+  allNetSelector: 'input.show-all-networks',
+  netGroupListSelector: 'ul.node_network_groups ',
+  netGroupNameSelector: 'div.network-group-name ',
   defaultPlaceholder: '127.0.0.1',
 
   gotoNodeNetworkSubTab(groupName) {
@@ -42,17 +45,15 @@ NetworksLib.prototype = {
         .end();
   },
   checkNetworkInitialState(networkName) {
-    var chain = this.remote;
-    var mainDiv = 'div.' + networkName.toLowerCase() + ' ';
+    var mainDiv = 'div.col-xs-10 div:first-child div.' + networkName.toLowerCase() + ' ';
     var properNames = ['Public', 'Storage', 'Management', 'Baremetal', 'Private'];
+    var chain = this.remote;
     if (properNames.indexOf(networkName) === -1) {
       throw new Error('Invalid input value. Check networkName: "' + networkName +
         '" parameter and restart test.');
     }
-
     // Generic components
-    chain = chain.then(() => this.gotoNodeNetworkSubTab('default'))
-    .assertElementDisabled(this.btnSaveSelector, '"Save Settings" button is disabled')
+    chain = chain.assertElementDisabled(this.btnSaveSelector, '"Save Settings" button is disabled')
     .assertElementDisabled(this.btnCancelSelector, '"Cancel Changes" button is disabled')
     .assertElementNotExists('div.has-error', 'No Network errors are observed')
     // CIDR
@@ -138,6 +139,9 @@ NetworksLib.prototype = {
         // IP Ranges
         .assertElementPropertyEquals(mainDiv + 'div.ip_ranges input[name*="range-start"]',
           'value', '192.168.1.1', networkName + ' "Start IP Range" textfield  has default value')
+        .catch(() => this.remote.assertElementPropertyEquals(
+          mainDiv + 'div.ip_ranges input[name*="range-start"]', 'value', '192.168.1.2',
+          networkName + ' "Start IP Range" textfield  has default value'))
         .assertElementPropertyEquals(mainDiv + 'div.ip_ranges input[name*="range-end"]',
           'value', '192.168.1.254', networkName + ' "End IP Range" textfield has default value')
         // VLAN
@@ -150,6 +154,9 @@ NetworksLib.prototype = {
         // IP Ranges
         .assertElementPropertyEquals(mainDiv + 'div.ip_ranges input[name*="range-start"]',
           'value', '192.168.0.1', networkName + ' "Start IP Range" textfield  has default value')
+        .catch(() => this.remote.assertElementPropertyEquals(
+          mainDiv + 'div.ip_ranges input[name*="range-start"]', 'value', '192.168.0.2',
+          networkName + ' "Start IP Range" textfield  has default value'))
         .assertElementPropertyEquals(mainDiv + 'div.ip_ranges input[name*="range-end"]',
           'value', '192.168.0.254', networkName + ' "End IP Range" textfield has default value')
         // VLAN
@@ -367,45 +374,130 @@ NetworksLib.prototype = {
   },
   createNetworkGroup(groupName) {
     return this.remote
-      .assertElementEnabled('button.add-nodegroup-btn',
-        '"Add New Node Network Group" button is enabled')
-      .clickByCssSelector('button.add-nodegroup-btn')
-      .then(() => this.modal.waitToOpen())
-      .then(() => this.modal.checkTitle('Add New Node Network Group'))
-      .assertElementEnabled('input.node-group-input-name', '"Name" textfield is enabled')
-      .setInputValue('input.node-group-input-name', groupName)
-      .then(() => this.modal.clickFooterButton('Add Group'))
-      .then(() => this.modal.waitToClose())
-      .assertElementDisappears('.network-group-name .explanation', 1000, 'New subtab is shown')
-      .findByCssSelector('ul.node_network_groups li.active')
-        .assertElementTextEquals('a', groupName,
-          'New network group is appears, selected and name is correct')
+      .findByCssSelector(this.allNetSelector)
+        .isSelected()
+        .then((isSelected) => this.createNetworkGroup_Body(groupName, true, isSelected))
         .end()
-      .assertElementTextEquals('div.network-group-name button.btn-link', groupName,
-        '"' + groupName + '" node network group title appears')
-
+      .catch(() => this.createNetworkGroup_Body(groupName, false, false))
       .catch((error) => {
         this.remote.then(() => this.modal.close());
         throw new Error('Unexpected error via network group creation: ' + error);
       });
   },
+  createNetworkGroup_Body(groupName, allNetExists, allNetSelected) {
+    var groupSelector = 'div[data-name="' + groupName + '"] ';
+    var btnAddGroupSelector = '.add-nodegroup-btn';
+    var groupNameSelector = 'input.node-group-input-name';
+    var chain = this.remote;
+    // Precondition check
+    if (allNetExists) {
+      if (allNetSelected) {
+        chain = chain.assertElementEnabled(this.allNetSelector + ':checked',
+          '"Show All Networks" checkbox is enabled and selected before new group creation');
+      } else {
+        chain = chain.assertElementNotSelected(this.allNetSelector + ':enabled',
+          '"Show All Networks" checkbox is enabled and not selected before new group creation');
+      }
+    } else {
+      chain = chain.assertElementNotExists(this.allNetSelector,
+          '"Show All Networks" checkbox not exists before new group creation');
+    }
+    // Generic body
+    chain = chain.assertElementEnabled(btnAddGroupSelector, '"Add Network Group" button is enabled')
+    .clickByCssSelector(btnAddGroupSelector)
+    .then(() => this.modal.waitToOpen())
+    .then(() => this.modal.checkTitle('Add New Node Network Group'))
+    .assertElementEnabled(groupNameSelector, '"Modal name" textfield is enabled')
+    .setInputValue(groupNameSelector, groupName)
+    .then(() => this.modal.clickFooterButton('Add Group'))
+    .then(() => this.modal.waitToClose());
+    // Postcondition check
+    if (allNetSelected) {
+      chain = chain.assertElementAppears(groupSelector, 1000,
+        '"' + groupName + '" node network group appears at "All Networks" pane')
+      .assertElementEnabled(this.allNetSelector + ':checked',
+        '"Show All Networks" checkbox is enabled and selected after new group creation');
+    } else {
+      chain = chain.assertElementDisappears(this.netGroupNameSelector + '.explanation', 1000,
+        'New subtab is shown')
+      .findByCssSelector(this.netGroupListSelector + 'li.active')
+        .assertElementTextEquals('a', groupName,
+          'New network group is appears, selected and name is correct')
+        .end()
+      .assertElementTextEquals(this.netGroupNameSelector + '.btn-link', groupName,
+        '"' + groupName + '" node network group title appears')
+      .assertElementNotSelected(this.allNetSelector + ':enabled',
+        '"Show All Networks" checkbox is enabled and not selected after new group creation');
+    }
+    return chain;
+  },
   deleteNetworkGroup(groupName) {
+    var netGroupLeftSelector = this.netGroupListSelector + 'a';
     return this.remote
       .then(() => this.gotoNodeNetworkSubTab(groupName))
-      .assertElementAppears('.glyphicon-remove', 1000, 'Remove icon is shown')
-      .clickByCssSelector('.glyphicon-remove')
-      .then(() => this.modal.waitToOpen())
-      .then(() => this.modal.checkTitle('Remove Node Network Group'))
-      .then(() => this.modal.clickFooterButton('Delete'))
-      .then(() => this.modal.waitToClose())
-      .assertElementAppears('.network-group-name .explanation', 1000, 'Default subtab is shown')
-      .assertElementNotContainsText('ul.node_network_groups', groupName,
-        '"' + groupName + '" node network group disappears from network group list')
-      .assertElementNotContainsText('div.network-group-name button.btn-link', groupName,
-        '"' + groupName + '" node network group title disappears from "Networks" tab')
+      .catch(() => this.gotoNodeNetworkSubTab('All Networks'))
+      .findAllByCssSelector(this.netGroupNameSelector)
+        .then((netGroupNames) => {
+          if (netGroupNames.length >= 2) {
+            return this.deleteNetworkGroup_Body(groupName, true, netGroupNames.length);
+          } else {
+            return this.remote.findAllByCssSelector(netGroupLeftSelector)
+            .then((netGroupsLeft) => {
+              if (netGroupsLeft.length >= 2) {
+                return this.deleteNetworkGroup_Body(groupName, false, netGroupsLeft.length);
+              } else {
+                throw new Error('Cannot delete last (default) node network group');
+              }
+            })
+            .end();
+          }
+        })
+        .end()
       .catch((error) => {
         throw new Error('Unexpected error via network group deletion: ' + error);
       });
+  },
+  deleteNetworkGroup_Body(groupName, allNetSelected, numGroups) {
+    var groupSelector = 'div[data-name="' + groupName + '"] ';
+    var removeSelector = groupSelector + '.glyphicon-remove';
+    var chain = this.remote;
+    // Precondition check
+    if (allNetSelected) {
+      chain = chain.assertElementEnabled(this.allNetSelector + ':checked',
+        '"Show All Networks" checkbox is enabled and selected before group deletion');
+    } else {
+      chain = chain.assertElementNotSelected(this.allNetSelector + ':enabled',
+        '"Show All Networks" checkbox is enabled and not selected before group deletion');
+    }
+    // Generic body
+    chain = chain.assertElementAppears(removeSelector, 1000, 'Remove icon is shown')
+    .clickByCssSelector(removeSelector)
+    .then(() => this.modal.waitToOpen())
+    .then(() => this.modal.checkTitle('Remove Node Network Group'))
+    .then(() => this.modal.clickFooterButton('Delete'))
+    .then(() => this.modal.waitToClose());
+    // Postcondition check
+    if ((numGroups > 2 && !allNetSelected) || (numGroups <= 2)) {
+      chain = chain.assertElementAppears(this.netGroupNameSelector + '.explanation', 1000,
+        'Default subtab is shown')
+      .assertElementNotContainsText(this.netGroupListSelector, groupName,
+        '"' + groupName + '" node network group disappears from network group list')
+      .assertElementNotContainsText(this.netGroupNameSelector + '.btn-link', groupName,
+        '"' + groupName + '" node network group title disappears from "Networks" tab');
+      if (numGroups <= 2) {
+        chain = chain.assertElementNotExists(this.allNetSelector,
+          '"Show All Networks" checkbox not exists after group deletion');
+      } else {
+        chain = chain.assertElementNotSelected(this.allNetSelector + ':enabled',
+          '"Show All Networks" checkbox is enabled and not selected after group deletion');
+      }
+    } else {
+      chain = chain.assertElementDisappears(groupSelector, 1000,
+        '"' + groupName + '" node network group disappears from "All Networks" subtab')
+      .assertElementEnabled(this.allNetSelector + ':checked',
+          '"Show All Networks" checkbox is enabled and selected after group deletion');
+    }
+    return chain;
   },
   checkNeutronL3ForBaremetal() {
     return this.remote
@@ -505,11 +597,8 @@ NetworksLib.prototype = {
         networkName + ' "Use the whole CIDR" checkbox is enabled before changing')
       .findByCssSelector(cidrSelector)
         .isSelected()
-        .then(
-          (cidrStatus) => this.selectCidrWay(
-            networkName, cidrStatus, cidrSelector, ipStartSelector, ipEndSelector
-          )
-        )
+        .then((cidrStatus) => this.selectCidrWay(
+          networkName, cidrStatus, cidrSelector, ipStartSelector, ipEndSelector))
         .end()
       .assertElementPropertyEquals(ipStartSelector, 'value',
         '192.168.' + defaultIpRange[networkName] + '.1',
@@ -554,9 +643,8 @@ NetworksLib.prototype = {
     var ipEndSelector = 'input[name*="range-end"]';
     chain = chain.assertElementEnabled(addRangeSelector, 'IP range add button enabled')
     .findAllByCssSelector(rowRangeSelector)
-      .then(
-        (elements) => this.checkIpRange(addRangeSelector, rowRangeSelector, elements.length + 1)
-      )
+      .then((elements) =>
+        this.checkIpRange(addRangeSelector, rowRangeSelector, elements.length + 1))
       .end()
     .assertElementEnabled(lastRangeSelector + ipStartSelector,
       networkName + ' new "Start IP Range" textfield is enabled')
@@ -707,6 +795,51 @@ NetworksLib.prototype = {
         'True error message is displayed for intersection between' +
         networkNameToEdit + ' and ' + networkName + ' networks')
       .then(() => this.cancelChanges());
+  },
+  checkMergedNetworksGrouping(networkNamesArray) {
+    // Input array "networkNamesArray": [name#1, name#2, ...] by their position on page
+    var netSelector1 = 'div.col-xs-10 div:nth-child(';
+    var netSelector2 = ') ' + this.netGroupNameSelector + 'div.name';
+    var chain = this.remote;
+    chain = chain.assertElementsAppear(this.allNetSelector + ':enabled:checked', 1000,
+      '"Show All Networks" checkbox is enabled and selected');
+    for (var i = 1; i <= networkNamesArray.length; i++) {
+      chain = chain.waitForCssSelector(netSelector1 + i + netSelector2, 1000)
+      .assertElementContainsText(netSelector1 + i + netSelector2, networkNamesArray[i - 1],
+        '"' + networkNamesArray[i - 1] + '" network group true positioned and has correct name');
+    }
+    return chain;
+  },
+  checkNetworksGrouping(networkNamesArray) {
+    // Input array "networkNamesArray": [name#1, name#2, ...] by their position on page
+    var netSelector1 = this.netGroupListSelector + 'li:nth-child(';
+    var netSelector2 = ') a';
+    var chain = this.remote;
+    for (var i = 2; i < networkNamesArray.length + 2; i++) {
+      chain = chain.waitForCssSelector(netSelector1 + i + netSelector2, 1000)
+      .assertElementContainsText(netSelector1 + i + netSelector2, networkNamesArray[i - 2],
+        '"' + networkNamesArray[i - 2] + '" network group true positioned and has correct name');
+    }
+    return chain;
+  },
+  selectAllNetworksCheckbox(toSelectBool) {
+    // Input var "toSelectBool": true - select checkbox, false - unselect
+    return this.remote
+      .assertElementsExist(this.allNetSelector, '"Show All Networks" checkbox exists')
+      .findByCssSelector(this.allNetSelector)
+        .isSelected()
+        .then((isSelected) => {
+          if (isSelected && !toSelectBool) {
+            return this.remote.clickByCssSelector(this.allNetSelector)
+            .assertElementNotSelected(this.allNetSelector,
+              '"Show All Networks" checkbox is not selected');
+          } else if (!isSelected && toSelectBool) {
+            return this.remote.clickByCssSelector(this.allNetSelector)
+            .assertElementSelected(this.allNetSelector,
+              '"Show All Networks" checkbox is selected');
+          }
+        })
+        .end();
   }
 };
 

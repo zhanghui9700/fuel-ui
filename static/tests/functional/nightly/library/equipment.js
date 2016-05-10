@@ -14,17 +14,21 @@
  * under the License.
  **/
 
+import ModalWindow from 'tests/functional/pages/modal';
 import GenericLib from 'tests/functional/nightly/library/generic';
 import 'tests/functional/helpers';
 
 function EquipmentLib(remote) {
   this.remote = remote;
+  this.modal = new ModalWindow(remote);
   this.generic = new GenericLib(remote);
 }
 
 EquipmentLib.prototype = {
   constructor: EquipmentLib,
   nodeSelector: 'div.node',
+  managementIpSelector: 'div.node-summary div.management-ip',
+  publicIpSelector: 'div.node-summary div.public-ip',
 
   checkNodesSegmentation(nodeView, nodesQuantity, provisioningFlag) {
     // Input array: Nodes quantity by groups.
@@ -165,6 +169,30 @@ EquipmentLib.prototype = {
         });
       })
       .end();
+  },
+  checkGenericIpValues(nodeSelector, nodeName, isReadyCluster) {
+    var genericIpValue = RegExp('[\\s\\S]*(([0-9]{1,3}(\.|)){4})|(N/A)[\\s\\S]*', 'i');
+    if (isReadyCluster) {
+      genericIpValue = RegExp('[\\s\\S]*([0-9]{1,3}(\.|)){4}[\\s\\S]*', 'i');
+    }
+    return this.remote
+      .clickByCssSelector(nodeSelector)
+      .then(() => this.modal.waitToOpen())
+      .assertElementMatchesRegExp(this.managementIpSelector, genericIpValue,
+        '"Management IP" field for "' + nodeName + '" node has default value')
+      .assertElementMatchesRegExp(this.publicIpSelector, genericIpValue,
+        '"Public IP" field for "' + nodeName + '" node has default value')
+      .then(() => this.modal.close());
+  },
+  checkNoIpValues(nodeSelector, nodeName) {
+    return this.remote
+      .clickByCssSelector(nodeSelector)
+      .then(() => this.modal.waitToOpen())
+      .assertElementNotExists(this.managementIpSelector,
+        '"Management IP" field for "' + nodeName + '" node not exists')
+      .assertElementNotExists(this.publicIpSelector,
+        '"Public IP" field for "' + nodeName + '" node not exists')
+      .then(() => this.modal.close());
   }
 };
 

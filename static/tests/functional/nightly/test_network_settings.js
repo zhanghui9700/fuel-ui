@@ -20,10 +20,7 @@ import ClusterPage from 'tests/functional/pages/cluster';
 import NetworksLib from 'tests/functional/nightly/library/networks';
 
 registerSuite(() => {
-  var common,
-    clusterPage,
-    clusterName,
-    networksLib;
+  var common, clusterPage, clusterName, networksLib;
 
   return {
     name: 'Neutron VLAN segmentation',
@@ -75,6 +72,7 @@ registerSuite(() => {
     },
     'Check "Node Network Groups" segment on "Networks" tab'() {
       return this.remote
+        .then(() => networksLib.gotoNodeNetworkSubTab('default'))
         .then(() => networksLib.checkNetworkInitialState('Public'))
         .then(() => networksLib.checkNetworkInitialState('Storage'))
         .then(() => networksLib.checkNetworkInitialState('Management'));
@@ -166,10 +164,7 @@ registerSuite(() => {
 });
 
 registerSuite(() => {
-  var common,
-    clusterPage,
-    clusterName,
-    networksLib;
+  var common, clusterPage, clusterName, networksLib;
 
   return {
     name: 'Neutron tunneling segmentation',
@@ -181,18 +176,15 @@ registerSuite(() => {
 
       return this.remote
         .then(() => common.getIn())
-        .then(
-          () => common.createCluster(
-            clusterName,
-            {
-              'Networking Setup'() {
-                return this.remote
-                  .clickByCssSelector('input[value*="neutron"][value$=":vlan"]')
-                  .clickByCssSelector('input[value*="neutron"][value$=":tun"]');
-              }
+        .then(() => common.createCluster(clusterName,
+          {
+            'Networking Setup'() {
+              return this.remote
+                .clickByCssSelector('input[value*="neutron"][value$=":vlan"]')
+                .clickByCssSelector('input[value*="neutron"][value$=":tun"]');
             }
-          )
-        )
+          }
+        ))
         .then(() => clusterPage.goToTab('Networks'));
     },
     'Check "Node Network Groups" segment on "Networks" tab'() {
