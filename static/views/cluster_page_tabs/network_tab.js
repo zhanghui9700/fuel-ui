@@ -1296,7 +1296,7 @@ var NodeNetworkGroup = React.createClass({
               disabled={locked}
               configurationTemplateExists={configurationTemplateExists}
               verificationErrorField={
-                _.pluck(_.filter(verificationErrors, {network: network.id}), 'field')
+                _.map(_.filter(verificationErrors, {network: network.id}), 'field')
               }
               currentNodeNetworkGroup={nodeNetworkGroup}
             />

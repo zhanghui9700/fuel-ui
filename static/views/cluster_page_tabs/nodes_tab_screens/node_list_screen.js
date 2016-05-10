@@ -227,8 +227,8 @@ NodeListScreen = React.createClass({
       });
       if (
         !_.isEqual(
-          _.pluck(normalizedFilters, 'values'),
-          _.pluck(this.state.activeFilters, 'values')
+          _.map(normalizedFilters, 'values'),
+          _.map(this.state.activeFilters, 'values')
         )
       ) {
         this.updateFilters(normalizedFilters);
@@ -378,7 +378,7 @@ NodeListScreen = React.createClass({
         });
         break;
       case 'manufacturer':
-        options = _.uniq(this.props.nodes.pluck('manufacturer')).map((manufacturer) => {
+        options = _.uniq(this.props.nodes.map('manufacturer')).map((manufacturer) => {
           manufacturer = manufacturer || '';
           return {
             name: manufacturer.replace(/\s/g, '_'),
@@ -627,7 +627,7 @@ MultiSelectControl = React.createClass({
   onChange(name, checked, isLabel) {
     if (!this.props.dynamicValues) {
       var values = name === 'all' ?
-          checked ? _.pluck(this.props.options, 'name') : []
+          checked ? _.map(this.props.options, 'name') : []
         :
           checked ? _.union(this.props.values, [name]) : _.difference(this.props.values, [name]);
       this.props.onChange(values);
@@ -840,10 +840,10 @@ ManagementPanel = React.createClass({
     this.changeScreen(action, true);
   },
   showDeleteNodesDialog() {
-    DeleteNodesDialog.show({nodes: this.props.nodes, cluster: this.props.cluster})
-      .done(_.partial(this.props.selectNodes,
-        _.pluck(this.props.nodes.filter({status: 'ready'}), 'id'), null, true)
-      );
+    var {cluster, nodes, selectNodes} = this.props;
+    DeleteNodesDialog
+      .show({nodes, cluster})
+      .done(_.partial(selectNodes, _.map(nodes.filter({status: 'ready'}), 'id'), null, true));
   },
   hasChanges() {
     return this.props.hasChanges;
@@ -1406,10 +1406,8 @@ ManagementPanel = React.createClass({
                                 {filter.isNumberRange ?
                                   _.uniq(filter.values).join(' - ')
                                 :
-                                  _.pluck(
-                                    _.filter(options, (option) => {
-                                      return _.contains(filter.values, option.name);
-                                    })
+                                  _.map(
+                                    _.filter(options, ({name}) => _.contains(filter.values, name))
                                   , 'label').join(', ')
                                 }
                               </span>
@@ -1548,7 +1546,7 @@ NodeLabelsPanel = React.createClass({
   },
   isSavingPossible() {
     return !this.state.actionInProgress && this.hasChanges() &&
-      _.all(_.pluck(this.state.labels, 'error'), _.isNull);
+      _.all(_.map(this.state.labels, 'error'), _.isNull);
   },
   revertChanges() {
     return this.props.toggleLabelsPanel();
@@ -1930,7 +1928,7 @@ SelectAllMixin = {
         }
         label={i18n('common.select_all')}
         wrapperClassName='select-all pull-right'
-        onChange={_.partial(selectNodes, _.pluck(nodesToSelect, 'id'))}
+        onChange={_.partial(selectNodes, _.map(nodesToSelect, 'id'))}
       />
     );
   }
@@ -2151,7 +2149,7 @@ NodeGroup = React.createClass({
   mixins: [SelectAllMixin],
   render() {
     var availableNodes = this.props.nodes.filter((node) => node.isSelectable());
-    var nodesWithRestrictionsIds = _.pluck(_.filter(availableNodes, (node) => {
+    var nodesWithRestrictionsIds = _.map(_.filter(availableNodes, (node) => {
       return _.any(this.props.rolesWithLimitReached, (role) => !node.hasRole(role));
     }), 'id');
     return (

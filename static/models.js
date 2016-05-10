@@ -122,7 +122,7 @@ var restrictionMixin = models.restrictionMixin = {
       );
     return {
       result: !!satisfiedRestrictions.length,
-      message: _.compact(_.pluck(satisfiedRestrictions, 'message')).join(' ')
+      message: _.compact(_.map(satisfiedRestrictions, 'message')).join(' ')
     };
   },
   expandLimits(limits) {
@@ -428,7 +428,7 @@ models.Node = BaseModel.extend({
       } else if (resourceName === 'ram') {
         resource = this.get('meta').memory.total;
       } else if (resourceName === 'disks') {
-        resource = _.pluck(this.get('meta').disks, 'size').sort((a, b) => a - b);
+        resource = _.map(this.get('meta').disks, 'size').sort((a, b) => a - b);
       } else if (resourceName === 'disks_amount') {
         resource = this.get('meta').disks.length;
       } else if (resourceName === 'interfaces') {
@@ -483,9 +483,9 @@ models.Node = BaseModel.extend({
     return status === 'discover' || status === 'error';
   },
   getRolesSummary(releaseRoles) {
-    return _.map(this.sortedRoles(releaseRoles.pluck('name')), (role) => {
-      return releaseRoles.find({name: role}).get('label');
-    }).join(', ');
+    return _.map(this.sortedRoles(releaseRoles.pluck('name')),
+      (role) => releaseRoles.find({name: role}).get('label')
+    ).join(', ');
   },
   getStatusSummary() {
     // 'offline' status has higher priority
@@ -941,7 +941,7 @@ models.Interface = Backbone.DeepModel
     },
     getSlaveInterfaces() {
       if (!this.isBond()) return [this];
-      var slaveNames = _.pluck(this.get('slaves'), 'name');
+      var slaveNames = _.map(this.get('slaves'), 'name');
       return this.collection.filter((ifc) => _.contains(slaveNames, ifc.get('name')));
     },
     validate(attrs, options) {

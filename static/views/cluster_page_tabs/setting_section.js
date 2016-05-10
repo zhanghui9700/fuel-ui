@@ -73,7 +73,7 @@ var SettingSection = React.createClass({
     return setting.toggleable || _.contains(['checkbox', 'radio'], setting.type);
   },
   getValuesToCheck(setting, valueAttribute) {
-    return setting.values ? _.without(_.pluck(setting.values, 'data'), setting[valueAttribute]) :
+    return setting.values ? _.without(_.map(setting.values, 'data'), setting[valueAttribute]) :
       [!setting[valueAttribute]];
   },
   checkValues(values, path, currentValue, restriction) {

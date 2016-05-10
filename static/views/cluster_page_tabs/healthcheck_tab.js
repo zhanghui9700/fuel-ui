@@ -139,7 +139,7 @@ var HealthcheckTabContent = React.createClass({
     var testsetIds = this.props.testsets.pluck('id');
     this.setState({actionInProgress: true});
     _.each(testsetIds, (testsetId) => {
-      var testsToRun = _.pluck(this.props.tests.filter({
+      var testsToRun = _.map(this.props.tests.filter({
         testset: testsetId,
         checked: true
       }), 'id');
