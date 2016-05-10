@@ -36,6 +36,7 @@ class DashboardLib {
     this.btnDeploySelector = this.changesListPaneSelector + '.deploy-btn';
     this.btnProvisionSelector = this.changesListPaneSelector + '.btn-provision';
     this.btnDeploymentSelector = this.changesListPaneSelector + '.btn-deploy-nodes';
+    this.stopDeployBtn = 'button.stop-deployment-btn';
     this.btnDropdownSelector = this.changesListPaneSelector + '.btn.dropdown-toggle';
     this.btnChooseNodesSelector = this.changesListPaneSelector + '.btn-select-nodes';
     this.taskAlertsSelector = this.deployPaneSelector + 'div.task-alerts';
@@ -513,6 +514,34 @@ class DashboardLib {
     .assertElementMatchesRegExp(btnGenericDeploySel, RegExp(btnGenericDeployName, 'i'),
       paneName + ' button description is correct');
     return chain;
+  }
+
+  checkWarningNotContainsNote(warningText) {
+    var textWarningSelector = '.display-changes-dialog > div ';
+    var firstWarning = '> :nth-child(1) .instruction';
+    var secondWarning = '> :nth-child(2) .instruction';
+    return this.remote
+      .clickByCssSelector(this.btnDeploySelector)
+      .then(() => this.modal.waitToOpen())
+      .then(() => this.modal.checkTitle('Deploy Changes'))
+      .assertElementNotContainsText(textWarningSelector + firstWarning, warningText,
+              'Warning does not contain a note about configuration changes')
+      .assertElementNotContainsText(textWarningSelector + secondWarning, warningText,
+              'Warning does not contain a note about configuration changes')
+      .then(() => this.modal.clickFooterButton('Cancel'))
+      .then(() => this.modal.waitToClose());
+  }
+
+  checkWarningContainsNote(warningText) {
+    var warningSelector = '.instruction';
+    return this.remote
+      .clickByCssSelector(this.btnDeploySelector)
+      .then(() => this.modal.waitToOpen())
+      .then(() => this.modal.checkTitle('Deploy Changes'))
+      .assertElementContainsText(warningSelector, warningText,
+              'Warning contains a note about configuration changes')
+      .then(() => this.modal.clickFooterButton('Cancel'))
+      .then(() => this.modal.waitToClose());
   }
 }
 
