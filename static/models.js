@@ -807,25 +807,20 @@ models.Settings = Backbone.DeepModel
       });
       return _.intersection(this.groupList, groups);
     },
-    updateSettings(settings, models, updateNetworkSettings) {
+    updateSettings(settings, models, updateNetworkSettings = false) {
       _.each(this.attributes, (section, sectionName) => {
-        if (
-          updateNetworkSettings === true && section.metadata.group !== 'network' ||
-          updateNetworkSettings === false && section.metadata.group === 'network'
-        ) return;
+        var isNetworkGroup = section.metadata.group === 'network';
+        if (updateNetworkSettings === isNetworkGroup) {
+          _.each(section, (setting, settingName) => {
+            // do not update hidden settings (hack for #1442143)
+            if (setting.type === 'hidden') return;
 
-        _.each(section, (setting, settingName) => {
-          if (
-            updateNetworkSettings === true && setting.group !== 'network' ||
-            updateNetworkSettings === false && setting.group === 'network'
-          ) return;
-
-          // do not update hidden settings (hack for #1442143)
-          if (setting.type === 'hidden') return;
-
-          var path = utils.makePath(sectionName, settingName);
-          this.set(path, settings.get(path), {silent: true, validate: false});
-        });
+            if (isNetworkGroup || setting.group !== 'network') {
+              var path = utils.makePath(sectionName, settingName);
+              this.set(path, settings.get(path), {silent: true, validate: false});
+            }
+          });
+        }
       });
 
       this.mergePluginSettings();
