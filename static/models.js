@@ -391,6 +391,13 @@ models.Cluster = BaseModel.extend({
   },
   hasChanges({configModels}) {
     return this.get('nodes').hasChanges() || this.isConfigurationChanged({configModels});
+  },
+  getAllocatedRoles() {
+    return _.chain(this.get('nodes').filter({pending_deletion: false}))
+      .map((node) => node.get('roles').concat(node.get('pending_roles')))
+      .flatten()
+      .uniq()
+      .value();
   }
 });
 
