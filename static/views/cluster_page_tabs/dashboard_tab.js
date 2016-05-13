@@ -790,14 +790,8 @@ var ClusterActionsPanel = React.createClass({
   },
   render() {
     var {cluster, configModels} = this.props;
-    var nodes = cluster.get('nodes');
-    if (
-      nodes.length &&
-      !cluster.hasChanges({configModels}) &&
-      !cluster.needsRedeployment()
-    ) return null;
 
-    if (!nodes.length) {
+    if (!cluster.get('nodes').length) {
       return (
         <div className='row'>
           <div className='dashboard-block clearfix'>
@@ -817,6 +811,8 @@ var ClusterActionsPanel = React.createClass({
         </div>
       );
     }
+
+    if (!cluster.isDeploymentPossible({configModels})) return null;
     return <div>{this.renderActions()}</div>;
   }
 });

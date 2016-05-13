@@ -367,8 +367,11 @@ models.Cluster = BaseModel.extend({
   },
   isDeploymentPossible({configModels}) {
     return this.get('release').get('state') !== 'unavailable' &&
-      !this.task({group: 'deployment', active: true}) &&
-      (this.get('status') !== 'operational' || this.hasChanges({configModels}));
+      !this.task({group: 'deployment', active: true}) && (
+        this.get('status') !== 'operational' ||
+        this.hasChanges({configModels}) ||
+        this.needsRedeployment()
+      );
   },
   isConfigurationChanged({configModels}) {
     var deployedSettings = this.get('deployedSettings');
