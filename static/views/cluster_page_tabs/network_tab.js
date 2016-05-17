@@ -1791,8 +1791,7 @@ var NetworkSettings = React.createClass({
                 var settingsToDisplay = _.compact(_.map(section, (setting, settingName) => {
                   if (
                     (section.metadata.group || setting.group === 'network') &&
-                    settingName !== 'metadata' &&
-                    !this.checkRestrictions('hide', setting).result
+                    settings.isSettingVisible(setting, settingName, this.props.configModels)
                   ) return settingName;
                 }));
                 if (_.isEmpty(settingsToDisplay) && !settings.isPlugin(section)) return null;

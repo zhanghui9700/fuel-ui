@@ -256,9 +256,8 @@ var SettingsTab = React.createClass({
             var calculatedGroup = settings.sanitizeGroup(settingGroup);
             var pickedSettings = _.compact(_.map(section, (setting, settingName) => {
               if (
-                settingName !== 'metadata' &&
-                settings.sanitizeGroup(setting.group) === calculatedGroup &&
-                !this.checkRestrictions('hide', setting).result
+                settings.isSettingVisible(setting, settingName, this.state.configModels) &&
+                settings.sanitizeGroup(setting.group) === calculatedGroup
               ) return settingName;
             }));
             var hasErrors = _.any(pickedSettings, (settingName) => {
@@ -300,10 +299,9 @@ var SettingsTab = React.createClass({
               {_.map(sortedSections, (sectionName) => {
                 var settingsToDisplay = selectedGroup[sectionName].settings ||
                   _.compact(_.map(settings.get(sectionName), (setting, settingName) => {
-                    if (
-                      settingName !== 'metadata' &&
-                      !this.checkRestrictions('hide', setting).result
-                    ) return settingName;
+                    if (settings.isSettingVisible(setting, settingName, this.state.configModels)) {
+                      return settingName;
+                    }
                   }));
                 return <SettingSection
                   {... _.pick(this.state, 'initialAttributes', 'settingsForChecks', 'configModels')}

@@ -1358,17 +1358,12 @@ export var ShowNodeInfoDialog = React.createClass({
       .map(
         (sectionName) => {
           var metadata = nodeAttributes.get(utils.makePath(sectionName, 'metadata'));
-          var settingsToDisplay = _.chain(_.keys(nodeAttributes.attributes[sectionName]))
-            .without('metadata')
-            .filter(
-              (attribute) => !nodeAttributes.checkRestrictions(
-                configModels,
-                'hide',
-                nodeAttributes.get(utils.makePath(sectionName, attribute))
-              ).result
-            )
-            .value();
-
+          var settingsToDisplay = _.compact(_.map(nodeAttributes.attributes[sectionName],
+            (setting, settingName) => {
+              if (nodeAttributes.isSettingVisible(setting, settingName, configModels)) {
+                return settingName;
+              }
+            }));
           return (
             <SettingSection
               {... {sectionName, settingsToDisplay, cluster, configModels}}
