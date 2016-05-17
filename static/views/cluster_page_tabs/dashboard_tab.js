@@ -423,14 +423,11 @@ var ClusterActionsPanel = React.createClass({
           function(cluster) {
             return cluster.needsRedeployment() && {
               error: [
-                <InstructionElement
+                <div
                   key='unsuccessful_deploy'
-                  description='unsuccessful_deploy'
-                  link={{
-                    url: 'operations.html#troubleshooting',
-                    title: 'user_guide'
-                  }}
-                />
+                  className='instruction'>
+                  {i18n(ns + 'unsuccessful_deploy')}
+                </div>
               ]
             };
           },
@@ -594,11 +591,9 @@ var ClusterActionsPanel = React.createClass({
     var alerts = this.validate(action);
 
     var blockerDescriptions = {
-      deploy: <InstructionElement
-        description='deployment_of_environment_cannot_be_started'
-        isAlert
-        explanation='for_more_information_roles'
-      />
+      deploy: <div className='instruction invalid'>
+        {i18n(ns + 'deployment_of_environment_cannot_be_started')}
+      </div>
     };
 
     var actionButtonProps = {
@@ -793,10 +788,9 @@ var ClusterActionsPanel = React.createClass({
           <div className='dashboard-block clearfix'>
             <div className='col-xs-12'>
               <h4>{i18n(ns + 'new_environment_welcome')}</h4>
-              <InstructionElement
-                description='no_nodes_instruction'
-                explanation='for_more_information_roles'
-              />
+              <div className='instruction'>
+                {i18n(ns + 'no_nodes_instruction')}
+              </div>
               <AddNodesButton cluster={cluster} />
             </div>
           </div>
@@ -1300,32 +1294,6 @@ var DeleteEnvironmentAction = React.createClass({
         >
           <i className='glyphicon glyphicon-info-sign' />
         </Tooltip>
-      </div>
-    );
-  }
-});
-
-var InstructionElement = React.createClass({
-  propTypes: {
-    description: React.PropTypes.string.isRequired,
-    isAlert: React.PropTypes.bool,
-    link: React.PropTypes.shape({
-      url: React.PropTypes.string,
-      title: React.PropTypes.string
-    }),
-    explanation: React.PropTypes.string
-  },
-  getDefaultProps() {
-    return {
-      isAlert: false
-    };
-  },
-  render() {
-    var {description, isAlert, explanation} = this.props;
-    return (
-      <div className={utils.classNames({instruction: true, invalid: isAlert})}>
-        {i18n(ns + description)}
-        {explanation ? ' ' + i18n(ns + explanation) : '.'}
       </div>
     );
   }
