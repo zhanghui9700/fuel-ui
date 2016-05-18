@@ -249,7 +249,7 @@ var SettingsTab = React.createClass({
           var settingGroups = _.chain(section)
             .omit('metadata')
             .map('group')
-            .unique()
+            .uniq()
             .without('network')
             .value();
 
