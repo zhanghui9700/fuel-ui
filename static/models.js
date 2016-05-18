@@ -804,6 +804,11 @@ models.Settings = Backbone.DeepModel
     sanitizeGroup(group) {
       return _.includes(this.groupList, group) ? group : 'other';
     },
+    isSettingVisible(setting, settingName, configModels) {
+      return settingName !== 'metadata' &&
+        (setting.type !== 'hidden' || setting.description || setting.label) &&
+        !this.checkRestrictions(configModels, 'hide', setting).result;
+    },
     getGroupList() {
       var groups = [];
       _.each(this.attributes, (section) => {
