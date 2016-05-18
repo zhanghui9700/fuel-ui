@@ -136,7 +136,7 @@ var HealthcheckTabContent = React.createClass({
   runTests() {
     var testruns = new models.TestRuns();
     var oldTestruns = new models.TestRuns();
-    var testsetIds = this.props.testsets.pluck('id');
+    var testsetIds = this.props.testsets.map('id');
     this.setState({actionInProgress: true});
     _.each(testsetIds, (testsetId) => {
       var testsToRun = _.map(this.props.tests.filter({
@@ -284,7 +284,7 @@ var HealthcheckTabContent = React.createClass({
                 testset={testset}
                 testrun={this.props.testruns.find({testset: testset.id}) ||
                  new models.TestRun({testset: testset.id})}
-                tests={new Backbone.Collection(this.props.tests.filter({testset: testset.id}))}
+                tests={new models.BaseCollection(this.props.tests.filter({testset: testset.id}))}
                 disabled={disabledState || hasRunningTests}
               />;
             })}
@@ -310,7 +310,7 @@ var HealthcheckCredentials = React.createClass({
               type={(name === 'password') ? 'password' : 'text'}
               name={name}
               label={i18n('cluster_page.healthcheck_tab.' + name + '_label')}
-              value={this.props.credentials[name]}
+              value={this.props.credentials[name] || ''}
               onChange={this.props.onInputChange}
               toggleable={name === 'password'}
               description={i18n('cluster_page.healthcheck_tab.' + name + '_description')}
@@ -361,7 +361,7 @@ var TestSet = React.createClass({
                 name={this.props.testset.get('name')}
                 disabled={this.props.disabled}
                 onChange={this.handleTestSetCheck}
-                checked={this.props.testset.get('checked')}
+                checked={!!this.props.testset.get('checked')}
               />
             </th>
             <th className='col-xs-7 healthcheck-name'>
@@ -429,7 +429,7 @@ var Test = React.createClass({
             name={test.get('name')}
             disabled={this.props.disabled}
             onChange={this.handleTestCheck}
-            checked={test.get('checked')}
+            checked={!!test.get('checked')}
           />
         </td>
         <td className='healthcheck-name'>
