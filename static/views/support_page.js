@@ -94,7 +94,7 @@ var DocumentationLink = React.createClass({
         <p>
           <a
             className='btn btn-default documentation-link'
-            href='https://www.mirantis.com/openstack-documentation/'
+            href='http://docs.openstack.org/developer/fuel-docs/'
             target='_blank'
           >
             {i18n(ns + 'link')}
