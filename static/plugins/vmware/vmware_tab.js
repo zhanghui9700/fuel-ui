@@ -46,6 +46,7 @@ var Field = React.createClass({
     }, _.pick(metadata, 'name', 'type', 'label', 'description'));
     switch (metadata.type) {
       case 'password':
+        props.value = value;
         props.toggleable = true;
         break;
       case 'radio':
