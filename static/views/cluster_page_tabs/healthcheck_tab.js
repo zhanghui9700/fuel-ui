@@ -126,7 +126,7 @@ var HealthcheckTabContent = React.createClass({
     this.setState({credentialsVisible: !this.state.credentialsVisible});
   },
   handleSelectAllClick(name, value) {
-    this.props.tests.invoke('set', {checked: value});
+    this.props.tests.invokeMap('set', {checked: value});
   },
   handleInputChange(name, value) {
     var credentials = this.state.credentials;
@@ -204,7 +204,7 @@ var HealthcheckTabContent = React.createClass({
         actionInProgress: true,
         stoppingTestsInProgress: true
       });
-      testruns.invoke('set', {status: 'stopped'});
+      testruns.invokeMap('set', {status: 'stopped'});
       testruns.toJSON = function() {
         return this.map((testrun) =>
           _.pick(testrun.attributes, 'id', 'status')
@@ -331,13 +331,13 @@ var TestSet = React.createClass({
   ],
   handleTestSetCheck(name, value) {
     this.props.testset.set('checked', value);
-    this.props.tests.invoke('set', {checked: value});
+    this.props.tests.invokeMap('set', {checked: value});
   },
   componentWillUnmount() {
-    this.props.tests.invoke('off', 'change:checked', this.updateTestsetCheckbox, this);
+    this.props.tests.invokeMap('off', 'change:checked', this.updateTestsetCheckbox, this);
   },
   componentWillMount() {
-    this.props.tests.invoke('on', 'change:checked', this.updateTestsetCheckbox, this);
+    this.props.tests.invokeMap('on', 'change:checked', this.updateTestsetCheckbox, this);
   },
   updateTestsetCheckbox() {
     this.props.testset.set(
