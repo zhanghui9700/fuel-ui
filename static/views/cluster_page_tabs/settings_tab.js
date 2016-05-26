@@ -133,6 +133,7 @@ var SettingsTab = React.createClass({
   },
   loadDefaults() {
     this.setState({actionInProgress: true});
+    var settings = this.props.cluster.get('settings');
     var defaultSettings = new models.Settings();
     defaultSettings
     .fetch({
@@ -140,7 +141,7 @@ var SettingsTab = React.createClass({
     })
     .then(
       () => {
-        this.props.cluster.get('settings').updateAttributes(
+        settings.updateAttributes(
           defaultSettings,
           this.state.configModels,
           false
@@ -160,13 +161,16 @@ var SettingsTab = React.createClass({
         });
       }
     );
+    this.state.settingsForChecks.set(_.cloneDeep(settings.attributes));
   },
   loadDeployedSettings() {
-    this.props.cluster.get('settings').updateAttributes(
+    var settings = this.props.cluster.get('settings');
+    settings.updateAttributes(
       this.props.cluster.get('deployedSettings'),
       this.state.configModels,
       false
     );
+    this.state.settingsForChecks.set(_.cloneDeep(settings.attributes));
     this.setState({key: _.now()});
   },
   revertChanges() {
@@ -178,6 +182,7 @@ var SettingsTab = React.createClass({
     settings.set(_.cloneDeep(this.state.initialAttributes), {silent: true, validate: false});
     settings.mergePluginSettings();
     settings.isValid({models: this.state.configModels});
+    this.state.settingsForChecks.set(_.cloneDeep(settings.attributes));
   },
   onChange(groupName, settingName, value) {
     var settings = this.props.cluster.get('settings');
