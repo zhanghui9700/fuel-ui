@@ -18,16 +18,16 @@ import registerSuite from 'intern!object';
 import Common from 'tests/functional/pages/common';
 import ClustersPage from 'tests/functional/pages/clusters';
 import ClusterPage from 'tests/functional/pages/cluster';
-import DashboardPage from 'tests/functional/pages/dashboard';
 import ModalWindow from 'tests/functional/pages/modal';
 import Command from 'intern/dojo/node!leadfoot/Command';
 import GenericLib from 'tests/functional/nightly/library/generic';
 import EquipmentLib from 'tests/functional/nightly/library/equipment';
 import NetworksLib from 'tests/functional/nightly/library/networks';
+import DashboardLib from 'tests/functional/nightly/library/dashboard';
 
 registerSuite(() => {
-  var common, clustersPage, clusterPage, clusterName, dashboardPage, modal, command, genericLib,
-    equipmentLib, networksLib;
+  var common, clustersPage, clusterPage, clusterName, modal, command, genericLib, equipmentLib,
+    networksLib, dashboardLib;
   var controllerName = '###EpicBoost###_Node_1';
   var computeName = '###EpicBoost###_Node_2';
   var correlationName = '###EpicBoost###';
@@ -57,12 +57,12 @@ registerSuite(() => {
       clustersPage = new ClustersPage(this.remote);
       clusterPage = new ClusterPage(this.remote);
       clusterName = common.pickRandomName('VLAN Cluster');
-      dashboardPage = new DashboardPage(this.remote);
       modal = new ModalWindow(this.remote);
       command = new Command(this.remote);
       genericLib = new GenericLib(this.remote);
       equipmentLib = new EquipmentLib(this.remote);
       networksLib = new NetworksLib(this.remote);
+      dashboardLib = new DashboardLib(this.remote);
 
       return this.remote
         .then(() => common.getIn())
@@ -276,19 +276,18 @@ registerSuite(() => {
         .then(() => equipmentLib.deactivateFiltering());
     },
     'Node groups segmentation on "Equipment" page'() {
-      var progressSelector = '.dashboard-block .progress';
       return this.remote
         .then(() => genericLib.gotoPage('Environments'))
         // Start deployment
         .then(() => clustersPage.goToEnvironment(clusterName))
-        .then(() => dashboardPage.startDeployment())
-        .assertElementsAppear(progressSelector, 5000, 'Deployment is started')
+        .then(() => dashboardLib.startDeploy())
         // Check node groups segmentation
         .then(() => genericLib.gotoPage('Equipment'))
         .assertElementNotExists(clusterSelector, '"Pending Addition" node group is gone')
         .then(() => equipmentLib.checkNodesSegmentation('standard', inputArray, true));
     },
     'Check management and public ip fields at node details pop-up after deployment starts'() {
+      this.timeout = 45000;
       return this.remote
         // Check "Provisioning" "Controller" node
         .then(() => equipmentLib.checkGenericIpValues(
