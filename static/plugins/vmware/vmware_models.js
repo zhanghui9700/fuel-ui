@@ -102,6 +102,9 @@ var BaseCollection = Backbone.Collection
     },
     testRestrictions() {
       _.invokeMap(this.models, 'testRestrictions', restrictionModels);
+    },
+    invokeMap(path, ...args) {
+      _.invokeMap(this.models, path, ...args);
     }
   });
 
