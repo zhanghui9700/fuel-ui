@@ -15,7 +15,6 @@
 **/
 import $ from 'jquery';
 import _ from 'underscore';
-import Cookies from 'js-cookie';
 
 class KeystoneClient {
   constructor(url, options) {
@@ -60,9 +59,6 @@ class KeystoneClient {
         this.userId = result.access.user.id;
         this.token = result.access.token.id;
         this.tokenUpdateTime = new Date();
-
-        Cookies.set('token', result.access.token.id);
-
         return deferred;
       } catch (e) {
         return $.Deferred().reject();
@@ -91,9 +87,6 @@ class KeystoneClient {
       try {
         this.token = result.access.token.id;
         this.tokenUpdateTime = new Date();
-
-        Cookies.set('token', result.access.token.id);
-
         return deferred;
       } catch (e) {
         return $.Deferred().reject();
@@ -110,8 +103,6 @@ class KeystoneClient {
     delete this.userId;
     delete this.token;
     delete this.tokenUpdateTime;
-
-    Cookies.remove('token');
 
     this.tokenRemoveRequest = $.ajax(this.url + '/v2.0/tokens/' + token, {
       type: 'DELETE',

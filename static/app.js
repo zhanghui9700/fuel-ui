@@ -161,17 +161,20 @@ class App {
     // which caches requests resulting in wrong results (e.g /ostf/testruns/last/1)
     $.ajaxSetup({cache: false});
 
+    this.overrideBackboneSyncMethod();
+
     this.router = new Router();
-    this.keystoneClient = new KeystoneClient('/keystone', {
-      cacheTokenFor: 10 * 60 * 1000,
-      tenant: 'admin'
-    });
     this.version = new models.FuelVersion();
     this.fuelSettings = new models.FuelSettings();
     this.user = new models.User();
     this.statistics = new models.NodesStatistics();
     this.notifications = new models.Notifications();
     this.releases = new models.Releases();
+    this.keystoneClient = new KeystoneClient('/keystone', {
+      cacheTokenFor: 10 * 60 * 1000,
+      tenant: 'admin',
+      token: this.user.get('token')
+    });
   }
 
   initialize() {
@@ -181,19 +184,22 @@ class App {
     document.title = i18n('common.title');
 
     return this.version.fetch()
+      .then(null, (response) => {
+        if (response.status === 401) {
+          this.version.set({auth_required: true});
+          return $.Deferred().resolve();
+        }
+      })
       .then(() => {
         this.user.set({authenticated: !this.version.get('auth_required')});
-        this.overrideBackboneSyncMethod();
         if (this.version.get('auth_required')) {
-          _.extend(this.keystoneClient, this.user.pick('token'));
+          this.keystoneClient.token = this.user.get('token');
           return this.keystoneClient.authenticate()
             .then(() => this.user.set({authenticated: true}));
         }
         return $.Deferred().resolve();
       })
-      .then(() => {
-        return this.fuelSettings.fetch();
-      })
+      .then(() => this.fuelSettings.fetch())
       .then(null, () => {
         if (this.version.get('auth_required') && !this.user.get('authenticated')) {
           return $.Deferred().resolve();
@@ -257,10 +263,11 @@ class App {
         method = 'update';
       }
       // add auth token to header if auth is enabled
-      if (app.version.get('auth_required') && !this.authExempt) {
+      if (app.version && app.version.get('auth_required')) {
         return app.keystoneClient.authenticate()
           .fail(() => app.logout())
           .then(() => {
+            app.user.set('token', app.keystoneClient.token);
             options.headers = options.headers || {};
             options.headers['X-Auth-Token'] = app.keystoneClient.token;
             return originalSyncMethod.call(this, method, model, options);
