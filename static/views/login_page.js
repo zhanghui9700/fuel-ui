@@ -38,9 +38,7 @@ var LoginPage = React.createClass({
             </div>
           </div>
         </div>
-        <div className='footer col-xs-12'>
-          <p className='text-center'>{i18n('common.version')}: {app.version.get('release')}</p>
-        </div>
+        <div className='footer col-xs-12'></div>
       </div>
     );
   }
@@ -75,7 +73,7 @@ var LoginForm = React.createClass({
           dispatcher.trigger('showDefaultPasswordWarning');
         }
 
-        return app.fuelSettings.fetch({cache: true});
+        return $.when(app.version.fetch({cache: true}), app.fuelSettings.fetch({cache: true}));
       })
       .then(() => {
         var nextUrl = '';
