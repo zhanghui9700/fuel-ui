@@ -1183,7 +1183,7 @@ var NetworkTab = React.createClass({
               showVerificationResult={!this.state.hideVerificationResult}
               showAllNetworks={showAllNetworks}
             />
-            <div className='col-xs-10'>
+            <div className='col-xs-10' key={this.state.key}>
               {activeNetworkSectionName === 'group/all' &&
                 nodeNetworkGroups.map((nodeNetworkGroup) => {
                   return <NodeNetworkGroup
@@ -1203,7 +1203,7 @@ var NetworkTab = React.createClass({
               }
               {activeNetworkSectionName === 'network_settings' &&
                 <NetworkSettings
-                  {... _.pick(this.state, 'key', 'configModels', 'settingsForChecks')}
+                  {... _.pick(this.state, 'configModels', 'settingsForChecks')}
                   cluster={this.props.cluster}
                   locked={isLocked}
                   initialAttributes={this.state.initialSettingsAttributes}
