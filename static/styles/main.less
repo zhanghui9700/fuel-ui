@@ -2601,12 +2601,13 @@ input[type=range] {
                 margin: 0 2px 2px;
                 margin-left: 0;
                 color: @white;
-                .font-bold;
-                .text-shadow;
                 font-size: @base-font-size - 4;
                 background: @blue;
                 line-height: 1;
                 text-transform: uppercase;
+                &:hover {
+                  background: @blue - 15%;
+                }
               }
             }
           }
