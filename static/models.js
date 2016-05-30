@@ -18,6 +18,7 @@ import $ from 'jquery';
 import _ from 'underscore';
 import i18n from 'i18n';
 import Backbone from 'backbone';
+import Cookies from 'js-cookie';
 import Expression from 'expression';
 import {ModelPath} from 'expression/objects';
 import utils from 'utils';
@@ -80,6 +81,7 @@ var cacheMixin = {
       (this.cacheFor > (new Date() - this.lastSyncTime))) {
       return $.Deferred().resolve();
     }
+    if (options) delete options.cache;
     return this._super('fetch', arguments);
   },
   sync() {
@@ -1552,10 +1554,10 @@ models.OSTFClusterMetadata = BaseModel.extend({
   urlRoot: '/api/ostf'
 });
 
-models.FuelVersion = BaseModel.extend({
+models.FuelVersion = BaseModel.extend(cacheMixin).extend({
+  cacheFor: 60 * 1000,
   constructorName: 'FuelVersion',
-  urlRoot: '/api/version',
-  authExempt: true
+  urlRoot: '/api/version'
 });
 
 models.User = BaseModel.extend({
@@ -1574,6 +1576,14 @@ models.User = BaseModel.extend({
           localStorage.setItem(attribute, value);
         }
       });
+    });
+    this.on('change:token', () => {
+      var token = this.get('token');
+      if (_.isUndefined(token)) {
+        Cookies.remove('token');
+      } else {
+        Cookies.set('token', token);
+      }
     });
   }
 });
