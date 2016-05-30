@@ -150,6 +150,7 @@ var SettingsTab = React.createClass({
           this.state.configModels,
           false
         );
+        this.state.settingsForChecks.set(_.cloneDeep(settings.attributes));
         this.setState({
           actionInProgress: false,
           key: _.now()
@@ -165,7 +166,6 @@ var SettingsTab = React.createClass({
         });
       }
     );
-    this.state.settingsForChecks.set(_.cloneDeep(settings.attributes));
   },
   loadDeployedSettings() {
     var settings = this.props.cluster.get('settings');
