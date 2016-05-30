@@ -30,7 +30,7 @@ EquipmentLib.prototype = {
   managementIpSelector: 'div.node-summary div.management-ip',
   publicIpSelector: 'div.node-summary div.public-ip',
 
-  checkNodesSegmentation(nodeView, nodesQuantity, provisioningFlag) {
+  checkNodesSegmentation(nodeView, nodesQuantity, isReadyCluster) {
     // Input array: Nodes quantity by groups.
     // [Total, Pending Addition (Provisioning), Discover, Error, Offline]
     var nodeSel = this.nodeSelector;
@@ -43,15 +43,15 @@ EquipmentLib.prototype = {
       throw new Error('Invalid input value. Check nodeView: "' + nodeView +
         '" parameter and restart test.');
     }
-    if (provisioningFlag) {
-      clusterSelector = 'provisioning';
+    if (isReadyCluster) {
+      clusterSelector = 'ready';
     }
     return this.remote
       .assertElementsAppear(nodeSel, 1000, '"' + nodeView + ' Node" view is loaded')
       .assertElementsExist(nodeSel, nodesQuantity[0],
         'Default nodes quantity is observed')
       .assertElementsExist(nodeSel + tempSelector + clusterSelector, nodesQuantity[1],
-        '"Pending Addition/Provisioning" nodes are observed in "' + nodeView + '"" view')
+        '"Pending Addition/Ready" nodes are observed in "' + nodeView + '"" view')
       .assertElementsExist(nodeSel + tempSelector + 'discover', nodesQuantity[2],
         '"Discovered" nodes are observed in "' + nodeView + '"" view')
       .assertElementsExist(nodeSel + tempSelector + 'error', nodesQuantity[3],

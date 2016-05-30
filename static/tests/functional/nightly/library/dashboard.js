@@ -266,16 +266,6 @@ class DashboardLib {
         btnSelector, btnName));
   }
 
-  startDeploy() {
-    return this.remote
-      .assertElementEnabled(this.btnDeploySelector, '"Deploy Changes" button is available')
-      .clickByCssSelector(this.btnDeploySelector)
-      .then(() => this.modal.waitToOpen())
-      .then(() => this.modal.checkTitle('Deploy Changes'))
-      .then(() => this.modal.clickFooterButton('Deploy'))
-      .assertElementsAppear(this.progressSelector, 5000, 'Deploy is started');
-  }
-
   genericModalCheck(paneName, btnMOpen, modalName, modalText, btnStart, btnStartName, resultMsg) {
     var successMsg = 'Success';
     var successSelector = this.alertSelector + 'strong';

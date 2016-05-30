@@ -23,11 +23,11 @@ import Command from 'intern/dojo/node!leadfoot/Command';
 import GenericLib from 'tests/functional/nightly/library/generic';
 import EquipmentLib from 'tests/functional/nightly/library/equipment';
 import NetworksLib from 'tests/functional/nightly/library/networks';
-import DashboardLib from 'tests/functional/nightly/library/dashboard';
+import DashboardPage from 'tests/functional/pages/dashboard';
 
 registerSuite(() => {
   var common, clustersPage, clusterPage, clusterName, modal, command, genericLib, equipmentLib,
-    networksLib, dashboardLib;
+    networksLib, dashboardPage;
   var controllerName = '###EpicBoost###_Node_1';
   var computeName = '###EpicBoost###_Node_2';
   var correlationName = '###EpicBoost###';
@@ -62,7 +62,7 @@ registerSuite(() => {
       genericLib = new GenericLib(this.remote);
       equipmentLib = new EquipmentLib(this.remote);
       networksLib = new NetworksLib(this.remote);
-      dashboardLib = new DashboardLib(this.remote);
+      dashboardPage = new DashboardPage(this.remote);
 
       return this.remote
         .then(() => common.getIn())
@@ -276,28 +276,20 @@ registerSuite(() => {
         .then(() => equipmentLib.deactivateFiltering());
     },
     'Node groups segmentation on "Equipment" page'() {
+      this.timeout = 60000;
+      var progressSelector = 'div.dashboard-tab div.progress';
       return this.remote
+        // Precondition
         .then(() => genericLib.gotoPage('Environments'))
-        // Start deployment
         .then(() => clustersPage.goToEnvironment(clusterName))
-        .then(() => dashboardLib.startDeploy())
+        .then(() => dashboardPage.startDeployment())
+        .assertElementsAppear(progressSelector, 5000, 'Deployment is started')
+        .assertElementDisappears(progressSelector, 45000, 'Deployment is finished')
         // Check node groups segmentation
         .then(() => genericLib.gotoPage('Equipment'))
         .assertElementNotExists(clusterSelector, '"Pending Addition" node group is gone')
-        .then(() => equipmentLib.checkNodesSegmentation('standard', inputArray, true));
-    },
-    'Check management and public ip fields at node details pop-up after deployment starts'() {
-      this.timeout = 45000;
-      return this.remote
-        // Check "Provisioning" "Controller" node
-        .then(() => equipmentLib.checkGenericIpValues(
-          nodeSelector + '.provisioning:first-child ' + settingsSelector,
-          'Provisioning Controller', false))
-        // Check "Provisioning" "Compute" node
-        .then(() => equipmentLib.checkGenericIpValues(
-          nodeSelector + '.provisioning:last-child ' + settingsSelector,
-          'Provisioning Compute', false))
-        .waitForCssSelector(nodeSelector + '.ready', 30000)
+        .then(() => equipmentLib.checkNodesSegmentation('standard', inputArray, true))
+        // Check management and public ip fields at node details pop-up
         // Check "Ready" "Controller" node
         .then(() => equipmentLib.checkGenericIpValues(
           nodeSelector + '.ready:first-child ' + settingsSelector, 'Ready Controller', true))
