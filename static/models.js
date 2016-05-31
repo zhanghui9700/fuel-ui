@@ -852,11 +852,22 @@ models.Settings = Backbone.DeepModel
       });
       return _.intersection(this.groupList, groups);
     },
-    updateAttributes(newSettings, models, updateNetworkSettings = false) {
+    updateAttributes(newSettings, models, updateNetworkSettings) {
+      /*
+       * updateNetworkSettings (boolean):
+       *   if true, update settings from 'network' group only
+       *   if false, do not update settings from 'network' group
+       *   if not specified (default), update all settings
+      **/
+
       this.validationError = null;
+
       _.each(this.attributes, (section, sectionName) => {
         var isNetworkGroup = section.metadata.group === 'network';
-        if (updateNetworkSettings === isNetworkGroup) {
+        var shouldSectionBeUpdated = _.isUndefined(updateNetworkSettings) ||
+          updateNetworkSettings === isNetworkGroup;
+
+        if (shouldSectionBeUpdated) {
           if (this.isPlugin(section)) {
             if (newSettings.get(sectionName)) {
               var pathToMetadata = utils.makePath(sectionName, 'metadata');
@@ -869,9 +880,13 @@ models.Settings = Backbone.DeepModel
           } else {
             _.each(section, (setting, settingName) => {
               // do not update hidden settings (hack for #1442143)
-              if (setting.type === 'hidden') return;
+              var shouldSettingBeUpdated = setting.type !== 'hidden' && (
+                _.isUndefined(updateNetworkSettings) ||
+                isNetworkGroup ||
+                setting.group !== 'network'
+              );
 
-              if (isNetworkGroup || setting.group !== 'network') {
+              if (shouldSettingBeUpdated) {
                 var path = utils.makePath(sectionName, settingName);
                 this.set(path, newSettings.get(path));
               }
