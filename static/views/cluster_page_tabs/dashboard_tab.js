@@ -56,7 +56,7 @@ var DashboardTab = React.createClass({
     backboneMixin({
       modelOrCollection: (props) => props.cluster.get('deployedNetworkConfiguration')
     }),
-    backboneMixin('cluster', 'change'),
+    backboneMixin('cluster'),
     pollingMixin(20, true)
   ],
   statics: {

@@ -561,8 +561,7 @@ var NetworkTab = React.createClass({
     backboneMixin({
       modelOrCollection(props) {
         return props.cluster.get('networkConfiguration').get('networking_parameters');
-      },
-      renderOn: 'change'
+      }
     }),
     backboneMixin({
       modelOrCollection(props) {
