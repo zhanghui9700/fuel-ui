@@ -1247,7 +1247,7 @@ var RenameEnvironmentAction = React.createClass({
     };
     return (
       <div className={utils.classNames(classes)}>
-        <div className='action-body' onKeyDown={this.handleKeyDown}>
+        <div onKeyDown={this.handleKeyDown}>
           <Input
             type='text'
             disabled={this.state.disabled}
