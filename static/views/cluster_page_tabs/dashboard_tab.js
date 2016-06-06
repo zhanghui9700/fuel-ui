@@ -819,7 +819,13 @@ var ClusterActionsPanel = React.createClass({
               <div className='instruction'>
                 {i18n(ns + 'no_nodes_instruction')}
               </div>
-              <AddNodesButton cluster={cluster} />
+              <a
+                className='btn btn-success btn-add-nodes'
+                href={'#cluster/' + cluster.id + '/nodes/add'}
+              >
+                <i className='glyphicon glyphicon-plus-white' />
+                {i18n(ns + 'go_to_nodes')}
+              </a>
             </div>
           </div>
         </div>
@@ -984,7 +990,7 @@ var ClusterInfo = React.createClass({
       _.map(['status', 'openstack_release', 'compute', 'network', 'storage_backends'], (field) => {
         var value = this.getClusterValue(field);
         return (
-          <div key={field}>
+          <div className='row' key={field}>
             <div className='col-xs-6'>
               <div className='cluster-info-title'>
                 {i18n(ns + 'cluster_info_fields.' + field)}
@@ -1094,7 +1100,16 @@ var ClusterInfo = React.createClass({
             <div className='col-xs-6' key='roles'>
               {this.renderLegend(roles, true)}
               {!cluster.task({group: 'deployment', active: true}) &&
-                <AddNodesButton cluster={cluster} />
+                <div className='row'>
+                  <div className='col-xs-12'>
+                    <a
+                      className='btn btn-link btn-add-nodes'
+                      href={'#cluster/' + cluster.id + '/nodes/add'}
+                    >
+                      {i18n(ns + 'go_to_nodes')}
+                    </a>
+                  </div>
+                </div>
               }
             </div>,
             <div className='col-xs-6' key='statuses'>
@@ -1115,8 +1130,8 @@ var ClusterInfo = React.createClass({
       <div className='cluster-information'>
         <div className='row'>
           <div className='col-xs-6'>
+            <div className='title'>{i18n(ns + 'summary')}</div>
             <div className='row'>
-              <div className='title'>{i18n(ns + 'summary')}</div>
               <div className='col-xs-6'>
                 <div className='cluster-info-title'>
                   {i18n(ns + 'cluster_info_fields.name')}
@@ -1138,44 +1153,30 @@ var ClusterInfo = React.createClass({
                   </div>
                 }
               </div>
-              {this.renderClusterInfoFields()}
-              {(cluster.get('status') === 'operational') &&
-                <div className='col-xs-12 go-to-healthcheck'>
-                  {i18n(ns + 'healthcheck')}
-                  <a href={'#cluster/' + cluster.id + '/healthcheck'}>
-                    {i18n(ns + 'healthcheck_tab')}
-                  </a>
-                </div>
-              }
-              <div className='col-xs-12 dashboard-actions-wrapper'>
-                <DeleteEnvironmentAction cluster={cluster} />
-                <ResetEnvironmentAction
-                  cluster={cluster}
-                  task={cluster.task({group: 'deployment', active: true})}
-                />
+            </div>
+            {this.renderClusterInfoFields()}
+            {(cluster.get('status') === 'operational') &&
+              <div className='go-to-healthcheck'>
+                {i18n(ns + 'healthcheck')}
+                <a href={'#cluster/' + cluster.id + '/healthcheck'}>
+                  {i18n(ns + 'healthcheck_tab')}
+                </a>
               </div>
+            }
+            <div className='row dashboard-actions-wrapper'>
+              <DeleteEnvironmentAction cluster={cluster} />
+              <ResetEnvironmentAction
+                cluster={cluster}
+                task={cluster.task({group: 'deployment', active: true})}
+              />
             </div>
           </div>
-          <div className='col-xs-6'>
+          <div className='col-xs-6 statistics'>
             {this.renderClusterCapacity()}
             {this.renderStatistics()}
           </div>
         </div>
       </div>
-    );
-  }
-});
-
-var AddNodesButton = React.createClass({
-  render() {
-    return (
-      <a
-        className='btn btn-success btn-add-nodes'
-        href={'#cluster/' + this.props.cluster.id + '/nodes/add'}
-      >
-        <i className='glyphicon glyphicon-plus-white' />
-        {i18n(ns + 'go_to_nodes')}
-      </a>
     );
   }
 });
@@ -1221,13 +1222,13 @@ var RenameEnvironmentAction = React.createClass({
     return {
       name: this.props.cluster.get('name'),
       disabled: false,
-      error: ''
+      error: null
     };
   },
   onChange(inputName, newValue) {
     this.setState({
       name: newValue,
-      error: ''
+      error: null
     });
   },
   handleKeyDown(e) {
@@ -1241,27 +1242,18 @@ var RenameEnvironmentAction = React.createClass({
     }
   },
   render() {
-    var classes = {
-      'rename-block': true,
-      'has-error': !!this.state.error
-    };
     return (
-      <div className={utils.classNames(classes)}>
-        <div onKeyDown={this.handleKeyDown}>
-          <Input
-            type='text'
-            disabled={this.state.disabled}
-            className={utils.classNames({'form-control': true, error: this.state.error})}
-            maxLength='50'
-            onChange={this.onChange}
-            defaultValue={this.state.name}
-            selectOnFocus
-            autoFocus
-          />
-          {this.state.error &&
-            <div className='text-danger'>{this.state.error}</div>
-          }
-        </div>
+      <div className='rename-block' onKeyDown={this.handleKeyDown}>
+        <Input
+          type='text'
+          disabled={this.state.disabled}
+          maxLength='50'
+          onChange={this.onChange}
+          defaultValue={this.state.name}
+          error={this.state.error}
+          selectOnFocus
+          autoFocus
+        />
       </div>
     );
   }
