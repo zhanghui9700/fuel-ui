@@ -49,7 +49,7 @@ registerSuite(() => {
         .assertElementDisabled(applyButtonSelector,
           'Apply button is disabled until both roles and nodes chosen')
         .assertElementsExist('.role-panel .row', 4, 'Roles are splitted in groups')
-        .assertElementExists('.role-block.mongo.disabled', 'Unavailable role is locked')
+        .assertElementExists('.role-block.mongo.unavailable', 'Unavailable role is locked')
         .assertElementExists(
           '.role-block.mongo i.glyphicon-warning-sign',
           'Unavailable role has warning icon'
@@ -74,7 +74,7 @@ registerSuite(() => {
           'Selected role has checkbox icon'
         )
         .assertElementExists(
-          '.role-block.compute.disabled',
+          '.role-block.compute.unavailable',
           'Compute role can not be added together with selected roles'
         )
         .assertElementDisabled(
