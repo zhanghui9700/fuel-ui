@@ -78,6 +78,7 @@ class Router extends Backbone.Router {
         }},
         {name: 'welcome', condition: (previousUrl) => {
           return previousUrl !== 'logout' &&
+            _.find(app.keystoneClient.userRoles, {name: 'admin'}) &&
             !app.fuelSettings.get('statistics.user_choice_saved.value');
         }}
       ];

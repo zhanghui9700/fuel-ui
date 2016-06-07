@@ -57,6 +57,7 @@ class KeystoneClient {
     }).then((result, state, deferred) => {
       try {
         this.userId = result.access.user.id;
+        this.userRoles = result.access.user.roles;
         this.token = result.access.token.id;
         this.tokenUpdateTime = new Date();
         return deferred;
@@ -101,6 +102,7 @@ class KeystoneClient {
     if (!token) return $.Deferred().reject();
 
     delete this.userId;
+    delete this.userRoles;
     delete this.token;
     delete this.tokenUpdateTime;
 
