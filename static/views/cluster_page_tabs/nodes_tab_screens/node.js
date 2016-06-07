@@ -547,7 +547,8 @@ var Node = React.createClass({
       pending_addition: 'text-success',
       pending_deletion: 'text-warning',
       error: 'text-danger',
-      deploying: 'text-success'
+      provisioning: 'text-success',
+      provisioned: 'text-success'
     }[status] || 'text-info';
     var statusClasses = {
       'node-status': true,
