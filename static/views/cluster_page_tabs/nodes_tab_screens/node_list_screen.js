@@ -1874,7 +1874,6 @@ Role = React.createClass({
         onMouseLeave={() => this.togglePopover(false)}
         onKeyDown={!disabled && this.onKeyDown}
       >
-        <div className='popover-binder'/>
         <div onClick={this.forceHidePopover}>
           <div className='role' onClick={!disabled && this.onClick}>
             <i
