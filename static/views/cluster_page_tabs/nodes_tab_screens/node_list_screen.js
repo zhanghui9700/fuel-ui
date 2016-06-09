@@ -1906,7 +1906,13 @@ Role = React.createClass({
 });
 
 SelectAllMixin = {
+  componentDidMount() {
+    this.setSelectAllCheckboxIndeterminateState();
+  },
   componentDidUpdate() {
+    this.setSelectAllCheckboxIndeterminateState();
+  },
+  setSelectAllCheckboxIndeterminateState() {
     if (this.refs['select-all']) {
       var input = this.refs['select-all'].getInputDOMNode();
       input.indeterminate = !input.checked &&
