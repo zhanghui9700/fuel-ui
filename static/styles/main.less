@@ -2121,6 +2121,17 @@ input[type=range] {
       }
     }
 
+    .node.provisioning {
+      .progress-bar, + .node-popover .progress-bar {
+        background-color: @green;
+      }
+    }
+    .node.deploying {
+      .progress-bar, + .node-popover .progress-bar {
+        background-color: @blue;
+      }
+    }
+
     @node-indent: 20px;
     @node-height: 58px;
     @node-inner-height: @node-height - 6;
@@ -4940,6 +4951,15 @@ input[type=range] {
       }
       &.has-stop-control .progress {
         width: 95%;
+      }
+      &.deploy .progress-bar, &.deployment .progress-bar {
+        background-color: @blue;
+      }
+      &.provision .progress-bar {
+        background-color: @green;
+      }
+      &.reset_environment .progress-bar, &.stop_deployment .progress-bar {
+        background-color: @orange;
       }
     }
     &.actions-panel {
