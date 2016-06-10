@@ -1152,7 +1152,7 @@ var ClusterInfo = React.createClass({
               </div>
             </div>
             {this.renderClusterInfoFields()}
-            {(cluster.get('status') === 'operational') &&
+            {cluster.isHealthCheckAvailable() &&
               <div className='go-to-healthcheck'>
                 {i18n(ns + 'healthcheck')}
                 <a href={'#cluster/' + cluster.id + '/healthcheck'}>
