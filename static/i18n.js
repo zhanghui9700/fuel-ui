@@ -49,6 +49,7 @@ i18next
     whitelist: i18n.getAvailableLocales(),
     fallbackLng: defaultLocale,
     detection: {
+      order: ['localStorage'],
       lookupLocalStorage: 'i18nextLocale',
       caches: ['localStorage']
     }
