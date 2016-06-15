@@ -399,7 +399,7 @@
       "version": "3.3.4"
     },
     "brace-expansion": {
-      "version": "1.1.4"
+      "version": "1.1.5"
     },
     "braces": {
       "version": "1.8.5"
@@ -438,17 +438,6 @@
         },
         "vinyl": {
           "version": "1.1.1"
-        }
-      }
-    },
-    "bufferstreams": {
-      "version": "1.1.0",
-      "dependencies": {
-        "isarray": {
-          "version": "1.0.0"
-        },
-        "readable-stream": {
-          "version": "2.1.4"
         }
       }
     },
@@ -892,9 +881,6 @@
     "domain-browser": {
       "version": "1.1.7"
     },
-    "duplexer": {
-      "version": "0.1.1"
-    },
     "duplexer2": {
       "version": "0.0.2"
     },
@@ -919,14 +905,10 @@
       "version": "0.1.1"
     },
     "editorconfig": {
-      "version": "0.11.4",
-      "resolved": "git+https://github.com/editorconfig/editorconfig-core-js.git#50e0dba81b2f7f3e9ea4f701f2c65dd3f482cd4c",
+      "version": "0.13.2",
       "dependencies": {
-        "commander": {
-          "version": "1.1.1"
-        },
         "lru-cache": {
-          "version": "2.0.4"
+          "version": "3.2.0"
         }
       }
     },
@@ -1084,9 +1066,6 @@
     "event-emitter": {
       "version": "0.3.4"
     },
-    "event-stream": {
-      "version": "3.3.2"
-    },
     "eventemitter3": {
       "version": "1.2.0"
     },
@@ -1164,9 +1143,6 @@
     },
     "extsprintf": {
       "version": "1.0.2"
-    },
-    "fancy-log": {
-      "version": "1.2.0"
     },
     "fast-levenshtein": {
       "version": "1.1.3"
@@ -1264,9 +1240,6 @@
     "fresh": {
       "version": "0.3.0"
     },
-    "from": {
-      "version": "0.1.3"
-    },
     "fs-extra": {
       "version": "0.18.4"
     },
@@ -1355,9 +1328,6 @@
         }
       }
     },
-    "glogg": {
-      "version": "1.0.0"
-    },
     "graceful-fs": {
       "version": "3.0.8"
     },
@@ -1384,34 +1354,6 @@
         }
       }
     },
-    "gulp-eslint": {
-      "version": "2.0.0",
-      "dependencies": {
-        "clone": {
-          "version": "1.0.2"
-        },
-        "gulp-util": {
-          "version": "3.0.7",
-          "dependencies": {
-            "object-assign": {
-              "version": "3.0.0"
-            }
-          }
-        },
-        "isarray": {
-          "version": "1.0.0"
-        },
-        "readable-stream": {
-          "version": "2.0.6"
-        },
-        "through2": {
-          "version": "2.0.1"
-        },
-        "vinyl": {
-          "version": "0.5.3"
-        }
-      }
-    },
     "gulp-filter": {
       "version": "2.0.1"
     },
@@ -1425,65 +1367,6 @@
     },
     "gulp-jison": {
       "version": "1.2.0"
-    },
-    "gulp-lintspaces": {
-      "version": "0.3.2",
-      "dependencies": {
-        "ansi-regex": {
-          "version": "0.2.1"
-        },
-        "ansi-styles": {
-          "version": "1.1.0"
-        },
-        "chalk": {
-          "version": "0.5.1"
-        },
-        "gulp-util": {
-          "version": "2.2.20"
-        },
-        "has-ansi": {
-          "version": "0.1.0"
-        },
-        "lintspaces": {
-          "version": "0.3.3"
-        },
-        "lodash._reinterpolate": {
-          "version": "2.4.1"
-        },
-        "lodash.escape": {
-          "version": "2.4.1"
-        },
-        "lodash.keys": {
-          "version": "2.4.1"
-        },
-        "lodash.template": {
-          "version": "2.4.1"
-        },
-        "lodash.templatesettings": {
-          "version": "2.4.1"
-        },
-        "minimist": {
-          "version": "0.2.0"
-        },
-        "readable-stream": {
-          "version": "1.0.34"
-        },
-        "strip-ansi": {
-          "version": "0.3.0"
-        },
-        "supports-color": {
-          "version": "0.2.0"
-        },
-        "through2": {
-          "version": "0.5.1"
-        },
-        "vinyl": {
-          "version": "0.2.3"
-        },
-        "xtend": {
-          "version": "3.0.0"
-        }
-      }
     },
     "gulp-replace": {
       "version": "0.5.3",
@@ -1538,9 +1421,6 @@
         }
       }
     },
-    "gulplog": {
-      "version": "1.0.0"
-    },
     "handlebars": {
       "version": "4.0.5"
     },
@@ -1558,9 +1438,6 @@
     },
     "has-flag": {
       "version": "1.0.0"
-    },
-    "has-gulplog": {
-      "version": "0.1.0"
     },
     "hawk": {
       "version": "3.1.3"
@@ -1592,7 +1469,7 @@
       "version": "1.4.0"
     },
     "http-proxy": {
-      "version": "1.13.3"
+      "version": "1.14.0"
     },
     "http-signature": {
       "version": "1.1.1"
@@ -2003,9 +1880,6 @@
         }
       }
     },
-    "keypress": {
-      "version": "0.1.0"
-    },
     "kind-of": {
       "version": "3.0.3"
     },
@@ -2050,13 +1924,16 @@
       "version": "2.2.1"
     },
     "lintspaces": {
-      "version": "0.5.0",
+      "version": "0.5.0"
+    },
+    "lintspaces-cli": {
+      "version": "0.3.0",
       "dependencies": {
-        "editorconfig": {
-          "version": "0.13.2"
+        "colors": {
+          "version": "0.6.2"
         },
-        "lru-cache": {
-          "version": "3.2.0"
+        "commander": {
+          "version": "2.2.0"
         }
       }
     },
@@ -2085,32 +1962,23 @@
     "lodash._basecopy": {
       "version": "3.0.1"
     },
+    "lodash._baseeach": {
+      "version": "4.1.3"
+    },
+    "lodash._baseiteratee": {
+      "version": "4.7.0"
+    },
     "lodash._basetostring": {
       "version": "3.0.1"
     },
     "lodash._basevalues": {
       "version": "3.0.0"
     },
-    "lodash._escapehtmlchar": {
-      "version": "2.4.1"
-    },
-    "lodash._escapestringchar": {
-      "version": "2.4.1"
-    },
     "lodash._getnative": {
       "version": "3.9.1"
     },
-    "lodash._htmlescapes": {
-      "version": "2.4.1"
-    },
     "lodash._isiterateecall": {
       "version": "3.0.9"
-    },
-    "lodash._isnative": {
-      "version": "2.4.1"
-    },
-    "lodash._objecttypes": {
-      "version": "2.4.1"
     },
     "lodash._reescape": {
       "version": "3.0.0"
@@ -2121,25 +1989,14 @@
     "lodash._reinterpolate": {
       "version": "3.0.0"
     },
-    "lodash._reunescapedhtml": {
-      "version": "2.4.1",
-      "dependencies": {
-        "lodash.keys": {
-          "version": "2.4.1"
-        }
-      }
-    },
     "lodash._root": {
       "version": "3.0.1"
     },
-    "lodash._shimkeys": {
-      "version": "2.4.1"
-    },
-    "lodash.defaults": {
-      "version": "2.4.1",
+    "lodash._stringtopath": {
+      "version": "4.8.0",
       "dependencies": {
-        "lodash.keys": {
-          "version": "2.4.1"
+        "lodash._basetostring": {
+          "version": "4.12.0"
         }
       }
     },
@@ -2160,11 +2017,11 @@
         }
       }
     },
-    "lodash.isobject": {
-      "version": "2.4.1"
-    },
     "lodash.keys": {
       "version": "3.1.2"
+    },
+    "lodash.map": {
+      "version": "4.4.0"
     },
     "lodash.restparam": {
       "version": "3.6.1"
@@ -2175,16 +2032,8 @@
     "lodash.templatesettings": {
       "version": "3.1.1"
     },
-    "lodash.values": {
-      "version": "2.4.1",
-      "dependencies": {
-        "lodash.keys": {
-          "version": "2.4.1"
-        }
-      }
-    },
     "log4js": {
-      "version": "0.6.36",
+      "version": "0.6.37",
       "dependencies": {
         "readable-stream": {
           "version": "1.0.34"
@@ -2208,9 +2057,6 @@
     },
     "map-obj": {
       "version": "1.0.1"
-    },
-    "map-stream": {
-      "version": "0.1.0"
     },
     "media-typer": {
       "version": "0.3.0"
@@ -2502,9 +2348,6 @@
           "version": "4.1.4"
         }
       }
-    },
-    "pause-stream": {
-      "version": "0.0.11"
     },
     "pbkdf2-compat": {
       "version": "2.0.1"
@@ -3164,9 +3007,6 @@
         }
       }
     },
-    "sparkles": {
-      "version": "1.0.0"
-    },
     "spdx-correct": {
       "version": "1.0.2"
     },
@@ -3178,9 +3018,6 @@
     },
     "spdx-license-ids": {
       "version": "1.2.1"
-    },
-    "split": {
-      "version": "0.3.3"
     },
     "sprintf-js": {
       "version": "1.0.3"
@@ -3204,9 +3041,6 @@
     },
     "stream-cache": {
       "version": "0.0.2"
-    },
-    "stream-combiner": {
-      "version": "0.0.4"
     },
     "stream-combiner2": {
       "version": "1.1.1",
@@ -3328,9 +3162,6 @@
     },
     "tildify": {
       "version": "1.2.0"
-    },
-    "time-stamp": {
-      "version": "1.0.1"
     },
     "timers-browserify": {
       "version": "1.4.2"
