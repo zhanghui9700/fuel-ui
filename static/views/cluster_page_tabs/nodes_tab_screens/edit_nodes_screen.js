@@ -22,7 +22,7 @@ import NodeListScreen from 'views/cluster_page_tabs/nodes_tab_screens/node_list_
 var EditNodesScreen = React.createClass({
   statics: {
     fetchData(options) {
-      var cluster = options.cluster;
+      var {cluster} = options;
       var nodes = utils.getNodeListFromTabOptions(options);
 
       if (!nodes) {
@@ -36,8 +36,10 @@ var EditNodesScreen = React.createClass({
       nodes.parse = function() {
         return this.getByIds(nodes.map('id'));
       };
-      return $.when(options.cluster.get('roles').fetch(),
-        cluster.get('settings').fetch({cache: true})).then(() => ({nodes}));
+      return $.when(
+        cluster.get('roles').fetch(),
+        cluster.get('settings').fetch({cache: true})
+      ).then(() => ({nodes}));
     }
   },
   render() {
@@ -46,8 +48,9 @@ var EditNodesScreen = React.createClass({
         {... _.omit(this.props, 'screenOptions')}
         ref='screen'
         mode='edit'
-        roles={this.props.cluster.get('roles')}
         nodeNetworkGroups={this.props.cluster.get('nodeNetworkGroups')}
+        showRolePanel
+        defaultFilters={{}}
         defaultSorting={[{roles: 'asc'}]}
       />
     );
