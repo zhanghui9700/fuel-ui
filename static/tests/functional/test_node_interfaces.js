@@ -81,7 +81,7 @@ registerSuite(() => {
         .clickByCssSelector('.mtu .btn-link')
         .sleep(500)
         .assertElementNotDisplayed(
-          '.mtu-control',
+          '.mtu-section input[name="value"]',
           'MTU control is hidden after clicking MTU link again'
         );
     },*/
