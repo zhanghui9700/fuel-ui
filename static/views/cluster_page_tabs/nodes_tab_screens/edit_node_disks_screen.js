@@ -68,15 +68,28 @@ var EditNodeDisksScreen = React.createClass({
   updateInitialData() {
     this.setState({initialDisks: _.cloneDeep(this.props.nodes.at(0).disks.toJSON())});
   },
+  hasChangesInRemainingNodes() {
+    var {initialDisks} = this.state;
+    return _.some(this.props.nodes.slice(1), (node) => {
+      var disksData = node.disks.toJSON();
+      return _.some(
+        models.Disk.prototype.editableAttributes,
+        (diskProperty) => {
+          return !_.isEqual(_.map(disksData, diskProperty),
+            _.map(initialDisks, diskProperty));
+        }
+      );
+    });
+  },
   hasChanges() {
     var disks = this.props.disks.toJSON();
     var {initialDisks} = this.state;
-    return !this.isLocked() && _.some(
+    return !this.isLocked() && (_.some(
       models.Disk.prototype.editableAttributes,
       (diskProperty) => {
         return !_.isEqual(_.map(disks, diskProperty), _.map(initialDisks, diskProperty));
       }
-    );
+    ) || this.props.nodes.length > 1 && this.hasChangesInRemainingNodes());
   },
   loadDefaults() {
     this.setState({actionInProgress: 'load_defaults'});
