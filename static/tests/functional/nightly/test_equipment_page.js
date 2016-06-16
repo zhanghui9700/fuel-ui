@@ -35,20 +35,22 @@ registerSuite(() => {
   var computeIp = '';
   var nodesController = 2;
   var nodesCompute = 1;
-  var nodesDiscover = 3;
+  var nodesDiscover = 6;
   var nodesError = 1;
   var nodesOffline = 1;
   var nodesCluster = nodesController + nodesCompute;
-  var totalNodes = nodesCluster + nodesDiscover + nodesError + nodesOffline;
+  var totalNodes = nodesDiscover + nodesError + nodesOffline;
   var inputArray = [totalNodes, nodesCluster, nodesDiscover, nodesError, nodesOffline];
-  var filterArray = [nodesCluster + nodesDiscover, nodesCluster, nodesDiscover, 0, 0];
+  var filterArray = [nodesDiscover, nodesCluster, nodesDiscover, 0, 0];
+  var deployArray = [totalNodes, nodesCluster, nodesDiscover - nodesCluster, nodesError,
+    nodesOffline];
   var nodeSelector = 'div.node';
   var clusterSelector = nodeSelector + '.pending_addition';
   var toAllNodesSelector = 'input[name="assign_to_all_nodes"]:enabled';
   var summarySelector = 'div.node-summary ';
   var settingsSelector = 'div.node-settings';
   var computeSettingsSelector = clusterSelector + ':nth-child(3) ' + settingsSelector;
-  var discoverSettingsSelector = nodeSelector + '.discover ' + settingsSelector;
+  var discoverSettingsSelector = 'div[class="node discover col-xs-12"] ' + settingsSelector;
 
   return {
     name: 'Nodes across environment',
@@ -288,7 +290,7 @@ registerSuite(() => {
         // Check node groups segmentation
         .then(() => genericLib.gotoPage('Equipment'))
         .assertElementNotExists(clusterSelector, '"Pending Addition" node group is gone')
-        .then(() => equipmentLib.checkNodesSegmentation('standard', inputArray, true))
+        .then(() => equipmentLib.checkNodesSegmentation('standard', deployArray, true))
         // Check management and public ip fields at node details pop-up
         // Check "Ready" "Controller" node
         .then(() => equipmentLib.checkGenericIpValues(

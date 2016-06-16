@@ -32,7 +32,7 @@ EquipmentLib.prototype = {
 
   checkNodesSegmentation(nodeView, nodesQuantity, isReadyCluster) {
     // Input array: Nodes quantity by groups.
-    // [Total, Pending Addition (Provisioning), Discover, Error, Offline]
+    // [Total, Pending Addition (Ready), Discover, Error, Offline]
     var nodeSel = this.nodeSelector;
     var tempSelector = '.';
     var clusterSelector = 'pending_addition';
@@ -51,13 +51,13 @@ EquipmentLib.prototype = {
       .assertElementsExist(nodeSel, nodesQuantity[0],
         'Default nodes quantity is observed')
       .assertElementsExist(nodeSel + tempSelector + clusterSelector, nodesQuantity[1],
-        '"Pending Addition/Ready" nodes are observed in "' + nodeView + '"" view')
+        '"Pending Addition/Ready" nodes are observed in "' + nodeView + '" view')
       .assertElementsExist(nodeSel + tempSelector + 'discover', nodesQuantity[2],
-        '"Discovered" nodes are observed in "' + nodeView + '"" view')
+        '"Discovered" nodes are observed in "' + nodeView + '" view')
       .assertElementsExist(nodeSel + tempSelector + 'error', nodesQuantity[3],
-        '"Error" nodes are observed in "' + nodeView + '"" view')
+        '"Error" nodes are observed in "' + nodeView + '" view')
       .assertElementsExist(nodeSel + tempSelector + 'offline', nodesQuantity[4],
-        '"Offline" nodes are observed in "' + nodeView + '"" view');
+        '"Offline" nodes are observed in "' + nodeView + '" view');
   },
   renameNode(nodeSelector, newName) {
     var nodeNameSelector = 'div.name p';
