@@ -50,8 +50,8 @@ var HealthCheckTab = React.createClass({
         return $.when(ostf.testsets.fetch(), ostf.tests.fetch(), ostf.testruns.fetch()).then(() => {
           options.cluster.set({ostf: ostf});
           return {};
-        }, () => $.Deferred().resolve()
-        );
+        })
+        .catch(() => true);
       }
       return $.Deferred().resolve();
     }
