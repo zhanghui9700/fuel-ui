@@ -420,7 +420,8 @@ export var Tooltip = React.createClass({
   propTypes: {
     container: React.PropTypes.node,
     placement: React.PropTypes.node,
-    text: React.PropTypes.node
+    text: React.PropTypes.node,
+    wrap: React.PropTypes.bool // wraps tooltip target element into div.tooltip-wrapper
   },
   getDefaultProps() {
     return {

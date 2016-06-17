@@ -555,8 +555,36 @@ button, .btn:not(.btn-link) {.font-semibold;}
 
 // TOOLTIPS
 
+.tooltip {
+  &.top, &.top-left, &.top-right {
+    .tooltip-arrow {
+      border-top-color: @tooltip-color;
+    }
+  }
+  &.right .tooltip-arrow {
+    border-right-color: @tooltip-color;
+  }
+  &.left .tooltip-arrow {
+    border-left-color: @tooltip-color;
+  }
+  &.bottom, &.bottom-left, &.bottom-right {
+    .tooltip-arrow {
+      border-bottom-color: @tooltip-color;
+    }
+  }
+}
+
 .tooltip-inner {
+  background-color: @tooltip-color;
+  color: @white;
+  font-weight: 500;
+  text-align: left;
+  padding: 10px;
   max-width: 300px;
+}
+
+.tooltip-wrapper {
+  display: inline-block;
 }
 
 // ALERTS
@@ -1763,11 +1791,6 @@ input[type=range] {
 .node-management-panel {
   @management-panel-indent: 5px;
 
-  .tooltip-wrapper {
-    display: inline-block;
-    float: left;
-  }
-
   .view-mode-switcher {
     margin-right: @management-panel-indent * 3;
     float: left;
@@ -2276,13 +2299,19 @@ input[type=range] {
         .node-action {
           width: @node-button-size * 2;
           margin-top: 9px;
+          .tooltip-wrapper {
+            position: relative;
+            top: 10px;
+            width: @node-button-size;
+            height: @node-button-size;
+          }
           .icon {
-            display: inline-block;
+            position: absolute;
+            top: -10px;
             height: @node-button-size;
             width: @node-button-size;
             background: url(@common-icons-sprite) no-repeat -@node-button-size -@node-button-size;
             opacity: .6;
-            margin-top: -2px;
             &:hover {
               opacity: 1;
             }
@@ -4308,7 +4337,7 @@ input[type=range] {
         display: block;
         overflow: visible;
         top: -6px;
-        left: 35px;
+        left: 25px;
         width: 350px;
         max-width: 350px;
         .break-word;
