@@ -210,6 +210,7 @@ class App {
         } else {
           this.mountNode.empty();
           NailgunUnavailabilityDialog.show({}, {preventDuplicate: true});
+          return $.Deferred().reject();
         }
       })
       .then(() => Backbone.history.start());
