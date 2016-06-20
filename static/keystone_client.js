@@ -13,7 +13,6 @@
  * License for the specific language governing permissions and limitations
  * under the License.
 **/
-import $ from 'jquery';
 import _ from 'underscore';
 
 class KeystoneClient {
@@ -25,15 +24,23 @@ class KeystoneClient {
     }, options);
   }
 
+  request(url, options = {}) {
+    options.headers = new Headers(_.extend({}, {
+      'Content-Type': 'application/json'
+    }, options.headers));
+    return fetch(this.url + url, options)
+      .then((response) => response.json());
+  }
+
   authenticate(username, password, options = {}) {
-    if (this.tokenUpdateRequest) return this.tokenUpdateRequest;
+    if (this.tokenUpdatePromise) return this.tokenUpdatePromise;
 
     if (
       !options.force &&
       this.tokenUpdateTime &&
       (this.cacheTokenFor > (new Date() - this.tokenUpdateTime))
     ) {
-      return $.Deferred().resolve();
+      return Promise.resolve();
     }
     var data = {auth: {}};
     if (username && password) {
@@ -44,29 +51,26 @@ class KeystoneClient {
     } else if (this.token) {
       data.auth.token = {id: this.token};
     } else {
-      return $.Deferred().reject();
+      return Promise.reject();
     }
     if (this.tenant) {
       data.auth.tenantName = this.tenant;
     }
-    this.tokenUpdateRequest = $.ajax(this.url + '/v2.0/tokens', {
-      type: 'POST',
-      dataType: 'json',
-      contentType: 'application/json',
-      data: JSON.stringify(data)
-    }).then((result, state, promise) => {
+    this.tokenUpdatePromise = this.request('/v2.0/tokens', {
+      method: 'POST',
+      body: JSON.stringify(data)
+    }).then((result) => {
       this.userId = result.access.user.id;
       this.userRoles = result.access.user.roles;
       this.token = result.access.token.id;
       this.tokenUpdateTime = new Date();
-      return promise;
     });
 
-    this.tokenUpdateRequest
+    this.tokenUpdatePromise
       .catch(() => delete this.tokenUpdateTime)
-      .then(() => delete this.tokenUpdateRequest);
+      .then(() => delete this.tokenUpdatePromise);
 
-    return this.tokenUpdateRequest;
+    return this.tokenUpdatePromise;
   }
 
   changePassword(currentPassword, newPassword) {
@@ -76,35 +80,34 @@ class KeystoneClient {
         original_password: currentPassword
       }
     };
-    return $.ajax(this.url + '/v2.0/OS-KSCRUD/users/' + this.userId, {
-      type: 'PATCH',
-      dataType: 'json',
-      contentType: 'application/json',
-      data: JSON.stringify(data),
-      headers: {'X-Auth-Token': this.token}
-    }).then((result, state, promise) => {
+    return this.request('/v2.0/OS-KSCRUD/users/' + this.userId, {
+      method: 'PATCH',
+      headers: {
+        'X-Auth-Token': this.token
+      },
+      body: JSON.stringify(data)
+    }).then((result) => {
       this.token = result.access.token.id;
       this.tokenUpdateTime = new Date();
-      return promise;
     });
   }
 
   deauthenticate() {
     var token = this.token;
 
-    if (this.tokenUpdateRequest) return this.tokenUpdateRequest;
-    if (!token) return $.Deferred().reject();
+    if (this.tokenUpdatePromise) return this.tokenUpdatePromise;
+    if (!token) return Promise.reject();
 
     delete this.userId;
     delete this.userRoles;
     delete this.token;
     delete this.tokenUpdateTime;
 
-    this.tokenRemoveRequest = $.ajax(this.url + '/v2.0/tokens/' + token, {
-      type: 'DELETE',
-      dataType: 'json',
-      contentType: 'application/json',
-      headers: {'X-Auth-Token': token}
+    this.tokenRemoveRequest = this.request('/v2.0/tokens/' + token, {
+      method: 'DELETE',
+      headers: {
+        'X-Auth-Token': this.token
+      }
     });
 
     this.tokenRemoveRequest
