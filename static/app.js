@@ -121,7 +121,7 @@ class Router extends Backbone.Router {
     if (!tab || !_.includes(tabs, tab)) {
       this.navigate('cluster/' + clusterId + '/' + tabs[0], {trigger: true, replace: true});
     } else {
-      app.loadPage(ClusterPage, arguments).fail(() => this.default());
+      app.loadPage(ClusterPage, arguments).catch(() => this.default());
     }
   }
 
@@ -269,17 +269,21 @@ class App {
       // add auth token to header if auth is enabled
       if (app.version && app.version.get('auth_required')) {
         return app.keystoneClient.authenticate()
-          .fail(() => app.logout())
+          .catch(() => {
+            app.logout();
+            return $.Deferred().reject();
+          })
           .then(() => {
             app.user.set('token', app.keystoneClient.token);
             options.headers = options.headers || {};
             options.headers['X-Auth-Token'] = app.keystoneClient.token;
             return originalSyncMethod.call(this, method, model, options);
           })
-          .fail((response) => {
+          .catch((response) => {
             if (response && response.status === 401) {
               app.logout();
             }
+            return $.Deferred().reject(response);
           });
       }
       return originalSyncMethod.call(this, method, model, options);

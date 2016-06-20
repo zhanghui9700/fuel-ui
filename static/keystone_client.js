@@ -54,19 +54,17 @@ class KeystoneClient {
       dataType: 'json',
       contentType: 'application/json',
       data: JSON.stringify(data)
-    }).then((result, state, deferred) => {
-      try {
-        this.userId = result.access.user.id;
-        this.userRoles = result.access.user.roles;
-        this.token = result.access.token.id;
-        this.tokenUpdateTime = new Date();
-        return deferred;
-      } catch (e) {
-        return $.Deferred().reject();
-      }
-    })
-    .fail(() => delete this.tokenUpdateTime)
-    .always(() => delete this.tokenUpdateRequest);
+    }).then((result, state, promise) => {
+      this.userId = result.access.user.id;
+      this.userRoles = result.access.user.roles;
+      this.token = result.access.token.id;
+      this.tokenUpdateTime = new Date();
+      return promise;
+    });
+
+    this.tokenUpdateRequest
+      .catch(() => delete this.tokenUpdateTime)
+      .then(() => delete this.tokenUpdateRequest);
 
     return this.tokenUpdateRequest;
   }
@@ -84,14 +82,10 @@ class KeystoneClient {
       contentType: 'application/json',
       data: JSON.stringify(data),
       headers: {'X-Auth-Token': this.token}
-    }).then((result, state, deferred) => {
-      try {
-        this.token = result.access.token.id;
-        this.tokenUpdateTime = new Date();
-        return deferred;
-      } catch (e) {
-        return $.Deferred().reject();
-      }
+    }).then((result, state, promise) => {
+      this.token = result.access.token.id;
+      this.tokenUpdateTime = new Date();
+      return promise;
     });
   }
 
@@ -111,8 +105,11 @@ class KeystoneClient {
       dataType: 'json',
       contentType: 'application/json',
       headers: {'X-Auth-Token': token}
-    })
-    .always(() => delete this.tokenRemoveRequest);
+    });
+
+    this.tokenRemoveRequest
+      .catch(() => true)
+      .then(() => delete this.tokenRemoveRequest);
 
     return this.tokenRemoveRequest;
   }
