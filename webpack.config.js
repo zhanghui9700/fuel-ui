@@ -2,6 +2,7 @@
 
 module.exports = {
   entry: [
+    'whatwg-fetch',
     './static/app.js'
   ],
   output: {
