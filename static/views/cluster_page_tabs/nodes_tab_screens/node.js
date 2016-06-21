@@ -463,13 +463,14 @@ var Node = React.createClass({
           <div className='node-action'>
             {this.props.nodeActionsAvailable && [
               !!node.get('cluster') &&
-                <Tooltip key='logs' text={i18n(ns + 'view_logs')}>
+                <Tooltip wrap key='logs' text={i18n(ns + 'view_logs')}>
                   <a className='btn-view-logs icon icon-logs' href={this.getNodeLogsLink()} />
                 </Tooltip>,
               renderActionButtons &&
                 (node.get('pending_addition') || node.get('pending_deletion')) &&
                 !locked &&
                 <Tooltip
+                  wrap
                   key={'discard-node-changes-' + node.id}
                   text={i18n(ns +
                     (node.get('pending_deletion') ? 'discard_deletion' : 'delete_node')
