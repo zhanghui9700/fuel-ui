@@ -17,7 +17,7 @@ module.exports = {
       {
         test: /\.js$/,
         loader: 'babel',
-        exclude: [/(node_modules|vendor\/custom)\//, /\/expression\/parser\.js$/],
+        exclude: [/node_modules\//, /\/expression\/parser\.js$/],
         query: {
           cacheDirectory: true,
           plugins: ['transform-runtime', 'transform-es2015-modules-commonjs'],
@@ -40,7 +40,7 @@ module.exports = {
     ]
   },
   resolve: {
-    modulesDirectories: ['static', 'node_modules', 'vendor/custom'],
+    modulesDirectories: ['static', 'node_modules'],
     extensions: ['', '.js'],
     alias: {
       underscore: 'lodash',
