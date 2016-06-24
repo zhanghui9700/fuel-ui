@@ -1223,7 +1223,10 @@ var NodeInterface = React.createClass({
           </div>
           {!isCompact ?
             <NodeInterfaceAttributes
-              {... _.pick(this.props, 'interface', 'limitations', 'locked')}
+              {... _.pick(this.props,
+                'interface', 'nodesInterfaces', 'getAvailableBondingTypes', 'bondingProperties',
+                'limitations', 'locked'
+              )}
               errors={(this.props.errors || {}).interface_properties || {}}
               isMassConfiguration={!!this.props.nodes.length}
               bondingModeChanged={this.bondingModeChanged}
