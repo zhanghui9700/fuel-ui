@@ -17,13 +17,11 @@
 import ClusterPage from 'tests/functional/pages/cluster';
 import 'tests/functional/helpers';
 
-function GenericLib(remote) {
-  this.remote = remote;
-  this.clusterPage = new ClusterPage(this.remote);
-}
-
-GenericLib.prototype = {
-  constructor: GenericLib,
+class GenericLib {
+  constructor(remote) {
+    this.remote = remote;
+    this.clusterPage = new ClusterPage(this.remote);
+  }
 
   gotoPage(pageName) {
     var pageSelector = {Environments: 'clusters-page', Equipment: 'equipment-page',
@@ -44,15 +42,14 @@ GenericLib.prototype = {
         '" page is selected')
       .assertElementMatchesRegExp('h1.title', pageTitle[pageName], '"' + pageName +
         '" page is opened');
-  },
-
+  }
   checkMirantisRefsOnPage(page) {
     return this.remote
       .then(() => this.gotoPage(page))
       .assertElementNotExists('*[href*="mirantis"]', 'No Mirantis links on "' + page + '" page')
       .assertElementNotMatchesRegExp('.footer div', RegExp('Mirantis', 'i'),
         'No Mirantis names in footer text on page "' + page + '" page');
-  },
+  }
 
   checkMirantisRefsOnTab(tab) {
     return this.remote
@@ -61,6 +58,6 @@ GenericLib.prototype = {
       .assertElementNotMatchesRegExp('.footer div', RegExp('Mirantis', 'i'),
         'No Mirantis names in footer text on page "' + tab + '" tab');
   }
-};
+}
 
 export default GenericLib;
