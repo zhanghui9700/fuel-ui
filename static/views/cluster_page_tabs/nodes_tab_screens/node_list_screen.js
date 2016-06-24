@@ -1260,7 +1260,9 @@ ManagementPanel = React.createClass({
                       </button>
                       <button
                         className='btn btn-default btn-configure-interfaces'
-                        onClick={() => this.goToConfigurationScreen('interfaces', interfaceConflict)}
+                        onClick={
+                          () => this.goToConfigurationScreen('interfaces', interfaceConflict)
+                        }
                       >
                         {interfaceConflict && <i className='glyphicon glyphicon-danger-sign' />}
                         {i18n('dialog.show_node.network_configuration' +
