@@ -163,6 +163,7 @@ class App {
     $.ajaxSetup({cache: false});
 
     this.overrideBackboneSyncMethod();
+    this.overrideBackboneAjax();
 
     this.router = new Router();
     this.version = new models.FuelVersion();
@@ -271,7 +272,7 @@ class App {
         return app.keystoneClient.authenticate()
           .catch(() => {
             app.logout();
-            return $.Deferred().reject();
+            return Promise.reject();
           })
           .then(() => {
             app.user.set('token', app.keystoneClient.token);
@@ -283,12 +284,16 @@ class App {
             if (response && response.status === 401) {
               app.logout();
             }
-            return $.Deferred().reject(response);
+            return Promise.reject(response);
           });
       }
       return originalSyncMethod.call(this, method, model, options);
     };
     Backbone.sync.patched = true;
+  }
+
+  overrideBackboneAjax() {
+    Backbone.ajax = (...args) => Promise.resolve(Backbone.$.ajax(...args));
   }
 }
 
