@@ -501,8 +501,10 @@ models.Node = BaseModel.extend({
   },
   areInterfacesConfigurable() {
     var status = this.get('status');
+    var error = this.get('error_type');
+    // FIXME(jaranovich): #1592355 - interfaces of 'ready' node should be also configurable
     return status === 'discover' || status === 'stopped' ||
-      status === 'error' && this.get('error_type') === 'discover';
+      status === 'error' && (error === 'discover' || error === 'deploy');
   },
   getRolesSummary(releaseRoles) {
     return _.map(this.sortedRoles(releaseRoles.map('name')),
