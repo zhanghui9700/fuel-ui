@@ -30,6 +30,11 @@ export var DEPLOYMENT_TASK_ATTRIBUTES = [
   'time_end'
 ];
 
+export var DEPLOYMENT_HISTORY_VIEW_MODES = [
+  'timeline',
+  'table'
+];
+
 export var DEPLOYMENT_GRAPH_LEVELS = [
   'release',
   'plugin',
