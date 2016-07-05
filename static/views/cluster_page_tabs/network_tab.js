@@ -496,10 +496,10 @@ var NetworkTab = React.createClass({
       ];
     },
     fetchData({cluster}) {
-      return $.when(
+      return Promise.all([
         cluster.get('settings').fetch({cache: true}),
         cluster.get('networkConfiguration').fetch({cache: true})
-      ).then(() => ({}));
+      ]).then(() => ({}));
     },
     getSubtabs(options) {
       var {cluster, showAllNetworks} = options;
@@ -697,29 +697,26 @@ var NetworkTab = React.createClass({
         this.props.cluster.get('tasks').get(task.id).set('unsaved', this.hasChanges());
         this.setState({actionInProgress: false});
         dispatcher.trigger('networkVerificationTaskStarted');
-        return $.Deferred().resolve();
+        return Promise.resolve();
       });
   },
   isDiscardingPossible() {
     return !this.props.cluster.task({group: 'network', active: true});
   },
   applyChanges() {
-    if (!this.isSavingPossible()) return $.Deferred().reject();
+    if (!this.isSavingPossible()) return Promise.reject();
     this.setState({actionInProgress: 'apply_changes'});
     this.prepareIpRanges();
 
     var requests = [];
-    var result = $.Deferred();
 
     dispatcher.trigger('networkConfigurationUpdated', () => {
-      return Backbone.sync('update', this.props.cluster.get('networkConfiguration'))
-        .then((response) => {
+      var promise = Backbone.sync('update', this.props.cluster.get('networkConfiguration'))
+        .then(() => {
           this.updateInitialConfiguration();
-          result.resolve(response);
           this.setState({actionInProgress: false});
         }, (response) => {
-          result.reject();
-          return this.props.cluster.fetchRelated('tasks')
+          this.props.cluster.fetchRelated('tasks')
             .then(() => {
               // FIXME (morale): this hack is needed until backend response
               // format is unified https://bugs.launchpad.net/fuel/+bug/1521661
@@ -740,16 +737,18 @@ var NetworkTab = React.createClass({
               this.props.cluster.task('check_networks').set('unsaved', true);
               this.setState({actionInProgress: false});
             });
+          return Promise.reject();
         });
+      requests.push(promise);
+      return promise;
     });
-    requests.push(result);
 
     if (this.isNetworkSettingsChanged()) {
       var settings = this.props.cluster.get('settings');
-      var deferred = settings.save(null, {patch: true, wait: true, validate: false});
-      if (deferred) {
+      var promise = settings.save(null, {patch: true, wait: true, validate: false});
+      if (promise) {
         this.setState({actionInProgress: true});
-        deferred
+        promise
           .then(
             () => {
               this.setState({
@@ -772,11 +771,11 @@ var NetworkTab = React.createClass({
               });
             }
           );
-        requests.push(deferred);
+        requests.push(promise);
       }
     }
 
-    return $.when(...requests);
+    return Promise.all(requests);
   },
   isSavingPossible() {
     // not network related settings should not block saving of changes on Networks tab
@@ -877,10 +876,10 @@ var NetworkTab = React.createClass({
         return nodeNetworkGroup
           .destroy({wait: true})
           .then(
-            () => $.when(
+            () => Promise.all([
               nodeNetworkGroups.fetch(),
               this.props.cluster.get('networkConfiguration').fetch()
-            ),
+            ]),
             (response) => utils.showErrorDialog({
               title: i18n(networkTabNS + 'node_network_group_deletion_error'),
               response: response

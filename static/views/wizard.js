@@ -685,10 +685,10 @@ var CreateClusterWizard = React.createClass({
     this.setState({actionInProgress: true});
     var cluster = this.cluster;
     cluster.set({components: this.components});
-    var deferred = cluster.save();
-    if (deferred) {
+    var promise = cluster.save();
+    if (promise) {
       this.updateState({disabled: true});
-      deferred
+      promise
         .then(
           () => {
             this.props.clusters.add(cluster);
