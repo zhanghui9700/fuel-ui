@@ -1198,7 +1198,7 @@ ManagementPanel = React.createClass({
                 </Tooltip>
               ),
               this.state.activeSearch && (
-                <div className='search pull-left' key='search'>
+                <div className='search' key='search'>
                   <Input
                     type='text'
                     name='search'
