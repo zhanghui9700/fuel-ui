@@ -74,47 +74,43 @@ NotificationsPage = React.createClass({
 Notification = React.createClass({
   mixins: [backboneMixin('notification')],
   showNodeInfo(id) {
-    var node = new models.Node({id: id});
+    var node = new models.Node({id});
     node.fetch();
-    ShowNodeInfoDialog.show({node: node});
+    ShowNodeInfoDialog.show({node});
   },
   markAsRead() {
-    var notification = this.props.notification;
+    var {notification} = this.props;
     notification.toJSON = () => notification.pick('id', 'status');
     notification.save({status: 'read'});
   },
   onNotificationClick() {
-    if (this.props.notification.get('status') === 'unread') {
-      this.markAsRead();
-    }
-    var nodeId = this.props.notification.get('node_id');
-    if (nodeId) {
-      this.showNodeInfo(nodeId);
-    }
+    var {notification} = this.props;
+    if (notification.get('status') === 'unread') this.markAsRead();
+    if (notification.get('node_id')) this.showNodeInfo(notification.get('node_id'));
   },
   render() {
-    var topic = this.props.notification.get('topic');
-    var notificationClasses = {
-      'col-xs-12 notification': true,
-      'text-danger': topic === 'error',
-      'text-warning': topic === 'warning',
-      unread: this.props.notification.get('status') === 'unread'
-    };
+    var {notification} = this.props;
     var iconClass = {
-      error: 'glyphicon-exclamation-sign',
-      warning: 'glyphicon-warning-sign',
+      error: 'glyphicon-exclamation-sign text-danger',
+      warning: 'glyphicon-warning-sign text-warning',
       discover: 'glyphicon-bell'
-    }[topic] || 'glyphicon-info-sign';
+    }[notification.get('topic')] || 'glyphicon-info-sign';
+
     return (
-      <div className={utils.classNames(notificationClasses)} onClick={this.onNotificationClick}>
-        <div className='notification-time'>{this.props.notification.get('time')}</div>
-        <div className='notification-type'><i className={'glyphicon ' + iconClass} /></div>
+      <div
+        className={utils.classNames('col-xs-12 notification', notification.get('status'))}
+        onClick={this.onNotificationClick}
+      >
+        <div className='notification-time'>
+          {notification.get('time')}
+        </div>
+        <div className='notification-type'>
+          <i className={utils.classNames('glyphicon', iconClass)} />
+        </div>
         <div className='notification-message'>
           <span
-            className={this.props.notification.get('node_id') && 'btn btn-link'}
-            dangerouslySetInnerHTML={{
-              __html: utils.urlify(this.props.notification.escape('message'))
-            }}
+            className={utils.classNames({'btn btn-link': notification.get('node_id')})}
+            dangerouslySetInnerHTML={{__html: utils.urlify(notification.escape('message'))}}
           />
         </div>
       </div>

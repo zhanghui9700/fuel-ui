@@ -294,9 +294,9 @@ var NotificationsPopover = React.createClass({
   mixins: [backboneMixin('notifications')],
   showNodeInfo(id) {
     this.props.toggle(false);
-    var node = new models.Node({id: id});
+    var node = new models.Node({id});
     node.fetch();
-    ShowNodeInfoDialog.show({node: node});
+    ShowNodeInfoDialog.show({node});
   },
   markAsRead() {
     var notificationsToMark = new models.Notifications(
@@ -320,24 +320,22 @@ var NotificationsPopover = React.createClass({
     return {unreadNotificationsIds: []};
   },
   renderNotification(notification) {
-    var topic = notification.get('topic');
     var nodeId = notification.get('node_id');
     var notificationClasses = {
       notification: true,
-      'text-danger': topic === 'error',
-      'text-warning': topic === 'warning',
       clickable: nodeId,
       unread: notification.get('status') === 'unread' ||
         _.includes(this.state.unreadNotificationsIds, notification.id)
     };
     var iconClass = {
-      error: 'glyphicon-exclamation-sign',
-      warning: 'glyphicon-warning-sign',
+      error: 'glyphicon-exclamation-sign text-danger',
+      warning: 'glyphicon-warning-sign text-warning',
       discover: 'glyphicon-bell'
-    }[topic] || 'glyphicon-info-sign';
+    }[notification.get('topic')] || 'glyphicon-info-sign';
+
     return (
       <div key={notification.id} className={utils.classNames(notificationClasses)}>
-        <i className={'glyphicon ' + iconClass}></i>
+        <i className={utils.classNames('glyphicon', iconClass)} />
         <p
           dangerouslySetInnerHTML={{__html: utils.urlify(notification.escape('message'))}}
           onClick={nodeId && _.partial(this.showNodeInfo, nodeId)}
