@@ -741,7 +741,7 @@ ManagementPanel = React.createClass({
     }));
     return Backbone.sync('update', nodes)
       .done(() => {
-        $.when(this.props.cluster.fetch(), this.props.cluster.fetchRelated('nodes')).always(() => {
+        $.when(this.props.cluster.fetch(), this.props.cluster.get('nodes').fetch()).always(() => {
           if (this.props.mode === 'add') {
             dispatcher.trigger('updateNodeStats networkConfigurationUpdated ' +
               'labelsConfigurationUpdated');

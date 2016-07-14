@@ -82,7 +82,7 @@ var Node = React.createClass({
     new models.Node(this.props.node.attributes)
       .save({pending_deletion: false}, {patch: true})
       .done(() => {
-        this.props.cluster.fetchRelated('nodes').done(() => {
+        this.props.cluster.get('nodes').fetch().done(() => {
           this.setState({actionInProgress: false});
         });
       })

@@ -807,7 +807,7 @@ var NetworkTab = React.createClass({
         });
       })
       .then(() => {
-        return this.props.cluster.fetchRelated('tasks');
+        return this.props.cluster.get('tasks').fetch();
       })
       .then(() => {
         // FIXME(vkramskikh): this ugly hack is needed to distinguish
@@ -841,7 +841,7 @@ var NetworkTab = React.createClass({
           result.resolve(response);
         }, (response) => {
           result.reject();
-          return this.props.cluster.fetchRelated('tasks')
+          return this.props.cluster.get('tasks').fetch()
             .done(() => {
               // FIXME (morale): this hack is needed until backend response
               // format is unified https://bugs.launchpad.net/fuel/+bug/1521661

@@ -22,11 +22,7 @@ import NodeListScreen from 'views/cluster_page_tabs/nodes_tab_screens/node_list_
 var AddNodesScreen = React.createClass({
   statics: {
     fetchData(options) {
-      var nodes = new models.Nodes();
-      nodes.fetch = function(options) {
-        return this.constructor.__super__.fetch.call(this, _.extend({data: {cluster_id: ''}},
-          options));
-      };
+      var nodes = new models.Nodes({fetchOptions: {cluster_id: ''}});
       return $.when(nodes.fetch(), options.cluster.get('roles').fetch(),
         options.cluster.get('settings').fetch({cache: true})).then(() => ({nodes: nodes}));
     }
