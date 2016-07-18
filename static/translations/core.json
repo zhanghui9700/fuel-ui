@@ -592,6 +592,13 @@
                             "deploying": "Installing OpenStack",
                             "stopped": "Stopped"
                         },
+                        "error_types": {
+                            "deploy": "Deployment",
+                            "provision": "Provisioning",
+                            "deletion": "Deletion",
+                            "discover": "Discovering",
+                            "stop_deployment": "Stopping Deployment"
+                        },
                         "remove": "Remove",
                         "delete_node": "Delete node",
                         "discard_deletion": "Discard Deletion",
