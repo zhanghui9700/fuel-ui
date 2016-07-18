@@ -20,7 +20,11 @@ module.exports = {
         exclude: [/node_modules\//, /\/expression\/parser\.js$/],
         query: {
           cacheDirectory: true,
-          plugins: ['transform-runtime', 'transform-es2015-modules-commonjs'],
+          plugins: [
+            ['transform-es2015-classes', {loose: true}],
+            'transform-runtime',
+            'transform-es2015-modules-commonjs'
+          ],
           presets: ['es2015-webpack', 'react']
         }
       },
