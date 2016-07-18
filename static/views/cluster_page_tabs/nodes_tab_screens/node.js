@@ -378,6 +378,7 @@ var Node = React.createClass({
     var {node, cluster} = this.props;
     var statusNs = 'cluster_page.nodes_tab.node.status.';
     var status = node.getStatus();
+    var error = node.get('error_type');
     var statusLabel = i18n(statusNs + status, {
       os: cluster && cluster.get('release').get('operating_system') || 'OS'
     });
@@ -410,6 +411,9 @@ var Node = React.createClass({
           <div>
             <span className={utils.classNames({'text-danger': status === 'error'})}>
               {statusLabel}
+              {!isCompactView && !!error && ': ' +
+                i18n('cluster_page.nodes_tab.node.error_types.' + error, {defaultValue: error})
+              }
             </span>
             {!isCompactView && status === 'offline' &&
               <button onClick={this.removeNode} className='btn node-remove-button'>
