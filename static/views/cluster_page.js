@@ -22,6 +22,7 @@ import models from 'models';
 import dispatcher from 'dispatcher';
 import {backboneMixin, pollingMixin, dispatcherMixin} from 'component_mixins';
 import DashboardTab from 'views/cluster_page_tabs/dashboard_tab';
+import WorkflowsTab from 'views/cluster_page_tabs/workflows_tab';
 import NodesTab from 'views/cluster_page_tabs/nodes_tab';
 import NetworkTab from 'views/cluster_page_tabs/network_tab';
 import SettingsTab from 'views/cluster_page_tabs/settings_tab';
@@ -76,6 +77,7 @@ var ClusterPage = React.createClass({
         {url: 'settings', tab: SettingsTab},
         {url: 'vmware', tab: VmWareTab},
         {url: 'logs', tab: LogsTab},
+        {url: 'workflows', tab: WorkflowsTab},
         {url: 'healthcheck', tab: HealthCheckTab}
       ];
     },
@@ -121,11 +123,16 @@ var ClusterPage = React.createClass({
             _.extend({data: {cluster_id: id}}, options));
         };
 
+        // FIXME(kpimenova): get cluster-level graphs only for now
+        // update graph collection url to get all cluster related graphs after #1606931 fix
+        cluster.get('deploymentGraphs').url = '/api/clusters/' + cluster.id + '/deployment_graphs/';
+
         promise = $.when(
             cluster.fetch(),
             cluster.get('settings').fetch(),
             cluster.get('roles').fetch(),
             cluster.get('pluginLinks').fetch({cache: true}),
+            cluster.get('deploymentGraphs').fetch(),
             cluster.fetchRelated('nodes'),
             cluster.fetchRelated('tasks'),
             cluster.fetchRelated('nodeNetworkGroups')
