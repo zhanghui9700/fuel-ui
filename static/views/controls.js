@@ -154,7 +154,7 @@ export var Input = React.createClass({
           <i
             className={utils.classNames(
               'glyphicon',
-              fileName && !disabled ? 'glyphicon-remove' : 'glyphicon-file'
+              fileName && !disabled ? 'glyphicon-remove-alt' : 'glyphicon-file'
             )}
           />
         </div>
