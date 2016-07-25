@@ -28,6 +28,7 @@ import {
   SelectNodesDialog
 } from 'views/dialogs';
 import {backboneMixin, pollingMixin, renamingMixin} from 'component_mixins';
+import DeploymentHistory from 'views/cluster_page_tabs/deployment_history_component';
 
 var ns = 'cluster_page.dashboard_tab.';
 
@@ -38,6 +39,10 @@ var DashboardTab = React.createClass({
     backboneMixin({
       modelOrCollection: (props) => props.cluster.get('tasks'),
       renderOn: 'update change'
+    }),
+    backboneMixin({
+      modelOrCollection: (props) => props.cluster.get('transactions'),
+      renderOn: 'update change:status'
     }),
     backboneMixin({
       modelOrCollection: (props) => props.cluster.get('nodes'),
@@ -109,9 +114,10 @@ var DashboardTab = React.createClass({
           </div>
         }
         {runningDeploymentTask ?
-          <DeploymentInProgressControl
+          <RunningDeploymentControl
             cluster={cluster}
             task={runningDeploymentTask}
+            transaction={cluster.get('transactions').findTask({active: true})}
           />
         :
           [
@@ -135,7 +141,10 @@ var DashboardTab = React.createClass({
               />
           ]
         }
-        <ClusterInfo cluster={cluster} />
+        <ClusterInfo
+          cluster={cluster}
+          runningDeploymentTask={runningDeploymentTask}
+        />
         <DocumentationLinks />
       </div>
     );
@@ -216,9 +225,16 @@ var DashboardLink = React.createClass({
   }
 });
 
-var DeploymentInProgressControl = React.createClass({
+var RunningDeploymentControl = React.createClass({
+  getInitialState() {
+    return {isDeploymentHistoryOpen: false};
+  },
+  toggleDeploymentHistory() {
+    this.setState({isDeploymentHistoryOpen: !this.state.isDeploymentHistoryOpen});
+  },
   render() {
-    var {task, cluster} = this.props;
+    var {task, cluster, transaction} = this.props;
+    var {isDeploymentHistoryOpen} = this.state;
     var taskName = task.get('name');
 
     var showStopButton = task.isStoppable();
@@ -263,6 +279,60 @@ var DeploymentInProgressControl = React.createClass({
               }
             </div>
           </div>
+          {!!transaction &&
+            <div className='col-xs-12 toggle-history'>
+              <button
+                className='btn btn-link pull-right'
+                onClick={this.toggleDeploymentHistory}
+              >
+                {i18n(ns + (isDeploymentHistoryOpen ? 'hide' : 'show') + '_deployment_details')}
+              </button>
+            </div>
+          }
+        </div>
+        {!!transaction && isDeploymentHistoryOpen &&
+          <DeploymentHistoryWrapper transaction={transaction} />
+        }
+      </div>
+    );
+  }
+});
+
+var DeploymentHistoryWrapper = React.createClass({
+  mixins: [
+    backboneMixin({
+      modelOrCollection: (props) => props.deploymentHistory,
+      renderOn: 'update change'
+    }),
+    pollingMixin(3)
+  ],
+  getDefaultProps() {
+    return {deploymentHistory: new models.DeploymentTasks()};
+  },
+  fetchData() {
+    return this.props.deploymentHistory.fetch();
+  },
+  updateDeploymentHistoryUrl(transactionId) {
+    this.props.deploymentHistory.url = '/api/transactions/' + transactionId + '/deployment_history';
+  },
+  componentWillMount() {
+    this.updateDeploymentHistoryUrl(this.props.transaction.id);
+  },
+  componentWillReceiveProps(newProps) {
+    // if another transaction was started, show its deployment history
+    if (this.props.transaction.id !== newProps.transaction.id) {
+      this.updateDeploymentHistoryUrl(newProps.transaction.id);
+    }
+  },
+  render() {
+    return (
+      <div className='dashboard-block clearfix'>
+        <div className='col-xs-12 history-wrapper'>
+          {this.props.deploymentHistory.length ?
+            <DeploymentHistory {...this.props} />
+          :
+            <ProgressBar />
+          }
         </div>
       </div>
     );
@@ -1059,7 +1129,7 @@ var ClusterInfo = React.createClass({
     return result;
   },
   renderStatistics() {
-    var {cluster} = this.props;
+    var {cluster, runningDeploymentTask} = this.props;
     var roles = _.union(['total'], cluster.get('roles').pluck('name'));
     var statuses = _.without(models.Node.prototype.statuses, 'discover');
     return (
@@ -1069,7 +1139,7 @@ var ClusterInfo = React.createClass({
           [
             <div className='col-xs-6' key='roles'>
               {this.renderLegend(roles, true)}
-              {!cluster.task({group: 'deployment', active: true}) &&
+              {!runningDeploymentTask &&
                 <AddNodesButton cluster={cluster} />
               }
             </div>,
@@ -1086,7 +1156,7 @@ var ClusterInfo = React.createClass({
     );
   },
   render() {
-    var cluster = this.props.cluster;
+    var {cluster, runningDeploymentTask} = this.props;
     return (
       <div className='cluster-information'>
         <div className='row'>
@@ -1127,7 +1197,7 @@ var ClusterInfo = React.createClass({
                 <DeleteEnvironmentAction cluster={cluster} />
                 <ResetEnvironmentAction
                   cluster={cluster}
-                  task={cluster.task({group: 'deployment', active: true})}
+                  task={runningDeploymentTask}
                 />
               </div>
             </div>
