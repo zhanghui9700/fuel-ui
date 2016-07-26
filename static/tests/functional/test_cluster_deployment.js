@@ -68,7 +68,7 @@ registerSuite(() => {
         .then(() => modal.clickFooterButton('Provision 1 Node'))
         .then(() => modal.waitToClose())
         .assertElementAppears('div.deploy-process div.progress', 2000, 'Provisioning started')
-        .assertElementDisappears('div.deploy-process div.progress', 10000, 'Provisioning finished')
+        .assertElementDisappears('div.deploy-process div.progress', 20000, 'Provisioning finished')
         .assertElementContainsText(
           'div.alert-success strong',
           'Success',
@@ -163,7 +163,7 @@ registerSuite(() => {
         .then(() => modal.clickFooterButton('Provision 1 Node'))
         .then(() => modal.waitToClose())
         .assertElementAppears('div.deploy-process div.progress', 2000, 'Provisioning started')
-        .assertElementDisappears('div.deploy-process div.progress', 5000, 'Provisioning finished')
+        .assertElementDisappears('div.deploy-process div.progress', 20000, 'Provisioning finished')
         .clickByCssSelector('.actions-panel .dropdown button.dropdown-toggle')
         .clickByCssSelector('.actions-panel .dropdown .dropdown-menu li.deployment button')
         .assertElementContainsText('.btn-deploy-nodes', 'Deploy 1 Node', '1 node to be deployed')
@@ -173,7 +173,7 @@ registerSuite(() => {
         .then(() => modal.clickFooterButton('Deploy 1 Node'))
         .then(() => modal.waitToClose())
         .assertElementAppears('div.deploy-process div.progress', 2000, 'Deployment started')
-        .assertElementDisappears('div.deploy-process div.progress', 10000, 'Deployment finished')
+        .assertElementDisappears('div.deploy-process div.progress', 20000, 'Deployment finished')
         .assertElementContainsText(
           'div.alert-success strong',
           'Success',
@@ -223,7 +223,7 @@ registerSuite(() => {
           60000,
           'Progress bar disappears after deployment'
         )
-        .assertElementAppears('.links-block', 5000, 'Deployment completed')
+        .assertElementAppears('.links-block', 20000, 'Deployment completed')
         .assertElementExists('.go-to-healthcheck', 'Healthcheck link is visible after deploy')
         .findByLinkText('Horizon')
           .getProperty('href')
