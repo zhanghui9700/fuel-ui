@@ -228,7 +228,7 @@ var ClusterPage = React.createClass({
       return task.fetch()
         .then(() => {
           if (task.match({active: false})) dispatcher.trigger('deploymentTaskFinished');
-          return this.props.cluster.nodes.fetch();
+          return this.props.cluster.get('nodes').fetch();
         });
     } else {
       task = this.props.cluster.task({name: 'verify_networks', active: true});
