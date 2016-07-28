@@ -93,7 +93,12 @@ var DeploymentHistory = React.createClass({
   },
   changeViewMode(viewMode) {
     if (viewMode === this.state.viewMode) return;
-    this.setState({viewMode});
+    this.setState({
+      viewMode,
+      //close filters panel
+      areFiltersVisible: false,
+      openFilter: null
+    });
   },
   toggleFilters() {
     this.setState({
@@ -194,7 +199,7 @@ var DeploymentHistory = React.createClass({
               </Tooltip>
             }
           </div>
-          {areFiltersVisible && (
+          {viewMode === 'table' && areFiltersVisible && (
             <div className='filters col-xs-12'>
               <div className='well clearfix'>
                 <div className='well-heading'>
@@ -223,7 +228,7 @@ var DeploymentHistory = React.createClass({
             </div>
           )}
         </div>
-        {!areFiltersVisible && areFiltersApplied &&
+        {viewMode === 'table' && !areFiltersVisible && areFiltersApplied &&
           <div className='active-sorters-filters'>
             <div className='active-filters row' onClick={this.toggleFilters}>
               <strong className='col-xs-1'>{i18n(ns + 'filter_by')}</strong>
