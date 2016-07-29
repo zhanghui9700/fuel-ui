@@ -258,7 +258,7 @@ var RunningDeploymentControl = React.createClass({
                 <strong>
                   {i18n(ns + 'current_task') + ' '}
                 </strong>
-                {i18n('cluster_page.' + taskName) + '...'}
+                {i18n('cluster_page.' + taskName, {defaultValue: taskName}) + '...'}
               </h4>
               <ProgressBar progress={task.isInfinite() ? null : task.get('progress')} />
               {showStopButton &&
