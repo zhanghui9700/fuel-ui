@@ -354,7 +354,7 @@ models.Cluster = BaseModel.extend({
       collection.cluster = this;
       collection.updateFetchOptions(() => {
         var fetchOptions = {cluster_id: this.id};
-        if (key === 'transactions') fetchOptions.task_names = 'deployment';
+        if (key === 'transactions') fetchOptions.transaction_types = 'deployment';
         return fetchOptions;
       });
     });
@@ -676,11 +676,7 @@ models.Transaction = models.Task.extend({
 models.Transactions = models.Tasks.extend({
   constructorName: 'Transactions',
   model: models.Transaction,
-  url: '/api/transactions',
-  parse(response) {
-    // FIXME(jaranovich): to be removed after #1593751 fix
-    return _.filter(response, (transaction) => transaction.name === 'deployment');
-  }
+  url: '/api/transactions'
 });
 
 models.DeploymentTask = BaseModel.extend({
