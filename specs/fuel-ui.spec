@@ -22,13 +22,12 @@ Nailgun UI package
 %prep
 %setup -cq -n %{name}-%{version}
 
-cp -pr /usr/lib/node_modules %{_builddir}/%{name}-%{version}/node_modules
-cp -pr /usr/lib/node_modules/.bin %{_builddir}/node_modules/
+cp -pr /opt/nodejs-nailgun/lib/node_modules %{_builddir}/%{name}-%{version}/node_modules
 
 %build
-cd %{_builddir}/%{name}-%{version} && %{_builddir}/%{name}-%{version}/node_modules/.bin/gulp build --static-dir=compressed_static
-[ -n %{_builddir} ] && rm -rf %{_builddir}/%{name}-%{version}/static
-mv %{_builddir}/%{name}-%{version}/compressed_static %{_builddir}/%{name}-%{version}/static
+./node_modules/.bin/gulp build --static-dir=compressed_static
+rm -rf static
+mv compressed_static static
 
 %install
 mkdir -p %{buildroot}/usr/share/nailgun
@@ -40,5 +39,3 @@ rm -rf $RPM_BUILD_ROOT
 %files
 %defattr(0755,root,root)
 /usr/share/nailgun
-
-
