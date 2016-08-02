@@ -344,10 +344,7 @@
                     "filter_tooltip": "Filter Workflows",
                     "filter_by_graph_type": "Type",
                     "filter_by_graph_level": "Level",
-                    "no_graphs_matched_filters": "No workflows matched applied filters.",
-                    "downloading_tasks_error": {
-                        "title": "Download Deployment Tasks Error"
-                    }
+                    "no_graphs_matched_filters": "No workflows matched applied filters."
                 },
                 "nodes_tab": {
                     "roles": "Roles",
@@ -939,6 +936,9 @@
                 "loading": "Loading..."
             },
             "dialog": {
+                "file_download_error": {
+                    "title": "File Download Error"
+                },
                 "nailgun_unavailability": {
                     "title": "Nailgun is Unavailable",
                     "retry_now": "Retry Now",
