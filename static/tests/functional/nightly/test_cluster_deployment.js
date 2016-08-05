@@ -21,7 +21,7 @@ import DashboardPage from 'tests/functional/pages/dashboard';
 import NodeComponent from 'tests/functional/pages/node';
 import ModalWindow from 'tests/functional/pages/modal';
 import NodesLib from 'tests/functional/nightly/library/nodes';
-import NetworksLib from 'tests/functional/nightly/library/networks';
+import GenericNetworksLib from 'tests/functional/nightly/library/networks_generic';
 import DashboardLib from 'tests/functional/nightly/library/dashboard';
 
 registerSuite(() => {
@@ -41,7 +41,7 @@ registerSuite(() => {
       clusterPage = new ClusterPage(this.remote);
       dashboardPage = new DashboardPage(this.remote);
       nodesLib = new NodesLib(this.remote);
-      networksLib = new NetworksLib(this.remote);
+      networksLib = new GenericNetworksLib(this.remote);
       dashboardLib = new DashboardLib(this.remote);
       clusterName = common.pickRandomName('Test Cluster');
 
@@ -50,7 +50,7 @@ registerSuite(() => {
         .then(() => common.createCluster(clusterName));
     },
     'Check deployment/provisioning with node in "Offline"/"Error" state'() {
-      this.timeout = 45000;
+      this.timeout = 60000;
       var offlineNodesAmount = 1;
       var errorNodesAmount = 1;
       return this.remote
@@ -73,7 +73,7 @@ registerSuite(() => {
         .then(() => dashboardPage.discardChanges());
     },
     'Check that "Regular deployment" works as expected'() {
-      this.timeout = 75000;
+      this.timeout = 100000;
       var provisionNodesAmount = 1;
       var nodeStatus = 'ready';
       var clusterStatus = 'Operational';
@@ -101,7 +101,7 @@ registerSuite(() => {
         .then(() => dashboardPage.discardChanges());
     },
     'Check nodes selection dialog supports Quick Search, Sorting and Filtering'() {
-      this.timeout = 90000;
+      this.timeout = 100000;
       var provisionControllerAmount = 1;
       var provisionComputeAmount = 1;
       var provisionNodesAmount = provisionControllerAmount + provisionComputeAmount;
@@ -138,7 +138,7 @@ registerSuite(() => {
           initialStatus, computeName, provisionStatus, clusterName, clusterStatus));
     },
     'Check that "Regular deployment" works as expected for provisioned/deployed part of nodes'() {
-      this.timeout = 45000;
+      this.timeout = 75000;
       var provisionNodesAmount = 1;
       var deployNodesAmount = 1;
       var nodeStatus = 'ready';
@@ -185,7 +185,7 @@ registerSuite(() => {
         .then(() => clusterPage.goToTab('Dashboard'));
     },
     'Check that "Deployment only" works as expected'() {
-      this.timeout = 45000;
+      this.timeout = 75000;
       var provisionNodesAmount = 3;
       var deployNodesAmount = 3;
       var nodeStatus = 'ready';
@@ -212,7 +212,7 @@ registerSuite(() => {
         .then(() => dashboardPage.discardChanges());
     },
     'Check Virt role provisioning'() {
-      this.timeout = 60000;
+      this.timeout = 75000;
       var vmConfigJson = '[{"id":1,"mem":2,"cpu":2}]';
       var paneName = '"VMs provisioning"';
       var node = new NodeComponent(this.remote);
