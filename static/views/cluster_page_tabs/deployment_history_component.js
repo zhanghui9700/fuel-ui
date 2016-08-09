@@ -293,6 +293,28 @@ var DeploymentHistory = React.createClass({
   }
 });
 
+var DeploymentHistoryTask = React.createClass({
+  getColorFromString(str) {
+    var color = (utils.getStringHashCode(str) & 0x00FFFFFF).toString(16).toUpperCase();
+    return '#' + ('00000' + color).substr(-6);
+  },
+  render() {
+    var {task, left, width} = this.props;
+
+    var taskName = task.get('task_name');
+    return <Tooltip text={taskName}>
+      <div
+        className='node-task'
+        style={{background: this.getColorFromString(taskName), left, width}}
+      >
+        {task.get('status') === 'error' &&
+          <div className='error-marker' style={{left: Math.floor(width / 2)}} />
+        }
+      </div>
+    </Tooltip>;
+  }
+});
+
 var DeploymentHistoryTimeline = React.createClass({
   getIntervalLabel(index) {
     var {timelineIntervalWidth, secondsPerPixel} = this.props;
@@ -307,12 +329,8 @@ var DeploymentHistoryTimeline = React.createClass({
     }
     return i18n(ns + 'seconds', {seconds});
   },
-  getTaskWidth(timeStart, timeEnd) {
+  getTimeIntervalWidth(timeStart, timeEnd) {
     return Math.floor((timeEnd - timeStart) / this.props.secondsPerPixel);
-  },
-  getColorFromString(str) {
-    var color = (utils.getStringHashCode(str) & 0x00FFFFFF).toString(16).toUpperCase();
-    return '#' + ('00000' + color).substr(-6);
   },
   adjustOffsets(e) {
     this.refs.scale.style.left = -e.target.scrollLeft + 'px';
@@ -328,7 +346,6 @@ var DeploymentHistoryTimeline = React.createClass({
       (timeEnd - timeStart) / (secondsPerPixel * timelineIntervalWidth),
       timelineWidth / timelineIntervalWidth
     ]));
-    var currentTimePixels = isRunning ? this.getTaskWidth(timeStart, timeEnd) : 0;
 
     return (
       <div className='col-xs-12'>
@@ -357,39 +374,28 @@ var DeploymentHistoryTimeline = React.createClass({
                 })}
                 style={{
                   width: intervals * timelineIntervalWidth,
-                  backgroundPosition: this.getTaskWidth(timeStart, timeEnd)
+                  backgroundPosition: this.getTimeIntervalWidth(timeStart, timeEnd)
                 }}
               >
                 {_.map(nodeIds, (nodeId) =>
                   <div key={nodeId} className='clearfix'>
-                    {isRunning &&
-                      <div className='current-time-marker' style={{left: currentTimePixels}} />
-                    }
                     {deploymentHistory.map((task) => {
                       if (
                         task.get('node_id') !== nodeId ||
                         !_.includes(['ready', 'error', 'running'], task.get('status'))
                       ) return null;
 
-                      var taskName = task.get('task_name');
-                      var left = this.getTaskWidth(
-                        timeStart,
-                        utils.dateToSeconds(task.get('time_start'))
-                      );
-                      var width = this.getTaskWidth(
-                        utils.dateToSeconds(task.get('time_start')),
-                        task.get('time_end') ? utils.dateToSeconds(task.get('time_end')) : timeEnd
-                      );
-                      return <Tooltip key={taskName} text={taskName}>
-                        <div
-                          className='node-task'
-                          style={{background: this.getColorFromString(taskName), left, width}}
-                        >
-                          {task.get('status') === 'error' &&
-                            <div className='error-marker' style={{left: Math.floor(width / 2)}} />
-                          }
-                        </div>
-                      </Tooltip>;
+                      var taskTimeStart = utils.dateToSeconds(task.get('time_start'));
+                      var taskTimeEnd = task.get('time_end') ?
+                        utils.dateToSeconds(task.get('time_end')) : timeEnd;
+                      var left = this.getTimeIntervalWidth(timeStart, taskTimeStart);
+                      var width = this.getTimeIntervalWidth(taskTimeStart, taskTimeEnd);
+                      return <DeploymentHistoryTask
+                        key={task.get('task_name')}
+                        task={task}
+                        left={left}
+                        width={width}
+                      />;
                     })}
                   </div>
                 )}
