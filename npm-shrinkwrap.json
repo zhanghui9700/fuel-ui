@@ -894,6 +894,9 @@
     "dojo": {
       "version": "2.0.0-alpha.7"
     },
+    "dom-helpers": {
+      "version": "2.4.0"
+    },
     "dom-serialize": {
       "version": "2.2.1"
     },
@@ -1326,7 +1329,12 @@
       "version": "2.0.0"
     },
     "glob-stream": {
-      "version": "3.1.18"
+      "version": "3.1.18",
+      "dependencies": {
+        "glob": {
+          "version": "4.5.3"
+        }
+      }
     },
     "glob-watcher": {
       "version": "0.0.6"
@@ -2222,6 +2230,9 @@
         }
       }
     },
+    "moment": {
+      "version": "2.14.1"
+    },
     "ms": {
       "version": "0.7.1"
     },
@@ -2428,6 +2439,9 @@
     "pend": {
       "version": "1.2.0"
     },
+    "performance-now": {
+      "version": "0.2.0"
+    },
     "pify": {
       "version": "2.3.0"
     },
@@ -2599,6 +2613,9 @@
     "querystringify": {
       "version": "0.0.3"
     },
+    "raf": {
+      "version": "3.2.0"
+    },
     "randomatic": {
       "version": "1.1.5"
     },
@@ -2634,6 +2651,9 @@
     "react-addons-pure-render-mixin": {
       "version": "15.3.0"
     },
+    "react-addons-shallow-compare": {
+      "version": "15.3.0"
+    },
     "react-addons-test-utils": {
       "version": "15.3.0"
     },
@@ -2654,6 +2674,14 @@
     },
     "react-slider": {
       "version": "0.6.1"
+    },
+    "react-virtualized": {
+      "version": "7.19.0",
+      "dependencies": {
+        "classnames": {
+          "version": "2.2.5"
+        }
+      }
     },
     "read-all-stream": {
       "version": "3.1.0",
