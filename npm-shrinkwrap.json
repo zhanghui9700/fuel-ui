@@ -677,6 +677,9 @@
     "dojo": {
       "version": "2.0.0-alpha.6"
     },
+    "dom-helpers": {
+      "version": "2.4.0"
+    },
     "dom-serialize": {
       "version": "2.2.1"
     },
@@ -1833,7 +1836,19 @@
       "version": "0.2.0"
     },
     "lintspaces": {
-      "version": "0.3.3"
+      "version": "0.3.3",
+      "dependencies": {
+        "commander": {
+          "version": "1.1.1"
+        },
+        "editorconfig": {
+          "version": "0.11.4",
+          "resolved": "git+https://github.com/editorconfig/editorconfig-core-js.git#50e0dba81b2f7f3e9ea4f701f2c65dd3f482cd4c"
+        },
+        "lru-cache": {
+          "version": "2.0.4"
+        }
+      }
     },
     "load-json-file": {
       "version": "1.1.0",
@@ -2170,6 +2185,9 @@
         }
       }
     },
+    "moment": {
+      "version": "2.14.1"
+    },
     "ms": {
       "version": "0.7.1"
     },
@@ -2379,6 +2397,9 @@
     "pbkdf2-compat": {
       "version": "2.0.1"
     },
+    "performance-now": {
+      "version": "0.2.0"
+    },
     "pify": {
       "version": "2.3.0"
     },
@@ -2552,6 +2573,9 @@
     "querystringify": {
       "version": "0.0.3"
     },
+    "raf": {
+      "version": "3.2.0"
+    },
     "randomatic": {
       "version": "1.1.5"
     },
@@ -2579,6 +2603,9 @@
     "react-addons-pure-render-mixin": {
       "version": "0.14.3"
     },
+    "react-addons-shallow-compare": {
+      "version": "0.14.3"
+    },
     "react-addons-test-utils": {
       "version": "0.14.3"
     },
@@ -2603,6 +2630,25 @@
     },
     "react-dom": {
       "version": "0.14.3"
+    },
+    "react-virtualized": {
+      "version": "7.19.0",
+      "dependencies": {
+        "dom-helpers": {
+          "version": "2.4.0"
+        },
+        "raf": {
+          "version": "3.2.0",
+          "dependencies": {
+            "performance-now": {
+              "version": "0.2.0"
+            }
+          }
+        },
+        "classnames": {
+          "version": "2.2.5"
+        }
+      }
     },
     "read-file-stdin": {
       "version": "0.2.1"
