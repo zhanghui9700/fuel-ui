@@ -30,6 +30,7 @@ var DeploymentHistory = React.createClass({
   getDefaultProps() {
     return {
       timelineIntervalWidth: 75,
+      timelineRowHeight: 28,
       timelineWidth: 893
     };
   },
@@ -268,7 +269,7 @@ var DeploymentHistory = React.createClass({
           {viewMode === 'timeline' &&
             <DeploymentHistoryTimeline
               {... _.pick(this.props,
-                'deploymentHistory', 'timelineWidth', 'timelineIntervalWidth'
+                'deploymentHistory', 'timelineWidth', 'timelineIntervalWidth', 'timelineRowHeight'
               )}
               {... _.pick(this.state, 'secondsPerPixel')}
               timeStart={this.getTimelineTimeStart()}
@@ -297,13 +298,13 @@ var DeploymentHistoryTask = React.createClass({
     return '#' + ('00000' + color).substr(-6);
   },
   render() {
-    var {task, left, width} = this.props;
+    var {task, top, left, width} = this.props;
 
     var taskName = task.get('task_name');
     return <Tooltip text={taskName}>
       <div
         className='node-task'
-        style={{background: this.getColorFromString(taskName), left, width}}
+        style={{background: this.getColorFromString(taskName), top, left, width}}
       >
         {task.get('status') === 'error' &&
           <div className='error-marker' style={{left: Math.floor(width / 2)}} />
@@ -337,9 +338,16 @@ var DeploymentHistoryTimeline = React.createClass({
   render() {
     var {
       deploymentHistory, timeStart, timeEnd, isRunning,
-      timelineWidth, timelineIntervalWidth, secondsPerPixel
+      timelineWidth, timelineIntervalWidth, timelineRowHeight, secondsPerPixel
     } = this.props;
-    var nodeIds = _.uniq(deploymentHistory.map('node_id'));
+    var nodeIds = [];
+    var nodeOffsets = {};
+    deploymentHistory.each((task) => {
+      var nodeId = task.get('node_id');
+      if (_.has(nodeOffsets, nodeId)) return;
+      nodeOffsets[nodeId] = nodeIds.length;
+      nodeIds.push(nodeId);
+    });
     var intervals = Math.ceil(_.max([
       (timeEnd - timeStart) / (secondsPerPixel * timelineIntervalWidth),
       timelineWidth / timelineIntervalWidth
@@ -372,32 +380,29 @@ var DeploymentHistoryTimeline = React.createClass({
                 })}
                 style={{
                   width: intervals * timelineIntervalWidth,
+                  height: nodeIds.length * timelineRowHeight,
                   backgroundPosition: this.getTimeIntervalWidth(timeStart, timeEnd)
                 }}
               >
-                {_.map(nodeIds, (nodeId) =>
-                  <div key={nodeId} className='clearfix'>
-                    {deploymentHistory.map((task) => {
-                      if (
-                        task.get('node_id') !== nodeId ||
-                        !_.includes(['ready', 'error', 'running'], task.get('status'))
-                      ) return null;
+                {deploymentHistory.map((task) => {
+                  if (!_.includes(['ready', 'error', 'running'], task.get('status'))) return null;
 
-                      var taskTimeStart = task.get('time_start') ?
-                        moment.utc(task.get('time_start')).unix() : 0;
-                      var taskTimeEnd = task.get('time_end') ?
-                        moment.utc(task.get('time_end')).unix() : timeEnd;
-                      var left = this.getTimeIntervalWidth(timeStart, taskTimeStart);
-                      var width = this.getTimeIntervalWidth(taskTimeStart, taskTimeEnd);
-                      return <DeploymentHistoryTask
-                        key={task.get('task_name')}
-                        task={task}
-                        left={left}
-                        width={width}
-                      />;
-                    })}
-                  </div>
-                )}
+                  var taskTimeStart = task.get('time_start') ?
+                    moment.utc(task.get('time_start')).unix() : 0;
+                  var taskTimeEnd = task.get('time_end') ?
+                    moment.utc(task.get('time_end')).unix() : timeEnd;
+                  var top = timelineRowHeight * nodeOffsets[task.get('node_id')];
+                  var left = this.getTimeIntervalWidth(timeStart, taskTimeStart);
+                  var width = this.getTimeIntervalWidth(taskTimeStart, taskTimeEnd);
+
+                  return <DeploymentHistoryTask
+                    key={task.get('node_id') + ' ' + task.get('task_name')}
+                    task={task}
+                    top={top}
+                    left={left}
+                    width={width}
+                  />;
+                })}
               </div>
             </div>
           </div>
