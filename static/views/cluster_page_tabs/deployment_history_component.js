@@ -17,6 +17,7 @@ import _ from 'underscore';
 import i18n from 'i18n';
 import React from 'react';
 import utils from 'utils';
+import moment from 'moment';
 import {Table, Tooltip, MultiSelectControl, DownloadFileButton} from 'views/controls';
 import {DeploymentTaskDetailsDialog} from 'views/dialogs';
 import {
@@ -66,22 +67,19 @@ var DeploymentHistory = React.createClass({
   getTimelineTimeStart() {
     var {deploymentHistory} = this.props;
     return _.min(_.compact(deploymentHistory.map(
-      // Date-parsing algorithms in Chrome and Firefox are different, therefore to prevent
-      // the divergence - we append 'Z' to get correct UTC datetime string
-      (task) => utils.dateToSeconds(task.get('time_start') ?
-        task.get('time_start') + 'Z' : null)
+      (task) => task.get('time_start') ? moment.utc(task.get('time_start')).unix() : 0
     ))) ||
     // make current time a default time in case of transaction has 'pending' status
-    _.now() / 1000;
+    moment.utc().unix();
   },
   getTimelineTimeEnd() {
     var {transaction, deploymentHistory, timelineIntervalWidth, timelineWidth} = this.props;
-    if (transaction.match({status: 'running'})) return _.now() / 1000;
+    if (transaction.match({status: 'running'})) return moment.utc().unix();
     return _.max(_.compact(deploymentHistory.map(
-      (task) => utils.dateToSeconds(task.get('time_end'))
+      (task) => task.get('time_end') ? moment.utc(task.get('time_end')).unix() : 0
     ))) ||
     // set minimal timeline scale in case of transaction has 'pending' status
-    _.now() / 1000 + timelineWidth / timelineIntervalWidth;
+    moment.utc().unix() + timelineWidth / timelineIntervalWidth;
   },
   getTimelineMaxSecondsPerPixel() {
     var {timelineIntervalWidth, timelineWidth} = this.props;
@@ -385,9 +383,10 @@ var DeploymentHistoryTimeline = React.createClass({
                         !_.includes(['ready', 'error', 'running'], task.get('status'))
                       ) return null;
 
-                      var taskTimeStart = utils.dateToSeconds(task.get('time_start'));
+                      var taskTimeStart = task.get('time_start') ?
+                        moment.utc(task.get('time_start')).unix() : 0;
                       var taskTimeEnd = task.get('time_end') ?
-                        utils.dateToSeconds(task.get('time_end')) : timeEnd;
+                        moment.utc(task.get('time_end')).unix() : timeEnd;
                       var left = this.getTimeIntervalWidth(timeStart, taskTimeStart);
                       var width = this.getTimeIntervalWidth(taskTimeStart, taskTimeEnd);
                       return <DeploymentHistoryTask
