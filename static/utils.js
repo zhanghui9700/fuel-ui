@@ -341,10 +341,6 @@ var utils = {
       addLeadingZero(date.getSeconds()) + ' ' + addLeadingZero(date.getDate()) + '/' +
       addLeadingZero(date.getMonth() + 1) + '/' + date.getFullYear();
   },
-  dateToSeconds(date) {
-    if (!date) return 0;
-    return new Date(date).getTime() / 1000;
-  },
   getStringHashCode(str) {
     var hash = 0;
     for (var i = 0; i < str.length; i++) {
