@@ -55,8 +55,8 @@ function shutdownSelenium() {
   }
 }
 
-var SELENIUM_VERSION = '2.52.0';
-var SELENIUM_DRIVERS = {chrome: {version: '2.20'}};
+var SELENIUM_VERSION = '2.53.1';
+var SELENIUM_DRIVERS = {};
 
 gulp.task('selenium:fetch', function(cb) {
   var selenium = require('selenium-standalone');
