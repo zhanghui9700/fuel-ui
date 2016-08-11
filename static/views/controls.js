@@ -71,6 +71,7 @@ export var Input = React.createClass({
     tooltipText: React.PropTypes.node,
     toggleable: React.PropTypes.bool,
     onChange: React.PropTypes.func,
+    error: React.PropTypes.node,
     extraContent: React.PropTypes.node
   },
   getInitialState() {
@@ -178,8 +179,10 @@ export var Input = React.createClass({
     };
 
     var props = _.extend(
-      {},
-      this.props,
+      _.omit(this.props, [
+        'label', 'debounce', 'description', 'inputClassName', 'wrapperClassName',
+        'tooltipPlacement', 'tooltipIcon', 'tooltipText', 'toggleable', 'error', 'extraContent'
+      ]),
       {
         ref: 'input',
         key: 'input',
@@ -300,7 +303,7 @@ export var RadioGroup = React.createClass({
         }
         {_.map(values,
           (value) => <Input
-            {...this.props}
+            {..._.omit(this.props, ['values', 'label', 'tooltipText'])}
             {...value}
             type='radio'
             key={value.data}
@@ -354,7 +357,7 @@ export var ProgressButton = React.createClass({
       'btn-progress': progress
     });
     return <button
-      {...this.props}
+      {..._.omit(this.props, ['progress'])}
       className={classNames}
     >
       {children}
