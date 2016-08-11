@@ -26,7 +26,7 @@ import {
 
 var ns = 'cluster_page.deployment_history.';
 
-var parseTime = _.memoize((time) => Number(moment.utc(time).unix()));
+var parseTime = _.memoize((time) => Number(moment.utc(time)));
 
 var DeploymentHistory = React.createClass({
   getDefaultProps() {
@@ -62,7 +62,7 @@ var DeploymentHistory = React.createClass({
           options: DEPLOYMENT_TASK_STATUSES
         }
       ],
-      secondsPerPixel: this.getTimelineMaxSecondsPerPixel()
+      millisecondsPerPixel: this.getTimelineMaxMillisecondsPerPixel()
     };
   },
   // FIXME(jaranovich): timeline start and end times should be provided from transaction
@@ -73,31 +73,31 @@ var DeploymentHistory = React.createClass({
       (task) => task.get('time_start') ? parseTime(task.get('time_start')) : 0
     ))) ||
     // make current time a default time in case of transaction has 'pending' status
-    moment.utc().unix();
+    moment.utc();
   },
   getTimelineTimeEnd() {
     var {transaction, deploymentHistory, timelineIntervalWidth, timelineWidth} = this.props;
-    if (transaction.match({status: 'running'})) return moment.utc().unix();
+    if (transaction.match({status: 'running'})) return moment.utc();
     return _.max(_.compact(deploymentHistory.map(
       (task) => task.get('time_end') ? parseTime(task.get('time_end')) : 0
     ))) ||
     // set minimal timeline scale in case of transaction has 'pending' status
-    moment.utc().unix() + timelineWidth / timelineIntervalWidth;
+    moment.utc() + timelineWidth / timelineIntervalWidth * 1000;
   },
-  getTimelineMaxSecondsPerPixel() {
+  getTimelineMaxMillisecondsPerPixel() {
     var {timelineIntervalWidth, timelineWidth} = this.props;
     return _.max([
       parseFloat(
-        (this.getTimelineTimeEnd() - this.getTimelineTimeStart()) / timelineWidth
+        (this.getTimelineTimeEnd() - this.getTimelineTimeStart()) / timelineWidth / 1000
       ),
-      1 / timelineIntervalWidth
+      1000 / timelineIntervalWidth
     ]);
   },
   zoomInTimeline() {
-    this.setState({secondsPerPixel: this.state.secondsPerPixel / 2});
+    this.setState({millisecondsPerPixel: this.state.millisecondsPerPixel / 2});
   },
   zoomOutTimeline() {
-    this.setState({secondsPerPixel: this.state.secondsPerPixel * 2});
+    this.setState({millisecondsPerPixel: this.state.millisecondsPerPixel * 2});
   },
   changeViewMode(viewMode) {
     if (viewMode === this.state.viewMode) return;
@@ -135,14 +135,15 @@ var DeploymentHistory = React.createClass({
     this.setState({filters});
   },
   render() {
-    var {viewMode, areFiltersVisible, openFilter, filters, secondsPerPixel} = this.state;
+    var {viewMode, areFiltersVisible, openFilter, filters, millisecondsPerPixel} = this.state;
     var {deploymentHistory, transaction, timelineIntervalWidth} = this.props;
 
     var areFiltersApplied = _.some(filters, ({values}) => values.length);
 
     // interval should be equal at least 1 second
-    var canTimelineBeZoommedIn = secondsPerPixel / 2 >= 1 / timelineIntervalWidth;
-    var canTimelineBeZoommedOut = secondsPerPixel * 2 <= this.getTimelineMaxSecondsPerPixel();
+    var canTimelineBeZoommedIn = millisecondsPerPixel / 2 >= 1000 / timelineIntervalWidth;
+    var canTimelineBeZoommedOut =
+      millisecondsPerPixel * 2 <= this.getTimelineMaxMillisecondsPerPixel();
 
     return (
       <div className='deployment-history-table'>
@@ -273,7 +274,7 @@ var DeploymentHistory = React.createClass({
               {... _.pick(this.props,
                 'deploymentHistory', 'timelineWidth', 'timelineIntervalWidth', 'timelineRowHeight'
               )}
-              {... _.pick(this.state, 'secondsPerPixel')}
+              {... _.pick(this.state, 'millisecondsPerPixel')}
               timeStart={this.getTimelineTimeStart()}
               timeEnd={this.getTimelineTimeEnd()}
               isRunning={transaction.match({status: 'running'})}
@@ -346,8 +347,8 @@ var DeploymentHistoryTask = React.createClass({
 
 var DeploymentHistoryTimeline = React.createClass({
   getIntervalLabel(index) {
-    var {timelineIntervalWidth, secondsPerPixel} = this.props;
-    var seconds = Math.floor(secondsPerPixel * timelineIntervalWidth * (index + 1));
+    var {timelineIntervalWidth, millisecondsPerPixel} = this.props;
+    var seconds = Math.floor(millisecondsPerPixel / 1000 * timelineIntervalWidth * (index + 1));
     var minutes = seconds < 60 ? 0 : Math.floor(seconds / 60);
     seconds = seconds - (minutes * 60);
     var hours = minutes < 60 ? 0 : Math.floor(minutes / 60);
@@ -359,7 +360,7 @@ var DeploymentHistoryTimeline = React.createClass({
     return i18n(ns + 'seconds', {seconds});
   },
   getTimeIntervalWidth(timeStart, timeEnd) {
-    return Math.floor((timeEnd - timeStart) / this.props.secondsPerPixel);
+    return Math.floor((timeEnd - timeStart) / this.props.millisecondsPerPixel);
   },
   adjustOffsets(e) {
     this.refs.scale.style.left = -e.target.scrollLeft + 'px';
@@ -368,7 +369,7 @@ var DeploymentHistoryTimeline = React.createClass({
   render() {
     var {
       deploymentHistory, timeStart, timeEnd, isRunning,
-      timelineWidth, timelineIntervalWidth, timelineRowHeight, secondsPerPixel
+      timelineWidth, timelineIntervalWidth, timelineRowHeight, millisecondsPerPixel
     } = this.props;
     var nodeIds = [];
     var nodeOffsets = {};
@@ -379,7 +380,7 @@ var DeploymentHistoryTimeline = React.createClass({
       nodeIds.push(nodeId);
     });
     var intervals = Math.ceil(_.max([
-      (timeEnd - timeStart) / (secondsPerPixel * timelineIntervalWidth),
+      (timeEnd - timeStart) / (millisecondsPerPixel * timelineIntervalWidth),
       timelineWidth / timelineIntervalWidth
     ]));
 
