@@ -42,6 +42,7 @@ var Field = React.createClass({
     var props = _.extend({
       onChange: this.onChange,
       disabled: this.props.disabled,
+      tooltipText: this.props.tooltipText,
       error: (this.props.model.validationError || {})[metadata.name]
     }, _.pick(metadata, 'name', 'type', 'label', 'description'));
     switch (metadata.type) {
@@ -78,13 +79,16 @@ var FieldGroup = React.createClass({
     var restrictions = this.props.model.testRestrictions();
     var metadata = _.filter(this.props.model.get('metadata'), VmWareModels.isRegularField);
     var fields = metadata.map((meta) => {
+      if (restrictions.hide[meta.name] && restrictions.hide[meta.name].result) {
+        return null;
+      }
       return (
         <Field
           key={meta.name}
           model={this.props.model}
           metadata={meta}
-          disabled={this.props.disabled}
-          disableWarning={restrictions.disable[meta.name]}
+          disabled={this.props.disabled || restrictions.disable[meta.name].result}
+          tooltipText={restrictions.disable[meta.name].message}
         />
       );
     });
@@ -339,7 +343,9 @@ var VmWareTab = React.createClass({
       cluster: this.props.cluster,
       settings: this.props.cluster.get('settings'),
       networking_parameters: this.props.cluster.get('networkConfiguration')
-        .get('networking_parameters')
+        .get('networking_parameters'),
+      current_vcenter: this.model.get('availability_zones').at(0),
+      glance: this.model.get('glance')
     });
 
     this.onModelSync(); // eslint-disable-line no-sync
@@ -408,6 +414,7 @@ var VmWareTab = React.createClass({
     var model = this.state.model;
     var currentJson = JSON.stringify(this.model.toJSON());
     var editable = this.props.cluster.isAvailableForSettingsChanges();
+    this.actions = this.model.testRestrictions();
     var hide = this.actions.hide || {};
     var disable = this.actions.disable || {};
 
