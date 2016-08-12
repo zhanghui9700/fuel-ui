@@ -402,14 +402,10 @@ var DeploymentHistoryTimeline = React.createClass({
             </div>
             <div className='timelines-container' onScroll={this.adjustOffsets}>
               <div
-                className={utils.classNames({
-                  timelines: true,
-                  'current-time-marker': isRunning
-                })}
+                className='timelines'
                 style={{
                   width: intervals * timelineIntervalWidth,
-                  height: nodeIds.length * timelineRowHeight,
-                  backgroundPosition: this.getTimeIntervalWidth(timeStart, timeEnd)
+                  height: nodeIds.length * timelineRowHeight
                 }}
               >
                 {deploymentHistory.map((task) => {
@@ -431,6 +427,16 @@ var DeploymentHistoryTimeline = React.createClass({
                     width={width}
                   />;
                 })}
+                {isRunning &&
+                  <div
+                    key='current-time-marker'
+                    className='current-time-marker'
+                    style={{
+                      height: nodeIds.length * timelineRowHeight,
+                      left: this.getTimeIntervalWidth(timeStart, timeEnd)
+                    }}
+                  />
+                }
               </div>
             </div>
           </div>
