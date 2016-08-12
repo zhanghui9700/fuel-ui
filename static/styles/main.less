@@ -5255,7 +5255,6 @@ input[type=range] {
   @row-height: 28px;
   @border-color: @gray + 50%;
   @max-height: 300px;
-  @even-background: fade(@gray, 10%);
   .striped-background() {
     background-color: fade(@gray, 10%);
     background-image: linear-gradient(transparent 50%, @white 0%);
@@ -5271,9 +5270,9 @@ input[type=range] {
     .node-names-container {
       overflow: hidden;
       max-height: @max-height;
-      .striped-background;
 
       .node-names {
+        .striped-background;
         position: relative;
 
         > div {
@@ -5319,15 +5318,16 @@ input[type=range] {
       overflow: auto;
       max-height: @max-height;
       border-left: 1px solid @border-color;
-      .striped-background;
 
       .timelines {
-        &.current-time-marker {
-          background: linear-gradient(to left, @orange, @orange);
-          background-size: 1px 100%;
-          background-repeat: no-repeat;
-        }
         position: relative;
+        .striped-background;
+
+        .current-time-marker {
+          position: absolute;
+          background-color: @orange;
+          width: 1px;
+        }
 
         .node-task {
           overflow: visible;
