@@ -87,9 +87,7 @@ var DeploymentHistory = React.createClass({
   getTimelineMaxMillisecondsPerPixel() {
     var {timelineIntervalWidth, timelineWidth} = this.props;
     return _.max([
-      parseFloat(
-        (this.getTimelineTimeEnd() - this.getTimelineTimeStart()) / timelineWidth / 1000
-      ),
+      (this.getTimelineTimeEnd() - this.getTimelineTimeStart()) / timelineWidth,
       1000 / timelineIntervalWidth
     ]);
   },
