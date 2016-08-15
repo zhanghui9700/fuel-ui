@@ -50,7 +50,7 @@ define([
         .then(function() {
           return self.modal.clickFooterButton('Delete');
         })
-        .findAllByCssSelector('div.confirm-deletion-form input[type=text]')
+        .findAllByCssSelector('.confirmation-form input[type=text]')
           .then(function(confirmInputs) {
             if (confirmInputs.length) {
               return confirmInputs[0]
@@ -125,7 +125,7 @@ define([
         .then(function() {
           return self.modal.clickFooterButton('Reset');
         })
-        .findAllByCssSelector('div.confirm-reset-form input[type=text]')
+        .findAllByCssSelector('.confirmation-form input[type=text]')
           .then(function(confirmationInputs) {
             if (confirmationInputs.length) {
               return confirmationInputs[0]
