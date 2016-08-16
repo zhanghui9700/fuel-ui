@@ -26,7 +26,8 @@ import {
 
 var ns = 'cluster_page.deployment_history.';
 
-var parseTime = _.memoize((time) => Number(moment.utc(time)));
+var parseISO8601Date = _.memoize((date) => new Date(date + 'Z').getTime());
+var parseRFC2822Date = (date) => Number(moment.utc(date, 'ddd, D MMM YYYY H:mm:ss [GMT]', true));
 
 var DeploymentHistory = React.createClass({
   getDefaultProps() {
@@ -67,11 +68,9 @@ var DeploymentHistory = React.createClass({
     };
   },
   getCurrentTime() {
-    return Number(moment.utc(
-      this.props.deploymentHistory.lastFetchDate,
-      'ddd, D MMM YYYY H:mm:ss [GMT]' // RFC 2822 date format used in HTTP headers
-    )) + 1000; // we don't get milliseconds from server, so add 1 second so that tasks end time
-               // won't be greater than current time
+    // we don't get milliseconds from server, so add 1 second so that tasks end time
+    // won't be greater than current time
+    return parseRFC2822Date(this.props.deploymentHistory.lastFetchDate) + 1000;
   },
   // FIXME(jaranovich): timeline start and end times should be provided from transaction
   // time_start and time_end attributes (#1593753 bug)
@@ -83,13 +82,13 @@ var DeploymentHistory = React.createClass({
     deploymentHistory.each((task) => {
       var taskTimeStart = task.get('time_start');
       if (taskTimeStart) {
-        taskTimeStart = parseTime(taskTimeStart);
+        taskTimeStart = parseISO8601Date(taskTimeStart);
         if (taskTimeStart < timelineTimeStart) timelineTimeStart = taskTimeStart;
         if (!timelineTimeEnd) timelineTimeEnd = timelineTimeStart;
         if (taskTimeStart > timelineTimeEnd) timelineTimeEnd = taskTimeStart;
         var taskTimeEnd = task.get('time_end');
         if (taskTimeEnd) {
-          taskTimeEnd = parseTime(taskTimeEnd);
+          taskTimeEnd = parseISO8601Date(taskTimeEnd);
           if (taskTimeEnd > timelineTimeEnd) timelineTimeEnd = taskTimeEnd;
         }
       }
@@ -429,9 +428,9 @@ var DeploymentHistoryTimeline = React.createClass({
                   if (!_.includes(['ready', 'error', 'running'], task.get('status'))) return null;
 
                   var taskTimeStart = task.get('time_start') ?
-                    parseTime(task.get('time_start')) : 0;
+                    parseISO8601Date(task.get('time_start')) : 0;
                   var taskTimeEnd = task.get('time_end') ?
-                    parseTime(task.get('time_end')) : timeEnd;
+                    parseISO8601Date(task.get('time_end')) : timeEnd;
 
                   var width = this.getTimeIntervalWidth(taskTimeStart, taskTimeEnd);
                   if (!width) return null;
