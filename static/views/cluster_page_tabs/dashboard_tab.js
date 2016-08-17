@@ -161,7 +161,7 @@ var DashboardTab = React.createClass({
               />,
             clusterHasChanges && this.renderClusterActionsPanel(clusterHasChanges),
             !cluster.get('nodes').length &&
-              <div className='row'>
+              <div className='row' key='add-nodes-alert'>
                 <div className='dashboard-block clearfix'>
                   <div className='col-xs-12'>
                     <h4>{i18n(ns + 'new_environment_welcome')}</h4>
