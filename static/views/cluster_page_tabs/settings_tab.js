@@ -100,7 +100,8 @@ var SettingsTab = React.createClass({
   applyChanges() {
     if (!this.isSavingPossible()) return Promise.reject();
 
-    var settings = this.props.cluster.get('settings');
+    var {cluster} = this.props;
+    var settings = cluster.get('settings');
     var promise = settings.save(null, {patch: true, wait: true, validate: false});
     if (promise) {
       this.setState({actionInProgress: 'apply_changes'});
@@ -113,18 +114,21 @@ var SettingsTab = React.createClass({
           });
           // some networks may have restrictions which are processed by nailgun,
           // so networks need to be refetched after updating cluster attributes
-          this.props.cluster.get('networkConfiguration').cancelThrottling();
-          this.props.cluster.fetch();
+          cluster.get('networkConfiguration').cancelThrottling();
+          // cluster workflows collection includes graphs of enabled plugins only
+          // so graphs need to be refetched after updating plugins
+          cluster.get('deploymentGraphs').cancelThrottling();
+          cluster.fetch();
         }, (response) => {
           this.setState({
             actionInProgress: false,
             key: _.now()
           });
-          this.props.cluster.fetch();
+          cluster.fetch();
           utils.showErrorDialog({
             title: i18n('cluster_page.settings_tab.settings_error.title'),
             message: i18n('cluster_page.settings_tab.settings_error.saving_warning'),
-            response: response
+            response
           });
         });
     }

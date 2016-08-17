@@ -706,32 +706,33 @@ var NetworkTab = React.createClass({
     this.prepareIpRanges();
 
     var requests = [];
+    var {cluster} = this.props;
 
     dispatcher.trigger('networkConfigurationUpdated', () => {
-      var promise = Backbone.sync('update', this.props.cluster.get('networkConfiguration'))
+      var promise = Backbone.sync('update', cluster.get('networkConfiguration'))
         .then(() => {
           this.updateInitialConfiguration();
           this.setState({actionInProgress: false});
         }, (response) => {
-          this.props.cluster.get('tasks').fetch()
+          cluster.get('tasks').fetch()
             .then(() => {
               // FIXME (morale): this hack is needed until backend response
               // format is unified https://bugs.launchpad.net/fuel/+bug/1521661
-              var checkNetworksTask = this.props.cluster.task('check_networks');
+              var checkNetworksTask = cluster.task('check_networks');
               if (!(checkNetworksTask && checkNetworksTask.get('message'))) {
                 var fakeTask = new models.Task({
-                  cluster: this.props.cluster.id,
+                  cluster: cluster.id,
                   message: utils.getResponseText(response),
                   status: 'error',
                   name: 'check_networks',
                   result: {}
                 });
-                this.props.cluster.get('tasks').remove(checkNetworksTask);
-                this.props.cluster.get('tasks').add(fakeTask);
+                cluster.get('tasks').remove(checkNetworksTask);
+                cluster.get('tasks').add(fakeTask);
               }
               // FIXME(vkramskikh): the same hack for check_networks task:
               // remove failed tasks immediately, so they won't be taken into account
-              this.props.cluster.task('check_networks').set('unsaved', true);
+              cluster.task('check_networks').set('unsaved', true);
               this.setState({actionInProgress: false});
             });
           return Promise.reject();
@@ -741,30 +742,34 @@ var NetworkTab = React.createClass({
     });
 
     if (this.isNetworkSettingsChanged()) {
-      var settings = this.props.cluster.get('settings');
+      var settings = cluster.get('settings');
       var promise = settings.save(null, {patch: true, wait: true, validate: false});
       if (promise) {
         this.setState({actionInProgress: true});
         promise
           .then(
             () => {
+              // cluster workflows collection includes graphs of enabled plugins only
+              // so graphs need to be refetched after updating network plugins
+              cluster.get('deploymentGraphs').cancelThrottling();
+
               this.setState({
                 initialSettingsAttributes: _.cloneDeep(settings.attributes),
                 actionInProgress: false,
                 key: _.now()
               });
-              this.props.cluster.fetch();
+              cluster.fetch();
             },
             (response) => {
               this.setState({
                 actionInProgress: false,
                 key: _.now()
               });
-              this.props.cluster.fetch();
+              cluster.fetch();
               utils.showErrorDialog({
                 title: i18n('cluster_page.settings_tab.settings_error.title'),
                 message: i18n('cluster_page.settings_tab.settings_error.saving_warning'),
-                response: response
+                response
               });
             }
           );
