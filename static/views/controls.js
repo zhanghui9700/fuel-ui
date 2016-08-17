@@ -683,7 +683,7 @@ export var DownloadFileButton = React.createClass({
   propTypes: {
     label: React.PropTypes.string.isRequired,
     fileName: React.PropTypes.string.isRequired,
-    fileContent: React.PropTypes.oneOf([React.PropTypes.func, React.PropTypes.string]),
+    fileContent: React.PropTypes.oneOfType([React.PropTypes.func, React.PropTypes.string]),
     url: React.PropTypes.string,
     fetchOptions: React.PropTypes.object,
     headers: React.PropTypes.object,
