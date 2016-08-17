@@ -30,11 +30,13 @@ var parseISO8601Date = _.memoize((date) => new Date(date + 'Z').getTime());
 var parseRFC2822Date = (date) => Number(moment.utc(date, 'ddd, D MMM YYYY H:mm:ss [GMT]', true));
 
 var DeploymentHistory = React.createClass({
+  propTypes: {
+    width: React.PropTypes.number.isRequired
+  },
   getDefaultProps() {
     return {
       timelineIntervalWidth: 75,
-      timelineRowHeight: 28,
-      timelineWidth: 893
+      timelineRowHeight: 28
     };
   },
   getInitialState() {
@@ -96,11 +98,13 @@ var DeploymentHistory = React.createClass({
     return [timelineTimeStart, timelineTimeEnd];
   },
   getTimelineMaxMillisecondsPerPixel(timelineTimeStart, timelineTimeEnd) {
-    var {timelineIntervalWidth, timelineWidth} = this.props;
     return _.max([
-      (timelineTimeEnd - timelineTimeStart) / timelineWidth,
-      1000 / timelineIntervalWidth
+      (timelineTimeEnd - timelineTimeStart) / this.getNodeTimelineContainerWidth(),
+      1000 / this.props.timelineIntervalWidth
     ]);
+  },
+  getNodeTimelineContainerWidth() {
+    return Math.floor(this.props.width * 0.8);
   },
   zoomInTimeline() {
     this.setState({millisecondsPerPixel: this.state.millisecondsPerPixel / 2});
@@ -282,9 +286,10 @@ var DeploymentHistory = React.createClass({
           {viewMode === 'timeline' &&
             <DeploymentHistoryTimeline
               {... _.pick(this.props,
-                'deploymentHistory', 'timelineWidth', 'timelineIntervalWidth', 'timelineRowHeight'
+                'deploymentHistory', 'width', 'timelineIntervalWidth', 'timelineRowHeight'
               )}
               {... _.pick(this.state, 'millisecondsPerPixel')}
+              nodeTimelineContainerWidth={this.getNodeTimelineContainerWidth()}
               timeStart={timelineTimeStart}
               timeEnd={timelineTimeEnd}
               isRunning={transaction.match({status: 'running'})}
@@ -382,8 +387,9 @@ var DeploymentHistoryTimeline = React.createClass({
   render() {
     var {
       deploymentHistory, timeStart, timeEnd, isRunning,
-      timelineWidth, timelineIntervalWidth, timelineRowHeight, millisecondsPerPixel
+      nodeTimelineContainerWidth, width, timelineIntervalWidth, timelineRowHeight
     } = this.props;
+
     var nodeIds = [];
     var nodeOffsets = {};
     deploymentHistory.each((task) => {
@@ -392,35 +398,49 @@ var DeploymentHistoryTimeline = React.createClass({
       nodeOffsets[nodeId] = nodeIds.length;
       nodeIds.push(nodeId);
     });
-    var intervals = Math.ceil(_.max([
-      (timeEnd - timeStart) / (millisecondsPerPixel * timelineIntervalWidth),
-      timelineWidth / timelineIntervalWidth
-    ]));
+
+    var nodeTimelineWidth = _.max([
+      this.getTimeIntervalWidth(timeStart, timeEnd),
+      nodeTimelineContainerWidth
+    ]);
+    var intervals = Math.floor(nodeTimelineWidth / timelineIntervalWidth);
 
     return (
       <div className='col-xs-12'>
         <div className='deployment-timeline clearfix'>
-          <div className='node-names-column'>
+          <div className='node-names-column' style={{width: width - nodeTimelineContainerWidth}}>
             <div className='header' />
             <div className='node-names-container'>
               <div className='node-names' ref='names'>
                 {_.map(nodeIds,
-                  (nodeId) => <div key={nodeId}>{nodeId === 'master' ? nodeId : '#' + nodeId}</div>
+                  (nodeId) => <div key={nodeId} style={{height: timelineRowHeight}}>
+                    {nodeId === 'master' ? nodeId : '#' + nodeId}
+                  </div>
                 )}
               </div>
             </div>
           </div>
-          <div className='timelines-column'>
+          <div className='timelines-column' style={{width: nodeTimelineContainerWidth}}>
             <div className='header'>
-              <div className='scale' ref='scale' style={{width: intervals * timelineIntervalWidth}}>
-                {_.times(intervals, (n) => <div key={n}>{this.getIntervalLabel(n)}</div>)}
+              <div className='scale' ref='scale' style={{width: nodeTimelineWidth}}>
+                {_.times(intervals, (n) =>
+                  <div
+                    key={n}
+                    style={{
+                      width: timelineIntervalWidth,
+                      right: (intervals - (n + 1)) * timelineIntervalWidth
+                    }}
+                  >
+                    {this.getIntervalLabel(n)}
+                  </div>
+                )}
               </div>
             </div>
             <div className='timelines-container' onScroll={this.adjustOffsets}>
               <div
                 className='timelines'
                 style={{
-                  width: intervals * timelineIntervalWidth,
+                  width: nodeTimelineWidth,
                   height: nodeIds.length * timelineRowHeight
                 }}
               >

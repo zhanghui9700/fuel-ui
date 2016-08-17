@@ -204,7 +204,7 @@ DeploymentHistoryScreen = React.createClass({
     }
   },
   render() {
-    return <DeploymentHistory {...this.props} />;
+    return <DeploymentHistory {...this.props} width={1128} />;
   }
 });
 
