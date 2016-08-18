@@ -382,13 +382,11 @@ export var Popover = React.createClass({
   propTypes: {
     className: React.PropTypes.node,
     container: React.PropTypes.node,
-    placement: React.PropTypes.node,
-    trigger: React.PropTypes.node
+    placement: React.PropTypes.node
   },
   getDefaultProps() {
     return {
-      placement: 'bottom',
-      trigger: 'manual'
+      placement: 'bottom'
     };
   },
   componentDidMount() {
@@ -396,9 +394,10 @@ export var Popover = React.createClass({
       var popoverContentId = _.uniqueId('popover');
       this.popoverMountNode = ReactDOM.findDOMNode(this).parentNode;
       $(this.popoverMountNode).popover({
+        animation: false,
         container: this.props.container,
         placement: this.props.placement,
-        trigger: this.props.trigger,
+        trigger: 'manual',
         html: true,
         content: '<span id=' + popoverContentId + '></span>'
       })
