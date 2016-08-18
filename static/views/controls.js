@@ -563,7 +563,7 @@ export var MultiSelectControl = React.createClass({
     var {optionsFilter} = this.state;
     if (!_.isNull(optionsFilter)) {
       return _.filter(this.props.options,
-        (option) => _.startsWith((option.title || '').toLowerCase(), optionsFilter)
+        (option) => _.includes((option.title || '').toLowerCase(), optionsFilter)
       );
     }
     return this.props.options;
