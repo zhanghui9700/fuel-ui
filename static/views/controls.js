@@ -491,7 +491,8 @@ export var Tooltip = React.createClass({
     $(ReactDOM.findDOMNode(this.refs.tooltip)).tooltip({
       container: this.props.container,
       placement: this.props.placement,
-      title: this.props.text
+      title: this.props.text,
+      trigger: 'hover'
     });
   },
   updateTooltipTitle() {
