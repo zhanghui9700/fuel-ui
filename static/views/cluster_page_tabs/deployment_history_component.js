@@ -325,13 +325,14 @@ var DeploymentHistoryTask = React.createClass({
     var {task, top, left, width} = this.props;
 
     var taskName = task.get('task_name');
+    var taskStatus = task.get('status');
     return <div
       onMouseEnter={() => this.togglePopover(true)}
       onMouseLeave={() => this.togglePopover(false)}
       className='node-task'
       style={{background: this.getColorFromString(taskName), top, left, width}}
     >
-      {task.get('status') === 'error' &&
+      {taskStatus === 'error' &&
         <div className='error-marker' style={{left: Math.floor(width / 2)}} />
       }
       {this.state.isPopoverVisible &&
@@ -342,19 +343,18 @@ var DeploymentHistoryTask = React.createClass({
         >
           <div>
             {DEPLOYMENT_TASK_ATTRIBUTES
-              .map((attr) => <div
-                key={attr}
-                className={utils.classNames('row', attr, task.get('status'))}
-              >
-                <span className='col-xs-3'>
-                  {i18n('dialog.deployment_task_details.task.' + attr)}
-                </span>
-                <span className='col-xs-9'>
-                  {_.startsWith(attr, 'time') ?
-                    utils.formatTimestamp(task.get(attr)) : task.get(attr)
-                  }
-                </span>
-              </div>)
+              .map((attr) => !_.isNull(task.get(attr)) && (
+                <div key={attr} className={utils.classNames('row', attr, taskStatus)}>
+                  <span className='col-xs-3'>
+                    {i18n('dialog.deployment_task_details.task.' + attr)}
+                  </span>
+                  <span className='col-xs-9'>
+                    {_.startsWith(attr, 'time') ?
+                      utils.formatTimestamp(task.get(attr)) : task.get(attr)
+                    }
+                  </span>
+                </div>
+              ))
             }
           </div>
         </Popover>
