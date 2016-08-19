@@ -43,8 +43,6 @@ var DeploymentHistory = React.createClass({
     var {deploymentHistory} = this.props;
     return {
       viewMode: 'timeline',
-      areFiltersVisible: false,
-      openFilter: null,
       filters: [
         {
           name: 'task_name',
@@ -113,13 +111,74 @@ var DeploymentHistory = React.createClass({
     this.setState({millisecondsPerPixel: this.state.millisecondsPerPixel * 2});
   },
   changeViewMode(viewMode) {
-    if (viewMode === this.state.viewMode) return;
-    this.setState({
-      viewMode,
-      //close filters panel
+    if (viewMode !== this.state.viewMode) this.setState({viewMode});
+  },
+  changeFilter(filterName, values) {
+    var {filters} = this.state;
+    _.find(filters, {name: filterName}).values = values;
+    this.setState({filters});
+  },
+  resetFilters() {
+    var {filters} = this.state;
+    _.each(filters, (filter) => {
+      filter.values = [];
+    });
+    this.setState({filters});
+  },
+  render() {
+    var {viewMode, filters, millisecondsPerPixel} = this.state;
+    var {deploymentHistory, transaction, timelineIntervalWidth} = this.props;
+    var [timelineTimeStart, timelineTimeEnd] = this.getTimelineTimeInterval();
+
+    // interval should be equal at least 1 second
+    var canTimelineBeZoommedIn = millisecondsPerPixel / 2 >= 1000 / timelineIntervalWidth;
+    var canTimelineBeZoommedOut =
+      millisecondsPerPixel * 2 <=
+      this.getTimelineMaxMillisecondsPerPixel(timelineTimeStart, timelineTimeEnd);
+
+    return (
+      <div className='deployment-history-table'>
+        <DeploymentHistoryManagementPanel
+          {... _.pick(this.props, 'deploymentHistory', 'transaction')}
+          {... _.pick(this.state, 'viewMode', 'filters')}
+          {... _.pick(this, 'changeViewMode', 'resetFilters', 'changeFilter')}
+          zoomInTimeline={canTimelineBeZoommedIn && this.zoomInTimeline}
+          zoomOutTimeline={canTimelineBeZoommedOut && this.zoomOutTimeline}
+        />
+        <div className='row'>
+          {viewMode === 'timeline' &&
+            <DeploymentHistoryTimeline
+              {... _.pick(this.props,
+                'deploymentHistory', 'width', 'timelineIntervalWidth', 'timelineRowHeight'
+              )}
+              {... _.pick(this.state, 'millisecondsPerPixel')}
+              nodeTimelineContainerWidth={this.getNodeTimelineContainerWidth()}
+              timeStart={timelineTimeStart}
+              timeEnd={timelineTimeEnd}
+              isRunning={transaction.match({status: 'running'})}
+            />
+          }
+          {viewMode === 'table' &&
+            <DeploymentHistoryTable
+              deploymentTasks={deploymentHistory.filter((task) =>
+                _.every(filters, ({name, values}) =>
+                  !values.length || _.includes(values, task.get(name))
+                )
+              )}
+            />
+          }
+        </div>
+      </div>
+    );
+  }
+});
+
+var DeploymentHistoryManagementPanel = React.createClass({
+  getInitialState() {
+    return {
       areFiltersVisible: false,
       openFilter: null
-    });
+    };
   },
   toggleFilters() {
     this.setState({
@@ -135,32 +194,20 @@ var DeploymentHistory = React.createClass({
       openFilter: visible ? filterName : isFilterOpen ? null : openFilter
     });
   },
-  changeFilter(filterName, values) {
-    var {filters} = this.state;
-    _.find(filters, {name: filterName}).values = values;
-    this.setState({filters});
-  },
-  resetFilters() {
-    var {filters} = this.state;
-    _.each(filters, (filter) => {
-      filter.values = [];
-    });
-    this.setState({filters});
-  },
   render() {
-    var {viewMode, areFiltersVisible, openFilter, filters, millisecondsPerPixel} = this.state;
-    var {deploymentHistory, transaction, timelineIntervalWidth} = this.props;
-    var areFiltersApplied = _.some(filters, ({values}) => values.length);
-    var [timelineTimeStart, timelineTimeEnd] = this.getTimelineTimeInterval();
+    var {
+      deploymentHistory, transaction,
+      viewMode, changeViewMode,
+      zoomInTimeline, zoomOutTimeline,
+      filters, resetFilters, changeFilter
+    } = this.props;
 
-    // interval should be equal at least 1 second
-    var canTimelineBeZoommedIn = millisecondsPerPixel / 2 >= 1000 / timelineIntervalWidth;
-    var canTimelineBeZoommedOut =
-      millisecondsPerPixel * 2 <=
-      this.getTimelineMaxMillisecondsPerPixel(timelineTimeStart, timelineTimeEnd);
+    var {areFiltersVisible, openFilter} = this.state;
+
+    var areFiltersApplied = _.some(filters, ({values}) => values.length);
 
     return (
-      <div className='deployment-history-table'>
+      <div>
         <div className='deployment-history-toolbar row'>
           <div className='col-xs-12 buttons'>
             <div className='view-modes pull-left'>
@@ -174,7 +221,7 @@ var DeploymentHistory = React.createClass({
                           [mode + '-view']: true,
                           active: mode === viewMode
                         })}
-                        onClick={() => this.changeViewMode(mode)}
+                        onClick={() => changeViewMode(mode)}
                       >
                         <input type='radio' name='view_mode' value={mode} />
                         <i className={utils.classNames('glyphicon', 'glyphicon-' + mode)} />
@@ -190,8 +237,8 @@ var DeploymentHistory = React.createClass({
                   <Tooltip text={i18n(ns + 'zoom_in_tooltip')}>
                     <button
                       className='btn btn-default btn-zoom-in pull-left'
-                      onClick={this.zoomInTimeline}
-                      disabled={!canTimelineBeZoommedIn}
+                      onClick={zoomInTimeline}
+                      disabled={!zoomInTimeline}
                     >
                       <i className='glyphicon glyphicon-plus-dark' />
                     </button>
@@ -199,8 +246,8 @@ var DeploymentHistory = React.createClass({
                   <Tooltip text={i18n(ns + 'zoom_out_tooltip')}>
                     <button
                       className='btn btn-default btn-zoom-out pull-left'
-                      onClick={this.zoomOutTimeline}
-                      disabled={!canTimelineBeZoommedOut}
+                      onClick={zoomOutTimeline}
+                      disabled={!zoomOutTimeline}
                     >
                       <i className='glyphicon glyphicon-minus-dark' />
                     </button>
@@ -240,7 +287,7 @@ var DeploymentHistory = React.createClass({
                   {areFiltersApplied &&
                     <button
                       className='btn btn-link pull-right btn-reset-filters'
-                      onClick={this.resetFilters}
+                      onClick={resetFilters}
                     >
                       <i className='glyphicon discard-changes-icon' /> {i18n('common.reset_button')}
                     </button>
@@ -251,7 +298,7 @@ var DeploymentHistory = React.createClass({
                     {...filter}
                     key={filter.name}
                     className={utils.classNames('filter-control', 'filter-by-' + filter.name)}
-                    onChange={_.partial(this.changeFilter, filter.name)}
+                    onChange={_.partial(changeFilter, filter.name)}
                     isOpen={openFilter === filter.name}
                     toggle={_.partial(this.toggleFilter, filter.name)}
                     options={_.map(filter.options, (value) => ({name: value, title: value}))}
@@ -275,36 +322,13 @@ var DeploymentHistory = React.createClass({
               </div>
               <button
                 className='btn btn-link btn-reset-filters'
-                onClick={this.resetFilters}
+                onClick={resetFilters}
               >
                 <i className='glyphicon discard-changes-icon' />
               </button>
             </div>
           </div>
         }
-        <div className='row'>
-          {viewMode === 'timeline' &&
-            <DeploymentHistoryTimeline
-              {... _.pick(this.props,
-                'deploymentHistory', 'width', 'timelineIntervalWidth', 'timelineRowHeight'
-              )}
-              {... _.pick(this.state, 'millisecondsPerPixel')}
-              nodeTimelineContainerWidth={this.getNodeTimelineContainerWidth()}
-              timeStart={timelineTimeStart}
-              timeEnd={timelineTimeEnd}
-              isRunning={transaction.match({status: 'running'})}
-            />
-          }
-          {viewMode === 'table' &&
-            <DeploymentHistoryTable
-              deploymentTasks={deploymentHistory.filter((task) =>
-                _.every(filters, ({name, values}) =>
-                  !values.length || _.includes(values, task.get(name))
-                )
-              )}
-            />
-          }
-        </div>
       </div>
     );
   }
