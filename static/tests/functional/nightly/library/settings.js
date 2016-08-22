@@ -101,10 +101,8 @@ SettingsLib.prototype = {
       .findByCssSelector(publicTlsSelector)
         .assertElementMatchesRegExp('h3', /Public TLS/i, 'Default subgroup name is observed')
         .findByCssSelector('div.checkbox-group')
-          .assertElementEnabled('input[label="' + servicesName + '"]', '"' + servicesName +
-            '" checkbox is enabled')
-          .assertElementNotSelected('input[label="' + servicesName + '"]', '"' + servicesName +
-            '" checkbox is not selected')
+          .assertElementEnabled('input', '"' + servicesName + '" checkbox is enabled')
+          .assertElementNotSelected('input', '"' + servicesName + '" checkbox is not selected')
           .assertElementContainsText('label', servicesName, '"' + servicesName +
             '" label has default description')
           .assertElementContainsText('span.help-block',
@@ -112,10 +110,8 @@ SettingsLib.prototype = {
             '" description has default value')
           .end()
         .findByCssSelector('div.checkbox-group.disabled')
-          .assertElementDisabled('input[label="' + horizonName + '"]', '"' + horizonName +
-            '" checkbox is disabled')
-          .assertElementNotSelected('input[label="' + horizonName + '"]', '"' + horizonName +
-            '" checkbox is not selected')
+          .assertElementDisabled('input', '"' + horizonName + '" checkbox is disabled')
+          .assertElementNotSelected('input', '"' + horizonName + '" checkbox is not selected')
           .assertElementContainsText('label', horizonName, '"' + horizonName +
             '" label has default description')
           .assertElementContainsText('span.help-block',
@@ -257,30 +253,12 @@ SettingsLib.prototype = {
         .end();
   },
   checkOtherSegment() {
+    var loggingSelector = 'div.setting-section-logging';
     var vpnSelector = 'div.setting-section-VPNaaS';
     var zabbixSelector = 'div.setting-section-zabbix_monitoring';
-    var loggingSelector = 'div.setting-section-logging';
+    var mainInputSelector = 'input[name="metadata"]:enabled:not(:checked)';
+    var zabbiRadioSelector = 'input[name="zabbix_monitoring"]:disabled';
     return this.remote
-      // Check VPNaaS plugin for Neutron subgroup
-      .assertElementsExist(vpnSelector, '"VPNaaS plugin" for Neutron subgroup exists')
-      .findByCssSelector(vpnSelector)
-        .assertElementMatchesRegExp('label', /VPNaaS plugin for Neutron/i,
-          'Default subgroup name is observed')
-        .assertElementDisabled('input[name="VPNaaS"]', '"Versions 1.1.0" radiobutton is disabled')
-        .assertElementSelected('input[name="VPNaaS"]', '"Versions 1.1.0" radiobutton is selected')
-        .end()
-      // Check Zabbix for Fuel subgroup
-      .assertElementsExist(zabbixSelector, 'Zabbix for Fuel subgroup exists')
-      .findByCssSelector(zabbixSelector)
-        .assertElementMatchesRegExp('label', /Zabbix for Fuel/i,
-          'Default subgroup name is observed')
-        .assertElementDisabled('input[label="1.0.0"]', '"Versions 1.0.0" radiobutton is disabled')
-        .assertElementSelected('input[label="1.0.0"]', '"Versions 1.0.0" radiobutton is selected')
-        .assertElementDisabled('input[label="2.0.0"]', '"Versions 2.0.0" radiobutton is disabled')
-        .assertElementNotSelected('input[label="2.0.0"]',
-          '"Versions 2.0.0" radiobutton is not selected')
-        .assertElementDisabled('input[name="zabbix_text_1"]', '"label 1.1" textfield is disabled')
-        .end()
       // Check The Logging, Monitoring and Alerting (LMA) Collector Plugin subgroup
       .assertElementsExist(loggingSelector,
         '"The Logging, Monitoring and Alerting (LMA) Collector Plugin" subgroup exists')
@@ -288,11 +266,34 @@ SettingsLib.prototype = {
         .assertElementMatchesRegExp('label',
           /.*The Logging, Monitoring and Alerting.*LMA.*Collector Plugin.*/i,
           'Default subgroup name is observed')
-        .assertElementDisabled('input[name="logging"]',
-          '"Versions 0.7.0" radiobutton is disabled')
-        .assertElementSelected('input[name="logging"]',
-          '"Versions 0.7.0" radiobutton is selected')
+        .assertElementsExist(mainInputSelector,
+          '"Collector Plugin" main checkbox is enabled and not selected')
+        .assertElementDisabled('input[name="logging"]:disabled:checked',
+          '"Versions 0.7.0" radiobutton is disabled and selected')
         .assertElementDisabled('input[name="logging_text"]', '"label" textfield is disabled')
+        .end()
+      // Check VPNaaS plugin for Neutron subgroup
+      .assertElementsExist(vpnSelector, '"VPNaaS plugin" for Neutron subgroup exists')
+      .findByCssSelector(vpnSelector)
+        .assertElementMatchesRegExp('label', /VPNaaS plugin for Neutron/i,
+          'Default subgroup name is observed')
+        .assertElementsExist(mainInputSelector,
+          '"VPNaaS plugin" main checkbox is enabled and not selected')
+        .assertElementsExist('input[name="VPNaaS"]:disabled:checked',
+          '"Versions 1.1.0" radiobutton is disabled and selected')
+        .end()
+      // Check Zabbix for Fuel subgroup
+      .assertElementsExist(zabbixSelector, 'Zabbix for Fuel subgroup exists')
+      .findByCssSelector(zabbixSelector)
+        .assertElementMatchesRegExp('label', /Zabbix for Fuel/i,
+          'Default subgroup name is observed')
+        .assertElementsExist(mainInputSelector,
+          '"Zabbix for Fuel Plugin" main checkbox is enabled and not selected')
+        .assertElementsExist(zabbiRadioSelector + ':checked',
+          '"Versions 1.0.0" radiobutton is disabled and selected')
+        .assertElementsExist(zabbiRadioSelector + ':not(:checked)',
+          '"Versions 2.0.0" radiobutton is disabled and not selected')
+        .assertElementDisabled('input[name="zabbix_text_1"]', '"label 1.1" textfield is disabled')
         .end();
   }
 };
