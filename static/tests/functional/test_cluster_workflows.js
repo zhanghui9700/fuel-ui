@@ -196,11 +196,20 @@ define([
           .then(function() {
             return modal.clickFooterButton('Run Workflow');
           })
+          .waitForElementDeletion('.confirmation-question', 5000)
+          .assertElementContainsText(
+            '.modal-body',
+            'Deployment tasks not found for',
+            'Workflow can not be started because it contains no deployment tasks'
+          )
+          .then(function() {
+            return modal.clickFooterButton('Close');
+          })
           .then(function() {
             return modal.waitToClose();
           })
-          .waitForElementDeletion('.dashboard-block .progress', 60000)
-          .assertElementAppears('.alert-success', 20000, 'Workflow deployment completed')
+          .clickByCssSelector('.actions-panel .dropdown button.dropdown-toggle')
+          .clickByCssSelector('.actions-panel .dropdown .dropdown-menu li.deploy button')
           .then(function() {
             return dashboardPage.startDeployment();
           })
