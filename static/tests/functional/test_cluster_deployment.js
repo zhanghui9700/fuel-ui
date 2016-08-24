@@ -52,6 +52,8 @@ registerSuite(() => {
         .then(() => clusterPage.resetEnvironment(clusterName))
         .then(() => dashboardPage.discardChanges());
     },
+    // Uncomment after fix of #1615557
+/*
     'Provision nodes'() {
       this.timeout = 100000;
       return this.remote
@@ -184,6 +186,7 @@ registerSuite(() => {
           'There are no changes to deploy in the environment'
         );
     },
+*/
     'Start/stop deployment'() {
       this.timeout = 100000;
       return this.remote
