@@ -154,7 +154,7 @@ registerSuite(() => {
       this.timeout = 60000;
       var publicVlanChkbox = '.public input[type*="checkbox"][name*="vlan_start"]';
       var publicVlanInput = '.public input[type="text"][name*="vlan_start"]';
-      var ironicCheckbox = 'input.form-control[label*="Install Ironic"]';
+      var ironicCheckbox = 'input[name="ironic"]';
       return this.remote
         // For the first check button on "Networks" tab
         .then(() => clusterPage.goToTab('Networks'))
@@ -202,17 +202,16 @@ registerSuite(() => {
         .clickByCssSelector(saveSettingsChangesButton)
         // Wait for changes apply
         .waitForElementDeletion(loadDeployedBtn + ':disabled', 1000);
-    },
+    }
+    /*
+    FIXME: Uncomment after bugfix.
+    Bug: https://bugs.launchpad.net/fuel/+bug/1611365
+
     'Check "deploy changes" button avaialability'() {
       this.timeout = 150000;
-      /*
-      FIXME: Uncomment after bugfix.
-      Bug: https://bugs.launchpad.net/fuel/+bug/1611365
-
       var deploymentMethodToggle = '.dropdown-toggle';
       var chooseProvisionNodesSelector = '.btn-group .dropdown-toggle';
       var provisionButton = '.provision button';
-      */
       var stopDeploymentButton = '.stop-deployment-btn';
       var deploymentDoneSelector = progressSelector + 'div.progress-bar[style="width: 89%;"]';
       return this.remote
@@ -228,11 +227,7 @@ registerSuite(() => {
         .waitForCssSelector(deployButton, 15000)
         .assertElementContainsText(clusterStatus, 'Stopped', 'Cluster should be in "Stopped" state')
         .assertElementExists(deployButton, '"Deploy Changes" button exists')
-        .assertElementEnabled(deployButton, '"Deploy changes" button is enabled');
-        /*
-        FIXME: Uncomment after bugfix.
-        Bug: https://bugs.launchpad.net/fuel/+bug/1611365
-
+        .assertElementEnabled(deployButton, '"Deploy changes" button is enabled')
         // Then check for cluster in "Partial deployed" state
         .then(() => clusterPage.resetEnvironment(clusterName))
         .waitForCssSelector(deployButton, 10000)
@@ -263,7 +258,7 @@ registerSuite(() => {
           'Cluster should be in "Partially Deployed" status');
         // Then check for cluster in "Errored" state
         // TBD. How to simulate cluster in "Errored" state..?
-        */
     }
+    */
   };
 });

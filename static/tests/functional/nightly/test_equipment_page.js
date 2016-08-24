@@ -216,8 +216,9 @@ registerSuite(() => {
       var btnLabelsSelector = 'button.btn-labels';
       var btnAddLabelSelector = 'button.btn-add-label';
       var btnApplySelector = 'button.btn-success';
-      var nameSelector = 'input[label="Name"]';
-      var valueSelector = 'input[label="Value"]';
+      var labelRowSelector = 'div.has-label ';
+      var nameSelector = labelRowSelector + 'div.label-key-control input';
+      var valueSelector = labelRowSelector + 'div:last-child input';
       var labelSelector = nodeSelector + ' div.node-labels button.btn-link';
       var popoverSelector = 'div.popover ';
       var labelPaneSelector = 'div.labels ';
