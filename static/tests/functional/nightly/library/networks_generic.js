@@ -28,6 +28,7 @@ class NetworksGenericLib {
     this.allNetSelector = 'input.show-all-networks:enabled';
     this.btnAddGroupSelector = 'button.add-nodegroup-btn';
     this.btnSaveSelector = 'button.apply-btn';
+    this.btnProgressSelector = 'button.btn-progress';
     this.btnCancelSelector = 'button.btn-revert-changes';
     this.btnVerifySelector = 'button.verify-networks-btn';
     this.errorSelector = 'div.has-error ';
@@ -53,6 +54,7 @@ class NetworksGenericLib {
     return this.remote
       .assertElementEnabled(this.btnSaveSelector, '"Save Settings" button is enabled')
       .clickByCssSelector(this.btnSaveSelector)
+      .waitForElementDeletion(this.btnProgressSelector, 5000)
       .assertElementDisabled(this.btnSaveSelector, '"Save Settings" button is disabled')
       .assertElementNotExists(this.errorSelector, 'Settings saved successfully');
   }
