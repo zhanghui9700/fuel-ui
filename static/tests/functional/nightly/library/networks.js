@@ -331,7 +331,7 @@ class NetworkLib {
       .assertElementEnabled(this.btnSaveSelector, '"Save Settings" button is enabled')
       .clickByCssSelector(this.btnSaveSelector)
       .assertElementAppears(this.cidrErrorSelector, 1000, this.cidrMessage + 'txtfld is red marked')
-      .assertElementAppears(errorSelector, 500, networkName + ' "CIDR" textfield is "red" marked')
+      .assertElementAppears(errorSelector, 1000, networkName + ' "CIDR" textfield is "red" marked')
       .assertElementsExist(this.alertSelector, 'Error message is observed')
       .assertElementMatchesRegExp(this.alertSelector, alertMessage, 'True error message is' +
         'displayed for intersection: ' + this.networkName + ' and ' + networkName + ' networks')
