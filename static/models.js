@@ -872,12 +872,12 @@ models.Settings = Backbone.DeepModel
     },
     hasChanges(datatoCheck, models) {
       return _.any(this.attributes, (section, sectionName) => {
-        // plugins installed to already deployed environment
+        // settings (plugins) installed to already deployed environment
         // are not presented in the environment deployed configuration
         var sectionToCheck = datatoCheck[sectionName];
-        if (this.isPlugin(section) && !sectionToCheck) return section.metadata.enabled;
+        var {metadata} = section;
+        if (!sectionToCheck) return !metadata.toggleable || metadata.enabled;
 
-        var metadata = section.metadata;
         if (metadata) {
           if (!sectionToCheck.metadata) return false;
           // restrictions with action = 'none' should not block checking of the setting section
@@ -931,8 +931,6 @@ models.Settings = Backbone.DeepModel
        *   if not specified (default), update all settings
       **/
 
-      this.validationError = null;
-
       _.each(this.attributes, (section, sectionName) => {
         var isNetworkGroup = section.metadata.group === 'network';
         var shouldSectionBeUpdated = _.isUndefined(updateNetworkSettings) ||
@@ -948,7 +946,7 @@ models.Settings = Backbone.DeepModel
               );
               this.mergePluginSettings(sectionName);
             }
-          } else {
+          } else if (newSettings.get(sectionName)) {
             _.each(section, (setting, settingName) => {
               // do not update hidden settings (hack for #1442143)
               var shouldSettingBeUpdated = setting.type !== 'hidden' && (
