@@ -17,7 +17,6 @@ import _ from 'underscore';
 import i18n from 'i18n';
 import React from 'react';
 import utils from 'utils';
-import moment from 'moment';
 import {Table, Tooltip, Popover, MultiSelectControl, DownloadFileButton} from 'views/controls';
 import {DeploymentTaskDetailsDialog} from 'views/dialogs';
 import {
@@ -26,8 +25,7 @@ import {
 
 var ns = 'cluster_page.deployment_history.';
 
-var parseISO8601Date = _.memoize((date) => new Date(date + 'Z').getTime());
-var parseRFC2822Date = (date) => Number(moment.utc(date, 'ddd, D MMM YYYY H:mm:ss [GMT]', true));
+var {parseRFC2822Date, parseISO8601Date, formatTimestamp} = utils;
 
 var DeploymentHistory = React.createClass({
   propTypes: {
@@ -373,8 +371,8 @@ var DeploymentHistoryTask = React.createClass({
                     {i18n('dialog.deployment_task_details.task.' + attr)}
                   </span>
                   <span className='col-xs-9'>
-                    {_.startsWith(attr, 'time') ?
-                      utils.formatTimestamp(task.get(attr)) : task.get(attr)
+                    {attr === 'time_start' || attr === 'time_end' ?
+                      formatTimestamp(parseISO8601Date(task.get(attr))) : task.get(attr)
                     }
                   </span>
                 </div>
@@ -535,8 +533,8 @@ var DeploymentHistoryTable = React.createClass({
             }
             body={_.map(deploymentTasks,
               (task) => DEPLOYMENT_TASK_ATTRIBUTES
-                .map((attr) => _.startsWith(attr, 'time') ?
-                  utils.formatTimestamp(task.get(attr)) : task.get(attr)
+                .map((attr) => attr === 'time_start' || attr === 'time_end' ?
+                  formatTimestamp(parseISO8601Date(task.get(attr))) : task.get(attr)
                 )
                 .concat([
                   <button
