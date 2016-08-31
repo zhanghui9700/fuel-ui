@@ -79,7 +79,7 @@ registerSuite(() => {
           'Two buttons are presented and disabled in zoom control'
         )
         .assertElementsExist(
-          '.deployment-timeline .node-names div',
+          '.deployment-timeline .node-names > div',
           2,
           'Two timelines are shown - for master and slave node'
         )
@@ -119,8 +119,6 @@ registerSuite(() => {
         .waitForElementDeletion('.dashboard-block .progress', 40000);
     },
     'Test deployment history tab of finished deployment'() {
-      var deploymentTasksNumber;
-
       return this.remote
         .then(() => clusterPage.goToTab('History'))
         .assertElementExists(
@@ -151,25 +149,10 @@ registerSuite(() => {
         )
         .clickByCssSelector('.deployment-history-toolbar .btn-filters')
         .assertElementsExist(
-          '.filters .filter-by-task_name, .filters .filter-by-node_id, .filters .filter-by-status',
-          3,
-          'Three filters are presented: filter by Task Name, by Node ID, and by Task status'
-        )
-        .findAllByCssSelector('.history-table table tbody tr')
-          .then((elements) => {
-            deploymentTasksNumber = elements.length;
-          })
-          .end()
-        .clickByCssSelector('.filters .filter-by-node_id')
-        .clickByCssSelector('.popover-content .checkbox-group input[name="master"]')
-        .findAllByCssSelector('.history-table table tbody tr')
-          .then((elements) => {
-            return assert.isTrue(
-              deploymentTasksNumber > elements.length,
-              'Filter by node ID works and shows tasks only for master node'
-            );
-          })
-          .end();
+          '.filters .filter-by-task_name, .filters .filter-by-status',
+          2,
+          'Two filters are presented: filter by Task Name and by Task status'
+        );
     },
     'Test deployment history tab after second cluster deployment'() {
       this.timeout = 100000;
