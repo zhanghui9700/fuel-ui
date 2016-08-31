@@ -93,6 +93,7 @@ HistoryTab = React.createClass({
   },
   render() {
     var {cluster, activeTransactionId} = this.props;
+    var {deploymentHistory} = this.state;
     var ns = 'cluster_page.history_tab.';
     var transactions = cluster.get('transactions').filterTasks({active: false});
     var visibleTransactionsAmount = 7;
@@ -179,18 +180,20 @@ HistoryTab = React.createClass({
                   );
                 })}
               </div>
-              <ReactTransitionGroup
-                component='div'
-                transitionName='screen'
-              >
-                <ScreenTransitionWrapper key={screen} loading={this.state.loading}>
-                  <DeploymentHistoryScreen
-                    ref='screen'
-                    deploymentHistory={this.state.deploymentHistory}
-                    transaction={cluster.get('transactions').get(activeTransactionId)}
-                  />
-                </ScreenTransitionWrapper>
-              </ReactTransitionGroup>
+              {!_.isNull(deploymentHistory) &&
+                <ReactTransitionGroup
+                  component='div'
+                  transitionName='screen'
+                >
+                  <ScreenTransitionWrapper key={screen} loading={this.state.loading}>
+                    <DeploymentHistoryScreen
+                      ref='screen'
+                      deploymentHistory={deploymentHistory}
+                      transaction={cluster.get('transactions').get(activeTransactionId)}
+                    />
+                  </ScreenTransitionWrapper>
+                </ReactTransitionGroup>
+              }
             </div>
           :
             <div className='alert alert-warning'>

@@ -42,10 +42,6 @@ var DashboardTab = React.createClass({
       renderOn: 'update change'
     }),
     backboneMixin({
-      modelOrCollection: (props) => props.cluster.get('transactions'),
-      renderOn: 'update change:status'
-    }),
-    backboneMixin({
       modelOrCollection: (props) => props.cluster.get('nodes'),
       renderOn: 'update change'
     }),
