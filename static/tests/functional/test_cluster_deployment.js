@@ -93,7 +93,7 @@ define([
           })
           .assertElementAppears('div.deploy-process div.progress', 2000, 'Provisioning started')
           .assertElementDisappears(
-            'div.deploy-process div.progress', 20000, 'Provisioning finished'
+            'div.deploy-process div.progress', 60000, 'Provisioning finished'
           )
           .assertElementContainsText(
             'div.alert-success strong',
@@ -196,7 +196,7 @@ define([
           })
           .assertElementAppears('div.deploy-process div.progress', 2000, 'Provisioning started')
           .assertElementDisappears(
-            'div.deploy-process div.progress', 20000, 'Provisioning finished'
+            'div.deploy-process div.progress', 60000, 'Provisioning finished'
           )
           .then(function() {
             return clusterPage.goToTab('Nodes');
@@ -226,7 +226,7 @@ define([
           })
           .assertElementAppears('div.deploy-process div.progress', 2000, 'Provisioning started')
           .assertElementDisappears(
-            'div.deploy-process div.progress', 20000, 'Provisioning finished'
+            'div.deploy-process div.progress', 60000, 'Provisioning finished'
           )
           .clickByCssSelector('.actions-panel .dropdown button.dropdown-toggle')
           .clickByCssSelector('.actions-panel .dropdown .dropdown-menu li.deployment button')
@@ -245,7 +245,7 @@ define([
             return modal.waitToClose();
           })
           .assertElementAppears('div.deploy-process div.progress', 2000, 'Deployment started')
-          .assertElementDisappears('div.deploy-process div.progress', 20000, 'Deployment finished')
+          .assertElementDisappears('div.deploy-process div.progress', 60000, 'Deployment finished')
           .assertElementContainsText(
             'div.alert-success strong',
             'Success',
@@ -271,7 +271,7 @@ define([
           .then(function() {
             return dashboardPage.stopDeployment();
           })
-          .assertElementDisappears('div.deploy-process div.progress', 20000, 'Deployment stopped')
+          .assertElementDisappears('div.deploy-process div.progress', 60000, 'Deployment stopped')
           .assertElementAppears(
             dashboardPage.deployButtonSelector,
             3000,
@@ -300,7 +300,7 @@ define([
             60000,
             'Progress bar disappears after deployment'
           )
-          .assertElementAppears('.links-block', 20000, 'Deployment completed')
+          .assertElementAppears('.links-block', 60000, 'Deployment completed')
           .assertElementExists('.go-to-healthcheck', 'Healthcheck link is visible after deploy')
           .findByLinkText('Horizon')
             .getAttribute('href')
