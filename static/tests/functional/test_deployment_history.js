@@ -135,6 +135,8 @@ define([
           .waitForElementDeletion('.dashboard-block .progress', 40000);
       },
       'Test deployment history tab of finished deployment': function() {
+        var deploymentTasksNumber;
+
         return this.remote
           .then(function() {
             return clusterPage.goToTab('History');
@@ -175,10 +177,25 @@ define([
           )
           .clickByCssSelector('.deployment-history-toolbar .btn-filters')
           .assertElementsExist(
-            '.filters .filter-by-task_name, .filters .filter-by-status',
-            2,
-            'Two filters are presented: filter by Task Name and by Task status'
-          );
+            '.filters .filter-by-task_name,.filters .filter-by-node_id,.filters .filter-by-status',
+            3,
+            'Three filters are presented: filter by Task Name, Node, and by Task Status'
+          )
+          .findAllByCssSelector('.history-table table tbody tr')
+            .then(function(elements) {
+              deploymentTasksNumber = elements.length;
+            })
+            .end()
+          .clickByCssSelector('.filters .filter-by-node_id')
+          .clickByCssSelector('.popover-content .checkbox-group input[name="master"]')
+          .findAllByCssSelector('.history-table table tbody tr')
+            .then(function(elements) {
+              return assert.isTrue(
+                deploymentTasksNumber > elements.length,
+                'Filter by node ID works and shows tasks only for master node'
+              );
+            })
+            .end();
       },
       'Test deployment history tab after second cluster deployment': function() {
         this.timeout = 100000;
