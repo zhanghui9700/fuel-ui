@@ -356,6 +356,10 @@ var DeploymentHistoryTask = React.createClass({
     var taskName = task.get('task_name');
     var taskStatus = task.get('status');
     return <div
+      onClick={() => {
+        this.togglePopover(false);
+        DeploymentTaskDetailsDialog.show({task});
+      }}
       onMouseEnter={() => this.togglePopover(true)}
       onMouseLeave={() => this.togglePopover(false)}
       className='node-task'
@@ -371,7 +375,7 @@ var DeploymentHistoryTask = React.createClass({
           className='deployment-task-info'
         >
           <div>
-            {DEPLOYMENT_TASK_ATTRIBUTES
+            {_.without(DEPLOYMENT_TASK_ATTRIBUTES, 'node_id')
               .map((attr) => !_.isNull(task.get(attr)) && (
                 <div key={attr} className={utils.classNames('row', attr, taskStatus)}>
                   <span className='col-xs-3'>
