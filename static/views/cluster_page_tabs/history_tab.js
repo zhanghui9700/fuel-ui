@@ -112,7 +112,7 @@ HistoryTab = React.createClass({
     var {deploymentHistory} = this.state;
     var ns = 'cluster_page.history_tab.';
     var transactions = cluster.get('transactions').filterTasks({active: false});
-    var visibleTransactionsAmount = 3;
+    var visibleTransactionsAmount = 7;
     var visibleTransactions = transactions;
     var hiddenTransactions = [];
     var activeHiddenTransaction;
