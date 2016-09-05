@@ -65,10 +65,10 @@ define([
           .then(function() {
             return common.removeCluster(clusterName);
           })
-          .assertElementAppears('.notifications-icon .badge.visible', 3000,
+          .assertElementAppears('.notifications-icon .badge.visible', 30000,
             'New notification appear after the cluster removal')
           .clickByCssSelector('.notifications-icon')
-          .assertElementAppears('.notifications-popover .notification.clickable', 20000,
+          .assertElementAppears('.notifications-popover .notification.clickable', 30000,
             'Discovered node notification uploaded')
           // Check if Node Information dialog is shown
           .clickByCssSelector('.notifications-popover .notification.clickable p')
