@@ -402,7 +402,11 @@ var DeploymentHistoryTask = React.createClass({
   onClick() {
     var {task, deploymentHistory} = this.props;
     this.togglePopover(false);
-    DeploymentTaskDetailsDialog.show({task, deploymentHistory});
+    DeploymentTaskDetailsDialog.show({
+      task,
+      deploymentHistory,
+      nodeName: renderNodeName.call(this, task.get('node_id'), false)
+    });
   },
   togglePopover(isPopoverVisible) {
     this.setState({isPopoverVisible});
@@ -491,7 +495,7 @@ var DeploymentHistoryTimeline = React.createClass({
   },
   render() {
     var {
-      deploymentHistory, timeStart, timeEnd, isRunning,
+      nodes, deploymentHistory, timeStart, timeEnd, isRunning,
       nodeTimelineContainerWidth, width, timelineIntervalWidth, timelineRowHeight
     } = this.props;
 
@@ -565,7 +569,7 @@ var DeploymentHistoryTimeline = React.createClass({
 
                   return <DeploymentHistoryTask
                     key={task.get('node_id') + ' ' + task.get('task_name')}
-                    {...{deploymentHistory, task, top, left, width}}
+                    {...{deploymentHistory, task, top, left, width, nodes}}
                   />;
                 })}
                 {isRunning &&
@@ -605,7 +609,7 @@ var DeploymentHistoryTable = React.createClass({
                   if (attr === 'time_start' || attr === 'time_end') {
                     return task.get(attr) ? formatTimestamp(parseISO8601Date(task.get(attr))) : '-';
                   } else if (attr === 'node_id') {
-                    return renderNodeName.call(this, task.get(attr));
+                    return renderNodeName.call(this, task.get('node_id'));
                   } else {
                     return task.get(attr);
                   }
@@ -614,7 +618,11 @@ var DeploymentHistoryTable = React.createClass({
                   <button
                     key={task.get('task_name') + 'details'}
                     className='btn btn-link'
-                    onClick={() => DeploymentTaskDetailsDialog.show({task, deploymentHistory})}
+                    onClick={() => DeploymentTaskDetailsDialog.show({
+                      task,
+                      deploymentHistory,
+                      nodeName: renderNodeName.call(this, task.get('node_id'), false)
+                    })}
                   >
                     {i18n(ns + 'task_details')}
                   </button>
