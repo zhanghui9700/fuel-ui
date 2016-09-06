@@ -473,11 +473,17 @@ export var Tooltip = React.createClass({
   componentDidMount() {
     if (this.props.text) this.addTooltip();
   },
-  componentDidUpdate() {
-    if (this.props.text) {
-      this.updateTooltipTitle();
-    } else {
-      this.removeTooltip();
+  componentDidUpdate(prevProps) {
+    var newText = this.props.text;
+    var oldText = prevProps.text;
+    if (newText !== oldText) {
+      if (!newText) {
+        this.removeTooltip();
+      } else if (!oldText) {
+        this.addTooltip();
+      } else {
+        this.updateTooltipTitle();
+      }
     }
   },
   componentWillUnmount() {

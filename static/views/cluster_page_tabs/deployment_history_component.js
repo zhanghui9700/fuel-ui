@@ -280,8 +280,8 @@ var DeploymentHistoryManagementPanel = React.createClass({
             }
             {viewMode === 'timeline' &&
               <div className='zoom-controls pull-right'>
-                <div className='btn-group' data-toggle='buttons'>
-                  <Tooltip text={i18n(ns + 'zoom_in_tooltip')}>
+                <div className='btn-group'>
+                  <Tooltip text={!!zoomInTimeline && i18n(ns + 'zoom_in_tooltip')}>
                     <button
                       className='btn btn-default btn-zoom-in pull-left'
                       onClick={zoomInTimeline}
@@ -290,7 +290,7 @@ var DeploymentHistoryManagementPanel = React.createClass({
                       <i className='glyphicon glyphicon-plus-dark' />
                     </button>
                   </Tooltip>
-                  <Tooltip text={i18n(ns + 'zoom_out_tooltip')}>
+                  <Tooltip text={!!zoomOutTimeline && i18n(ns + 'zoom_out_tooltip')}>
                     <button
                       className='btn btn-default btn-zoom-out pull-left'
                       onClick={zoomOutTimeline}
