@@ -357,7 +357,9 @@ models.Cluster = BaseModel.extend({
       collection.updateFetchOptions(() => {
         if (key === 'deploymentGraphs') return {clusters_ids: this.id, fetch_related: 1};
         var fetchOptions = {cluster_id: this.id};
-        if (key === 'transactions') fetchOptions.transaction_types = 'deployment';
+        if (key === 'transactions') {
+          fetchOptions.transaction_types = ['deployment', 'dry_run_deployment'].join(',');
+        }
         return fetchOptions;
       });
     });
@@ -605,6 +607,7 @@ models.Task = BaseModel.extend({
       'deploy',
       'provision',
       'deployment',
+      'dry_run_deployment',
       'reset_environment',
       'spawn_vms'
     ]
