@@ -2341,34 +2341,50 @@ export var RemoveNodeNetworkGroupDialog = React.createClass({
 });
 
 export var DeploymentTaskDetailsDialog = React.createClass({
-  mixins: [dialogMixin],
+  mixins: [
+    dialogMixin,
+    backboneMixin('task')
+  ],
   getDefaultProps() {
     return {
       title: i18n('dialog.deployment_task_details.title'),
       modalClass: 'deployment-task-details-dialog'
     };
   },
+  componentWillMount() {
+    if (_.isEmpty(this.props.task.get('summary'))) this.loadTaskSummary();
+  },
+  loadTaskSummary() {
+    var {task, deploymentHistory} = this.props;
+    var filteredDeploymentTasks = new models.DeploymentTasks();
+    filteredDeploymentTasks.url = _.result(deploymentHistory, 'url');
+    filteredDeploymentTasks.fetchOptions = {
+      tasks_names: task.get('task_name'),
+      nodes: task.get('node_id'),
+      include_summary: 1
+    };
+    filteredDeploymentTasks.fetch().then(() => {
+      task.set(filteredDeploymentTasks.at(0).attributes);
+    });
+  },
   renderTaskAttribute(value) {
     if (_.isArray(value)) return _.map(value, this.renderTaskAttribute).join(', ');
-    if (_.isPlainObject(value)) return JSON.stringify(value);
+    if (_.isPlainObject(value)) return JSON.stringify(value, null, 2);
     return value;
   },
   renderBody() {
     var {task} = this.props;
     var attributes = DEPLOYMENT_TASK_ATTRIBUTES
-      .concat(_.difference(_.keys(task.attributes), DEPLOYMENT_TASK_ATTRIBUTES));
+      .concat(
+        _.difference(_.without(_.keys(task.attributes), 'summary'), DEPLOYMENT_TASK_ATTRIBUTES)
+      )
+      .concat('summary');
     return (
       <div>
         {_.map(attributes, (attr) => {
           if (_.isNull(task.get(attr))) return null;
           return (
-            <div
-              key={attr}
-              className={utils.classNames({
-                row: true,
-                'main-attribute': _.includes(DEPLOYMENT_TASK_ATTRIBUTES, attr)
-              })}
-            >
+            <div key={attr} className='row'>
               <strong className='col-xs-3'>
                 {i18n('dialog.deployment_task_details.task.' + attr, {defaultValue: attr})}
               </strong>
