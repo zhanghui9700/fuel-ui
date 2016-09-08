@@ -68,7 +68,7 @@ registerSuite(() => {
         .clickByCssSelector('input[name=hypervisor\\:qemu]')
         .assertElementExists('.wizard-compute-pane .alert.empty-choice',
           'There should be the warning when no hypervisors selected')
-        .assertElementExists('.next-pane-btn.disabled', 'Next button should be disabled');
+        .assertElementDisabled('.next-pane-btn', 'Next button should be disabled');
     }
   };
 });
