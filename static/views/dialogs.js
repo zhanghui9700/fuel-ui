@@ -2346,16 +2346,25 @@ export var DeploymentTaskDetailsDialog = React.createClass({
       <div>
         {_.map(attributes, (attr) => {
           if (_.isNull(task.get(attr))) return null;
+          var taskStatus = task.get('status');
           return (
             <div key={attr} className='row'>
               <strong className='col-xs-3'>
                 {i18n('dialog.deployment_task_details.task.' + attr, {defaultValue: attr})}
               </strong>
-              <span className='col-xs-9'>
+              <span className={utils.classNames('col-xs-9', attr, taskStatus)}>
                 {attr === 'node_id' ? nodeName :
                   this.renderTaskAttribute(
                     attr === 'time_start' || attr === 'time_end' ?
-                      utils.formatTimestamp(utils.parseISO8601Date(task.get(attr))) : task.get(attr)
+                      utils.formatTimestamp(utils.parseISO8601Date(task.get(attr)))
+                    :
+                      attr === 'status' ?
+                        i18n(
+                          'cluster_page.deployment_history.task_statuses.' + taskStatus,
+                          {defaultValue: taskStatus}
+                        )
+                      :
+                        task.get(attr)
                   )
                 }
               </span>

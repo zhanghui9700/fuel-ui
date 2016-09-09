@@ -43,7 +43,7 @@ function renderNodeName(nodeId, isClickable = true) {
   if (isClickable) {
     return (
       <button
-        className='btn btn-link'
+        className='btn btn-link btn-node-info'
         onClick={() => ShowNodeInfoDialog.show({
           node,
           cluster: this.props.cluster,
@@ -93,7 +93,13 @@ var DeploymentHistory = React.createClass({
           label: i18n(ns + 'filter_by_status'),
           values: [],
           options: _.map(DEPLOYMENT_TASK_STATUSES,
-            (status) => ({name: status, title: status})
+            (status) => ({
+              name: status,
+              title: i18n(
+                'cluster_page.deployment_history.task_statuses.' + status,
+                {defaultValue: status}
+              )
+            })
           )
         }
       ],
@@ -436,18 +442,28 @@ var DeploymentHistoryTask = React.createClass({
           >
             <div>
               {_.without(DEPLOYMENT_TASK_ATTRIBUTES, 'node_id')
-                .map((attr) => !_.isNull(task.get(attr)) && (
-                  <div key={attr} className={utils.classNames('row', attr, taskStatus)}>
-                    <span className='col-xs-3'>
-                      {i18n('dialog.deployment_task_details.task.' + attr)}
-                    </span>
-                    <span className='col-xs-9'>
-                      {attr === 'time_start' || attr === 'time_end' ?
-                        formatTimestamp(parseISO8601Date(task.get(attr))) : task.get(attr)
-                      }
-                    </span>
-                  </div>
-                ))
+                .map((attr) => {
+                  if (_.isNull(task.get(attr))) return null;
+                  return (
+                    <div key={attr} className={utils.classNames('row', attr, taskStatus)}>
+                      <span className='col-xs-3'>
+                        {i18n('dialog.deployment_task_details.task.' + attr)}
+                      </span>
+                      <span className='col-xs-9'>
+                        {attr === 'time_start' || attr === 'time_end' ?
+                          formatTimestamp(parseISO8601Date(task.get(attr)))
+                        : attr === 'status' ?
+                            i18n(
+                              'cluster_page.deployment_history.task_statuses.' + taskStatus,
+                              {defaultValue: taskStatus}
+                            )
+                          :
+                            task.get(attr)
+                        }
+                      </span>
+                    </div>
+                  );
+                })
               }
             </div>
           </Popover>
@@ -606,10 +622,17 @@ var DeploymentHistoryTable = React.createClass({
             body={_.map(deploymentTasks,
               (task) => DEPLOYMENT_TASK_ATTRIBUTES
                 .map((attr) => {
+                  var taskStatus = task.get('status');
                   if (attr === 'time_start' || attr === 'time_end') {
                     return task.get(attr) ? formatTimestamp(parseISO8601Date(task.get(attr))) : '-';
                   } else if (attr === 'node_id') {
                     return renderNodeName.call(this, task.get('node_id'));
+                  } else if (attr === 'status') {
+                    return (
+                      <span className={utils.classNames('status', taskStatus)}>
+                        {i18n(ns + 'task_statuses.' + taskStatus, {defaultValue: taskStatus})}
+                      </span>
+                    );
                   } else {
                     return task.get(attr);
                   }

@@ -58,13 +58,18 @@ var WorkflowsTab = React.createClass({
           name: 'graph_type',
           label: i18n(ns + 'filter_by_graph_type'),
           values: [],
-          options: () => _.uniq(this.props.cluster.get('deploymentGraphs').invoke('getType')),
+          options: _.map(
+            _.uniq(this.props.cluster.get('deploymentGraphs').invoke('getType')),
+            (type) => ({name: type, title: type})
+          ),
           addOptionsFilter: true
         }, {
           name: 'graph_level',
           label: i18n(ns + 'filter_by_graph_level'),
           values: [],
-          options: () => DEPLOYMENT_GRAPH_LEVELS
+          options: _.map(DEPLOYMENT_GRAPH_LEVELS,
+            (level) => ({name: level, title: i18n(ns + 'graph_levels.' + level)})
+          )
         }
       ],
       areFiltersVisible: false,
@@ -184,9 +189,6 @@ var WorkflowsTab = React.createClass({
                         onChange={_.partial(this.changeFilter, filter.name)}
                         isOpen={openFilter === filter.name}
                         toggle={_.partial(this.toggleFilter, filter.name)}
-                        options={
-                          _.map(filter.options(), (value) => ({name: value, title: value}))
-                        }
                       />
                     )}
                   </div>
@@ -197,10 +199,13 @@ var WorkflowsTab = React.createClass({
                   <div className='active-filters row' onClick={this.toggleFilters}>
                     <strong className='col-xs-1'>{i18n(ns + 'filter_by')}</strong>
                     <div className='col-xs-11'>
-                      {_.map(filters, ({name, label, values}) => {
+                      {_.map(filters, ({name, label, values, options}) => {
                         if (!values.length) return null;
                         return <div key={name}>
-                          <strong>{label + ':'}</strong> <span>{values.join(', ')}</span>
+                          <strong>{label + ':'}</strong> <span>{
+                            _.map(values, (value) => _.find(options, {name: value}).title)
+                              .join(', ')
+                          }</span>
                         </div>;
                       })}
                     </div>
@@ -269,9 +274,10 @@ var WorkflowsTab = React.createClass({
                         return <tr key={graph.id}>
                           <td>{graph.get('name') || '-'}</td>
                           <td className='level'>
-                            {level}
-                            &nbsp;
-                            {level === 'plugin' && <span>({graphLevelModel.get('title')})</span>}
+                            {i18n(
+                              ns + 'graph_levels.' + level,
+                              {pluginName: level === 'plugin' && graphLevelModel.get('title')}
+                            )}
                           </td>
                           <td>
                             {level === 'cluster' &&
