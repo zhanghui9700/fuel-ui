@@ -346,7 +346,7 @@
                         "time_end": "Finished",
                         "status": "Status",
                         "message": "Message",
-                        "dry_run": "DRY RUN"
+                        "dry_run": "dry run"
                     },
                     "transaction_statuses": {
                         "ready": "Ready",
@@ -368,7 +368,12 @@
                     "filter_tooltip": "Filter Workflows",
                     "filter_by_graph_type": "Type",
                     "filter_by_graph_level": "Level",
-                    "no_graphs_matched_filters": "No workflows matched applied filters."
+                    "no_graphs_matched_filters": "No workflows matched applied filters.",
+                    "graph_levels": {
+                        "release": "Release",
+                        "cluster": "Environment",
+                        "plugin": "Plugin __pluginName__"
+                    }
                 },
                 "deployment_history": {
                     "master_node": "Master node",
@@ -393,7 +398,14 @@
                     "minutes": "__minutes__ minutes",
                     "minutes_and_seconds": "__minutes__ min __seconds__ sec",
                     "hours": "__hours__ hr __minutes__ min",
-                    "export_csv": "Export CSV"
+                    "export_csv": "Export CSV",
+                    "task_statuses": {
+                        "ready": "Ready",
+                        "error": "Error",
+                        "skipped": "Skipped",
+                        "pending": "Pending",
+                        "running": "Running"
+                    }
                 },
                 "nodes_tab": {
                     "roles": "Roles",
