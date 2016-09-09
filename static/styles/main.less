@@ -3461,9 +3461,9 @@ input[type=range] {
         padding-right: 0;
       }
     }
-    div.error.status span:last-child {
-      .font-semibold;
-      .text-danger;
+    .status {
+      &.error span:last-child {.text-danger;}
+      &.ready span:last-child {.text-success;}
     }
   }
 }
@@ -5362,6 +5362,7 @@ input[type=range] {
     }
     .dry-run-label {
       margin-left: 10px;
+      text-transform: uppercase;
     }
   }
 
@@ -5400,11 +5401,18 @@ input[type=range] {
         padding: 0;
         border: 0;
         max-width: 100%;
+        &.btn-node-info {
+          user-select: text;
+        }
         > div {
           white-space: nowrap;
           overflow: hidden;
           text-overflow: ellipsis;
         }
+      }
+      .status {
+        &.error {.text-danger;}
+        &.ready {.text-success;}
       }
     }
     .alert {
@@ -5468,6 +5476,10 @@ input[type=range] {
         > strong, > span {
           display: inline-block;
           .break-word;
+        }
+        .status {
+          &.error {.text-danger;}
+          &.ready {.text-success;}
         }
       }
     }
