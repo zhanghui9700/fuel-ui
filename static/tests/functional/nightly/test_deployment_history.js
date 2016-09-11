@@ -364,7 +364,7 @@ registerSuite(() => {
           'Task name has correct filtered value')
         .assertElementTextEquals(tableBodyRow + ' td:nth-child(2)', 'Master node',
           'Node name has correct filtered value')
-        .assertElementTextEquals(tableBodyRow + ' td:nth-child(3)', 'ready',
+        .assertElementTextEquals(tableBodyRow + ' td:nth-child(3)', 'Ready',
           'Task status has correct filtered value')
         .assertElementEnabled(resetFilter, '"Reset" button is available')
         .clickByCssSelector(resetFilter)

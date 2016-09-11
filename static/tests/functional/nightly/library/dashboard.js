@@ -57,50 +57,60 @@ class DashboardLib {
 
   changeDeploymentMode(deploymentModeName) {
     var deployModeMenuSelector = this.deployModePaneSelector + 'ul.dropdown-menu ';
-    var properNames = ['Deploy', 'Provision', 'Deployment', 'Workflow'];
-    var menuNames =
-      ['Provisioning + Deployment', 'Provisioning only', 'Deployment only', 'Custom Workflow'];
-    var menuSelectors = ['deploy', 'provision', 'deployment', 'custom_graph'];
-    // There are items indexes of dopdown menu to check proper values in it
-    var firstItemIndex = properNames.indexOf(deploymentModeName);
-    var secondItemIndex = properNames.length - firstItemIndex;
-    if (!_.includes(properNames, deploymentModeName)) {
+    var properNames = ['deploy', 'provision', 'deployment', 'workflow'];
+    var menuNames = ['Provisioning + Deployment', 'Provisioning only', 'Deployment only',
+      'Custom Workflow'];
+    var menuSelectors = ['li.deploy', 'li.provision', 'li.deployment', 'li.custom_graph'];
+    var itemIndex = properNames.indexOf(deploymentModeName.toLowerCase());
+    var itemName = menuNames[itemIndex];
+    var itemSelector = deployModeMenuSelector + menuSelectors[itemIndex] + ' button';
+    if (!_.includes(properNames, deploymentModeName.toLowerCase())) {
       throw new Error('Invalid input value. Check deployment mode name: "' + deploymentModeName +
         '" parameter and restart test. True values: ' + properNames);
     }
     return this.remote
-      .assertElementsAppear(this.deployPaneSelector, 1000, '"Deployment" pane appears')
+      .assertElementsAppear(this.deployPaneSelector, 3000, '"Deployment" pane appears')
       .assertElementsExist(this.deployModeSelector, '"Deploy mode" link exists')
       .findByCssSelector(this.deployModeSelector)
         .getVisibleText()
         .then((actualModeName) => {
-          if (actualModeName !== menuNames[firstItemIndex]) {
-            secondItemIndex -= menuNames.indexOf(actualModeName);
-            var firstItemSelector = deployModeMenuSelector + 'li.' +
-              menuSelectors[firstItemIndex] + ' .btn-link';
-            var secondItemSelector = deployModeMenuSelector + 'li.' +
-              menuSelectors[secondItemIndex] + ' .btn-link';
+          if (actualModeName !== itemName) {
             return this.remote
               .assertElementNotDisplayed(deployModeMenuSelector,
                 '"Deployment Mode" menu is not displayed by default')
               .clickByCssSelector(this.deployModeSelector)
-              .assertElementDisplayed(deployModeMenuSelector, 'Deployment Mode" menu appears')
-              .assertElementsExist(firstItemSelector,
-                '"' + menuNames[firstItemIndex] + '" menu item exists')
-              .assertElementsExist(secondItemSelector,
-                '"' + menuNames[secondItemIndex] + '" menu item exists')
-              .assertElementTextEquals(firstItemSelector, menuNames[firstItemIndex],
-                '"' + menuNames[firstItemIndex] + '" menu item has correct name')
-              .assertElementTextEquals(secondItemSelector, menuNames[secondItemIndex],
-                '"' + menuNames[secondItemIndex] + '" menu item has correct name')
-              .clickByCssSelector(firstItemSelector)
-              .assertElementNotDisplayed(deployModeMenuSelector,
-                '"Deployment Mode" menu disappears')
-              .assertElementsAppear(this.deployModeSelector, 500, '"Deployment mode" link appears')
-              .assertElementTextEquals(this.deployModeSelector, menuNames[firstItemIndex],
-                '"' + menuNames[firstItemIndex] + '" mode link has correct name');
+              .assertElementDisplayed(deployModeMenuSelector, 'Deployment Mode menu appears')
+              .findAllByCssSelector(deployModeMenuSelector + 'li')
+                .then((menuItems) => {
+                  if (!(menuItems.length >= menuSelectors.length - 2)) {
+                    throw new Error('Quantity of Deployment Mode menu items is incorrect: ' +
+                      menuItems.length);
+                  }
+                })
+                .end()
+              .findAllByCssSelector(deployModeMenuSelector + 'li')
+                .then((menuItems) => menuItems.reduce(
+                  (result, item) => item
+                    .getVisibleText()
+                    .then((visibleName) => {
+                      if (!_.includes(menuNames, visibleName)) {
+                        throw new Error('Deployment Mode menu item has incorrect name: "' +
+                          visibleName + '". True values: ' + menuNames);
+                      }
+                      if (actualModeName === visibleName) {
+                        throw new Error('Deployment Mode menu item has incorrect name: "' +
+                          visibleName + '". Already selected item mustn`t present in menu');
+                      }
+                    }),
+                false))
+                .end()
+              .clickByCssSelector(itemSelector)
+              .assertElementNotDisplayed(deployModeMenuSelector, 'Deployment Mode menu disappears')
+              .assertElementsAppear(this.deployModeSelector, 1000, '"Deployment mode" link appears')
+              .assertElementTextEquals(this.deployModeSelector, itemName, '"' + itemName +
+                '" mode link has correct name');
           } else {
-            return false;
+            return true;
           }
         })
         .end();

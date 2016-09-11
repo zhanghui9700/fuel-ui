@@ -41,7 +41,7 @@ class HistoryLib {
     var popoverStatus = taskPopover + 'div.status ';
     var popoverStartTime = taskPopover + 'div.time_start ';
     var popoverEndTime = taskPopover + 'div.time_end ';
-    var taskDetailsAttribure = '.deployment-task-details-dialog .main-attribute';
+    var taskDetailsAttribure = 'div.deployment-task-details-dialog div.modal-body div.row';
     return this.remote
       .clickByCssSelector(timelineViewButton)
       .assertElementsAppear(timelinePaneSelector, 5000, '"Timeline pane" appears')
@@ -90,11 +90,14 @@ class HistoryLib {
       .clickByCssSelector(tableBodyRow + ':nth-child(' + rowNumber + ') td:nth-child(6) button')
       .then(() => this.modal.waitToOpen())
       .then(() => this.modal.checkTitle('Deployment Task Details'))
-      .assertElementsExist(taskDetailsAttribure, 5,
-        'All main attributes for task are presented on task details dialog')
+      .assertElementsExist(taskDetailsAttribure, 'Attribute is presented at task details dialog')
       .findByCssSelector(taskDetailsAttribure + ':nth-child(1) span')
         .getVisibleText()
         .then((value) => assert.equal(value, taskName, 'Task name is the same in the dialog'))
+        .end()
+      .findByCssSelector(taskDetailsAttribure + ':nth-child(2) span')
+        .getVisibleText()
+        .then((value) => assert.equal(value, nodeName, 'Node name is the same in the dialog'))
         .end()
       .findByCssSelector(taskDetailsAttribure + ':nth-child(3) span')
         .getVisibleText()
