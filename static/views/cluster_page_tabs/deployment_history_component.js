@@ -84,8 +84,6 @@ var DeploymentHistory = React.createClass({
     // won't be greater than current time
     return parseRFC2822Date(this.props.deploymentHistory.lastFetchDate) + 1000;
   },
-  // FIXME(jaranovich): timeline start and end times should be provided from transaction
-  // time_start and time_end attributes (#1593753 bug)
   getTimelineTimeInterval() {
     var {transaction, deploymentHistory} = this.props;
     var timelineTimeStart, timelineTimeEnd;
@@ -95,7 +93,9 @@ var DeploymentHistory = React.createClass({
       var taskTimeStart = task.get('time_start');
       if (taskTimeStart) {
         taskTimeStart = parseISO8601Date(taskTimeStart);
-        if (taskTimeStart < timelineTimeStart) timelineTimeStart = taskTimeStart;
+        if (!timelineTimeStart || taskTimeStart < timelineTimeStart) {
+          timelineTimeStart = taskTimeStart;
+        }
         if (!timelineTimeEnd) timelineTimeEnd = timelineTimeStart;
         if (taskTimeStart > timelineTimeEnd) timelineTimeEnd = taskTimeStart;
         var taskTimeEnd = task.get('time_end');
