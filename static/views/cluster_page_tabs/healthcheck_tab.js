@@ -29,7 +29,20 @@ var HealthCheckTab = React.createClass({
       modelOrCollection: (props) => props.cluster.get('tasks'),
       renderOn: 'update change:status'
     }),
-    backboneMixin('cluster', 'change:status')
+    backboneMixin('cluster', 'change:status'),
+    backboneMixin({
+      modelOrCollection: ({ostf}) => ostf.tests,
+      renderOn: 'update change'
+    }),
+    backboneMixin({
+      modelOrCollection: ({ostf}) => ostf.testsets,
+      renderOn: 'update change:checked'
+    }),
+    backboneMixin({
+      modelOrCollection: ({ostf}) => ostf.testruns,
+      renderOn: 'update change:status'
+    }),
+    pollingMixin(3)
   ],
   statics: {
     breadcrumbsPath() {
@@ -37,27 +50,35 @@ var HealthCheckTab = React.createClass({
         [i18n('cluster_page.tabs.healthcheck'), null, {active: true}]
       ];
     },
-    fetchData(options) {
-      if (!options.cluster.get('ostf')) {
-        var ostf = {};
-        var clusterId = options.cluster.id;
-        ostf.testsets = new models.TestSets();
-        ostf.testsets.url = _.result(ostf.testsets, 'url') + '/' + clusterId;
-        ostf.tests = new models.Tests();
-        ostf.tests.url = _.result(ostf.tests, 'url') + '/' + clusterId;
-        ostf.testruns = new models.TestRuns();
-        ostf.testruns.url = _.result(ostf.testruns, 'url') + '/last/' + clusterId;
-        return $.when(ostf.testsets.fetch(), ostf.tests.fetch(), ostf.testruns.fetch()).then(() => {
-          options.cluster.set({ostf: ostf});
-          return {};
-        }, () => $.Deferred().resolve()
-        );
+    fetchData({cluster}) {
+      if (!cluster.get('ostf')) {
+        var testsets = new models.TestSets();
+        testsets.url = _.result(testsets, 'url') + '/' + cluster.id;
+        var tests = new models.Tests();
+        tests.url = _.result(tests, 'url') + '/' + cluster.id;
+        var testruns = new models.TestRuns();
+        testruns.url = _.result(testruns, 'url') + '/last/' + cluster.id;
+
+        return $.when(testsets.fetch(), tests.fetch(), testruns.fetch())
+          .then(
+            () => {
+              cluster.set('ostf', {testsets, tests, testruns});
+              return {ostf: cluster.get('ostf')};
+            },
+            () => $.Deferred().resolve()
+          );
       }
-      return $.Deferred().resolve();
+      return $.Deferred().resolve().then(() => ({ostf: cluster.get('ostf')}));
     }
   },
+  shouldDataBeFetched() {
+    return this.props.ostf.testruns.some({status: 'running'});
+  },
+  fetchData() {
+    return this.props.ostf.testruns.fetch();
+  },
   render() {
-    var ostf = this.props.cluster.get('ostf');
+    var {cluster, ostf} = this.props;
     return (
       <div className='row'>
         <div className='title'>
@@ -67,10 +88,9 @@ var HealthCheckTab = React.createClass({
           {ostf ?
             <HealthcheckTabContent
               ref='content'
-              testsets={ostf.testsets}
-              tests={ostf.tests}
-              testruns={ostf.testruns}
-              cluster={this.props.cluster}
+              {...ostf}
+              cluster={cluster}
+              startPolling={this.startPolling}
             />
           :
             <div className='alert alert-danger'>
@@ -84,33 +104,27 @@ var HealthCheckTab = React.createClass({
 });
 
 var HealthcheckTabContent = React.createClass({
-  mixins: [
-    backboneMixin('tests', 'update change'),
-    backboneMixin('testsets', 'update change:checked'),
-    backboneMixin('testruns', 'update change'),
-    pollingMixin(3)
-  ],
-  shouldDataBeFetched() {
-    return this.props.testruns.any({status: 'running'});
-  },
-  fetchData() {
-    return this.props.testruns.fetch();
-  },
-  componentWillReceiveProps(newProps) {
-    if (this.state.stoppingTestsInProgress &&
-      !newProps.testruns.any((testrun) => {
-        return _.contains(['running', 'stopped'], testrun.get('status'));
-      })
+  componentWillReceiveProps({testruns}) {
+    if (
+      this.state.stoppingTestsInProgress &&
+      !testruns.some((testrun) => _.includes(['running', 'stopped'], testrun.get('status')))
     ) {
       this.setState({stoppingTestsInProgress: false});
+    }
+    if (this.state.runningTestsInProgress && !testruns.some({status: 'running'})) {
+      this.setState({runningTestsInProgress: false});
     }
   },
   getInitialState() {
     return {
-      actionInProgress: false,
       credentialsVisible: null,
-      credentials: _.transform(this.props.cluster.get('settings').get('access'),
-        (result, value, key) => result[key] = value.value),
+      credentials: _.transform(
+        this.props.cluster.get('settings').get('access'),
+        (result, {value}, key) => {
+          result[key] = value;
+        }
+      ),
+      runningTestsInProgress: false,
       stoppingTestsInProgress: false
     };
   },
@@ -119,25 +133,24 @@ var HealthcheckTabContent = React.createClass({
     return !_.contains(['operational', 'error'], cluster.get('status')) ||
       !!cluster.task({group: 'deployment', active: true});
   },
-  getNumberOfCheckedTests() {
-    return this.props.tests.where({checked: true}).length;
-  },
   toggleCredentials() {
     this.setState({credentialsVisible: !this.state.credentialsVisible});
   },
-  handleSelectAllClick(name, value) {
-    this.props.tests.invoke('set', {checked: value});
+  handleSelectAllClick(name, checked) {
+    this.props.tests.invoke('set', {checked});
   },
   handleInputChange(name, value) {
-    var credentials = this.state.credentials;
+    var {credentials} = this.state;
     credentials[name] = value;
-    this.setState({credentials: credentials});
+    this.setState({credentials});
   },
   runTests() {
+    this.setState({runningTestsInProgress: true});
+
     var testruns = new models.TestRuns();
     var oldTestruns = new models.TestRuns();
     var testsetIds = this.props.testsets.pluck('id');
-    this.setState({actionInProgress: true});
+
     _.each(testsetIds, (testsetId) => {
       var testsToRun = _.pluck(this.props.tests.where({
         testset: testsetId,
@@ -154,7 +167,7 @@ var HealthcheckTabContent = React.createClass({
           return obj;
         };
 
-        if (this.props.testruns.where({testset: testsetId}).length) {
+        if (this.props.testruns.some({testset: testsetId})) {
           _.each(this.props.testruns.where({testset: testsetId}), (testrun) => {
             _.extend(testrunConfig, addCredentials({
               id: testrun.id,
@@ -183,96 +196,80 @@ var HealthcheckTabContent = React.createClass({
       requests.push(Backbone.sync('update', oldTestruns));
     }
     $.when(...requests)
-      .done(() => {
-        this.startPolling(true);
-      })
-      .fail((response) => {
-        utils.showErrorDialog({response: response});
-      })
-      .always(() => {
-        this.setState({actionInProgress: false});
-      });
-  },
-  getActiveTestRuns() {
-    return this.props.testruns.where({status: 'running'});
+      .done(() => this.props.startPolling(true))
+      .fail((response) => utils.showErrorDialog({response}));
   },
   stopTests() {
-    var testruns = new models.TestRuns(this.getActiveTestRuns());
+    var testruns = new models.TestRuns(
+      this.props.testruns.filter({status: 'running'})
+    );
     if (testruns.length) {
       this.setState({
-        actionInProgress: true,
+        runningTestsInProgress: false,
         stoppingTestsInProgress: true
       });
       testruns.invoke('set', {status: 'stopped'});
       testruns.toJSON = function() {
-        return this.map((testrun) =>
-          _.pick(testrun.attributes, 'id', 'status')
-        );
+        return this.map((testrun) => _.pick(testrun.attributes, 'id', 'status'));
       };
-      Backbone.sync('update', testruns).done(() => {
-        this.setState({actionInProgress: false});
-        this.startPolling(true);
-      });
+      Backbone.sync('update', testruns)
+        .done(() => this.props.startPolling(true));
     }
   },
   render() {
-    var disabledState = this.isLocked();
-    // due to immediate response from server after stopping OSTF tests
-    // returns 'stopped' state for testruns and the next polled
-    // responses return 'running' state for testruns up to the
-    // moment the tests are actually stopped, - added check for 'stopped' and
-    // 'running' testruns state
     var {tests, testruns, testsets, cluster} = this.props;
+    var {runningTestsInProgress, stoppingTestsInProgress, credentials} = this.state;
+    var actionInProgress = runningTestsInProgress || stoppingTestsInProgress;
+    var actionsAvailable = !this.isLocked();
     var ns = 'cluster_page.healthcheck_tab.';
-    var hasRunningTests = testruns.any({status: 'running'});
-    var hasStoppingTests = testruns.any({status: 'stopped'});
+
     return (
       <div>
-        {!disabledState &&
+        {actionsAvailable &&
           <div className='healthcheck-controls row well well-sm'>
             <div className='pull-left'>
               <Input
                 type='checkbox'
                 name='selectAll'
                 onChange={this.handleSelectAllClick}
-                checked={this.getNumberOfCheckedTests() === tests.length}
-                disabled={hasRunningTests}
+                checked={tests.every({checked: true})}
+                disabled={actionInProgress}
                 label={i18n('common.select_all')}
                 wrapperClassName='select-all'
               />
             </div>
-            {(hasRunningTests || hasStoppingTests) ?
-              (<ProgressButton
+            {testruns.some((testrun) => _.includes(['running', 'stopped'], testrun.get('status'))) ?
+              <ProgressButton
                 className='btn btn-danger stop-tests-btn pull-right'
-                disabled={this.state.actionInProgress || this.state.stoppingTestsInProgress}
+                disabled={stoppingTestsInProgress}
                 onClick={this.stopTests}
-                progress={this.state.stoppingTestsInProgress}
+                progress={stoppingTestsInProgress}
               >
                 {i18n(ns + 'stop_tests_button')}
-              </ProgressButton>)
+              </ProgressButton>
             :
-              (<ProgressButton
+              <ProgressButton
                 className='btn btn-success run-tests-btn pull-right'
-                disabled={!this.getNumberOfCheckedTests() || this.state.actionInProgress}
+                disabled={!tests.some({checked: true}) || runningTestsInProgress}
                 onClick={this.runTests}
-                progress={this.state.actionInProgress}
+                progress={runningTestsInProgress}
               >
                 {i18n(ns + 'run_tests_button')}
-              </ProgressButton>)
+              </ProgressButton>
             }
             <button
               className='btn btn-default toggle-credentials pull-right'
               data-toggle='collapse'
               data-target='.credentials'
               onClick={this.toggleCredentials}
-              >
+            >
               {i18n(ns + 'provide_credentials')}
             </button>
 
             <HealthcheckCredentials
-              credentials={this.state.credentials}
+              credentials={credentials}
               onInputChange={this.handleInputChange}
-              disabled={hasRunningTests}
+              disabled={actionInProgress}
             />
           </div>
         }
@@ -283,16 +280,20 @@ var HealthcheckTabContent = React.createClass({
             </div>
           }
           <div key='testsets'>
-            {testsets.map((testset) => {
-              return <TestSet
+            {testsets.map(
+              (testset) => <TestSet
                 key={testset.id}
                 testset={testset}
-                testrun={testruns.findWhere({testset: testset.id}) ||
-                 new models.TestRun({testset: testset.id})}
-                tests={new Backbone.Collection(tests.where({testset: testset.id}))}
-                disabled={disabledState || hasRunningTests}
-              />;
-            })}
+                testrun={
+                  testruns.findWhere({testset: testset.id}) ||
+                  new models.TestRun({testset: testset.id})
+                }
+                tests={
+                  new Backbone.Collection(tests.where({testset: testset.id}))
+                }
+                disabled={!actionsAvailable || actionInProgress}
+              />
+            )}
           </div>
         </div>
       </div>
