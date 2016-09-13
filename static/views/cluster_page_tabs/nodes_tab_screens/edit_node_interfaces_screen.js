@@ -267,7 +267,7 @@ var EditNodeInterfacesScreen = React.createClass({
   updateWithLimitations(sourceInterface, targetInterface) {
     // Interface parameters should be updated with respect to limitations:
     // restricted parameters should not be changed
-    var limitations = this.state.limitations[targetInterface.id];
+    var limitations = this.state.limitations[sourceInterface.id];
     var targetInterfaceProperties = targetInterface.get('interface_properties');
     var sourceInterfaceProperties = sourceInterface.get('interface_properties');
 
