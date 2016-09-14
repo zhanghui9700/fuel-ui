@@ -229,7 +229,7 @@ var ClusterPage = React.createClass({
     var {cluster} = this.props;
     var task = cluster.task({group: 'deployment', active: true});
     if (task) {
-      return task.fetch()
+      return cluster.get('tasks').fetch()
         .done(() => {
           var requests = [cluster.get('nodes').fetch()];
           if (task.match({active: false})) {
