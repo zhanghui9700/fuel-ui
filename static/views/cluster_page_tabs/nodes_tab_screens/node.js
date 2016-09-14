@@ -411,7 +411,7 @@ var Node = React.createClass({
           <div>
             <span className={utils.classNames({'text-danger': status === 'error'})}>
               {statusLabel}
-              {!isCompactView && !!error && ': ' +
+              {!isCompactView && status === 'error' && !!error && ': ' +
                 i18n('cluster_page.nodes_tab.node.error_types.' + error, {defaultValue: error})
               }
             </span>
