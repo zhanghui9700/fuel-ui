@@ -905,7 +905,7 @@ var NodeInterface = React.createClass({
     var {configModels, bondingProperties} = this.props;
     var ifc = this.props.interface;
     var bondType = ifc.get('bond_properties').type__;
-    var modes = bondingProperties[bondType].mode;
+    var modes = (bondingProperties[bondType] || {}).mode;
 
     var availableModes = [];
     var interfaces = ifc.isBond() ? ifc.getSlaveInterfaces() : [ifc];
@@ -925,7 +925,7 @@ var NodeInterface = React.createClass({
   },
   getBondPropertyValues(propertyName, value) {
     var bondType = this.props.interface.get('bond_properties').type__;
-    return _.flatten(_.pluck(this.props.bondingProperties[bondType][propertyName], value));
+    return _.flatten(_.pluck((this.props.bondingProperties[bondType] || {})[propertyName], value));
   },
   updateBondProperties(options) {
     var bondProperties = _.cloneDeep(this.props.interface.get('bond_properties')) || {};

@@ -1124,10 +1124,8 @@ models.Interface = Backbone.DeepModel
         networkErrors.push(i18n(ns + 'sriov_placement_error'));
       }
 
-      if (
-        this.get('interface_properties').dpdk.enabled &&
-        !_.isEqual(networks.pluck('name'), ['private'])
-      ) {
+      var dpdk = this.get('interface_properties').dpdk;
+      if (dpdk && dpdk.enabled && !_.isEqual(networks.pluck('name'), ['private'])) {
         networkErrors.push(i18n(ns + 'dpdk_placement_error'));
       }
 
