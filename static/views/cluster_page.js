@@ -120,6 +120,8 @@ var ClusterPage = React.createClass({
         pluginLinks.url = baseUrl + '/plugin_links';
         cluster.set({pluginLinks});
 
+        cluster.set({ostf: {}});
+
         promise = $.when(
             cluster.fetch(),
             cluster.get('settings').fetch(),
