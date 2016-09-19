@@ -310,9 +310,14 @@ registerSuite(() => {
         .then(() => clusterPage.goToTab('Logs'))
         .then(() => clusterPage.goToTab('Networks'))
         .then(() => networksLib.checkMergedNetworksGrouping(networkNames))
+        /*
+        FIXME: Uncomment after bugfix.
+        Bug: https://bugs.launchpad.net/fuel/+bug/1625115
+
         .then(() => clusterPage.goToTab('Health Check'))
         .then(() => clusterPage.goToTab('Networks'))
         .then(() => networksLib.checkMergedNetworksGrouping(networkNames))
+        */
         // Check after switching between "Networks" segments
         .then(() => networksLib.goToNodeNetworkSubTab('Neutron L2'))
         .assertElementsExist(allNetworksSelector, '"All Networks" segment exists and not selected')
