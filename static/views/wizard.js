@@ -639,7 +639,8 @@ var CreateClusterWizard = React.createClass({
         var defaultReleaseId = (this.releases.findWhere({is_deployable: true}) || {}).id || null;
         this.selectRelease(defaultReleaseId);
         this.setState({loading: false});
-      });
+      })
+      .fail(this.showError);
 
     this.updateState({activePaneIndex: 0});
   },
@@ -753,7 +754,8 @@ var CreateClusterWizard = React.createClass({
           this.components.invoke('expandWildcards', this.components);
           this.components.invoke('restoreDefaultValue', this.components);
           this.setState({loading: false});
-        });
+        })
+        .fail(this.showError);
     }
   },
   onChange(name, value) {
