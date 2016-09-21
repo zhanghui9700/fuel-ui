@@ -592,11 +592,14 @@ var CreateClusterWizard = React.createClass({
   },
   componentDidMount() {
     this.releases.fetch()
-      .then(() => {
-        var defaultReleaseId = (this.releases.find({is_deployable: true}) || {}).id || null;
-        this.selectRelease(defaultReleaseId);
-        this.setState({loading: false});
-      });
+      .then(
+        () => {
+          var defaultReleaseId = (this.releases.find({is_deployable: true}) || {}).id || null;
+          this.selectRelease(defaultReleaseId);
+          this.setState({loading: false});
+        },
+        this.showError
+      );
 
     this.updateState({activePaneIndex: 0});
   },
@@ -708,12 +711,15 @@ var CreateClusterWizard = React.createClass({
     if (releaseId) {
       this.setState({loading: true});
       this.components.fetch()
-        .then(() => {
-          this.components.invokeMap('expandWildcards', this.components);
-          this.components.invokeMap('restoreDefaultValue', this.components);
-          this.components.invokeMap('preprocessRequires', this.components);
-          this.setState({loading: false});
-        });
+        .then(
+          () => {
+            this.components.invokeMap('expandWildcards', this.components);
+            this.components.invokeMap('restoreDefaultValue', this.components);
+            this.components.invokeMap('preprocessRequires', this.components);
+            this.setState({loading: false});
+          },
+          this.showError
+        );
     }
   },
   onChange(name, value) {
