@@ -385,12 +385,14 @@
                     "task_name_header": "Task",
                     "node_id_header": "Node",
                     "status_header": "Status",
+                    "type_header": "Type",
                     "time_start_header": "Started",
                     "time_end_header": "Finished",
                     "filter_by": "Filter By",
                     "filter_by_task_name": "Task Name",
                     "filter_by_node": "Node",
                     "filter_by_status": "Task Status",
+                    "filter_by_type": "Task Type",
                     "task_details": "Details",
                     "filter_tooltip": "Filter Tasks",
                     "no_tasks_matched_filters": "No tasks matched the applied filters.",
@@ -1025,10 +1027,11 @@
                     "title": "Deployment Task Details",
                     "task": {
                         "task_name": "Name",
+                        "node_id": "Node",
                         "status": "Status",
+                        "type": "Type",
                         "time_start": "Started",
-                        "time_end": "Finished",
-                        "node_id": "Node"
+                        "time_end": "Finished"
                     }
                 },
                 "nailgun_unavailability": {
