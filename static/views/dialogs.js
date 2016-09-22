@@ -176,7 +176,7 @@ export var dialogMixin = {
             </div>
             <div className='modal-body'>
               {this.props.error ?
-                <div className='text-error'>
+                <div className='text-danger'>
                   {this.props.message || i18n('dialog.error_dialog.server_error')}
                 </div>
               : this.renderBody()}
