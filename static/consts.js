@@ -76,6 +76,7 @@ export var DEPLOYMENT_TASK_ATTRIBUTES = [
   'task_name',
   'node_id',
   'status',
+  'type',
   'time_start',
   'time_end'
 ];
