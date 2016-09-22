@@ -330,7 +330,6 @@ var Range = React.createClass({
     var verificationError = this.props.verificationError || null;
     var [startInputError, endInputError] = error || [];
 
-    wrapperClasses[this.props.wrapperClassName] = this.props.wrapperClassName;
     return (
       <div className={utils.classNames(wrapperClasses)}>
         {!this.props.hiddenHeader &&
@@ -982,6 +981,7 @@ var NetworkTab = React.createClass({
       verificationErrors: this.getVerificationErrors(),
       removeNodeNetworkGroup: this.removeNodeNetworkGroup
     };
+
     return (
       <div className={utils.classNames(classes)}>
         <div className='col-xs-12'>
@@ -1321,6 +1321,7 @@ var NetworkingL2Parameters = React.createClass({
     var networkParameters =
       this.props.cluster.get('networkConfiguration').get('networking_parameters');
     var idRangePrefix = networkParameters.get('segmentation_type') === 'vlan' ? 'vlan' : 'gre_id';
+
     return (
       <div className='forms-box form-neutron-l2' key='neutron-l2'>
         <h3 className='networks'>
@@ -1338,6 +1339,7 @@ var NetworkingL2Parameters = React.createClass({
         <div>
           <Range
             {...this.composeProps(idRangePrefix + '_range', true)}
+            {... _.pick(this.props, 'cluster', 'network')}
             extendable={false}
             placeholder=''
             integerValue
@@ -1374,6 +1376,7 @@ var NetworkingL3Parameters = React.createClass({
           <div className='network-description'>{i18n('network.descriptions.floating')}</div>
           <Range
             {...this.composeProps('floating_ranges', true)}
+            {... _.pick(this.props, 'cluster', 'network')}
             rowsClassName='floating-ranges-rows'
             hiddenControls
           />
@@ -1403,6 +1406,7 @@ var NetworkingL3Parameters = React.createClass({
             <Range
               key='baremetal_range'
               {...this.composeProps('baremetal_range', true)}
+              {... _.pick(this.props, 'cluster', 'network')}
               extendable={false}
               hiddenControls
             />
