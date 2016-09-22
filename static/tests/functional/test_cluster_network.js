@@ -55,7 +55,7 @@ registerSuite(() => {
         .findByCssSelector('.btn-revert-changes')
           .then(
             (element) => element.isEnabled()
-              .then((isEnabled) => !isEnabled || element.click())
+              .then((isEnabled) => isEnabled && element.click())
           )
           .end();
     },

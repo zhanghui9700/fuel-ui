@@ -29,7 +29,7 @@ class LoginPage {
       .setFindTimeout(500)
       .setWindowSize(1280, 1024)
       .getCurrentUrl()
-      .then((url) => url === Helpers.serverUrl + '/#login' || this.logout())
+      .then((url) => url !== Helpers.serverUrl + '/#login' && this.logout())
       .setInputValue('[name=username]', username)
       .setInputValue('[name=password]', password)
       .clickByCssSelector('.login-btn');
@@ -38,7 +38,7 @@ class LoginPage {
   logout() {
     return this.remote
       .getCurrentUrl()
-      .then((url) => url.indexOf(Helpers.serverUrl) === 0 ||
+      .then((url) => url.indexOf(Helpers.serverUrl) !== 0 &&
         this.remote
           .get(Helpers.serverUrl + '/#logout')
           .findByClassName('login-btn')
