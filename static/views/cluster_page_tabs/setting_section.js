@@ -315,7 +315,7 @@ var SettingSection = React.createClass({
               )}
             </div>
           }
-          {isPlugin &&
+          {isPlugin && metadata.versions &&
             <div className='plugin-versions clearfix'>
               <RadioGroup
                 key={metadata.chosen_id}

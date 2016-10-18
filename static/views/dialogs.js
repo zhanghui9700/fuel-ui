@@ -1345,7 +1345,9 @@ export var ShowNodeInfoDialog = React.createClass({
       .always(() => {
         var configModels = this.props.cluster && {
           settings: this.props.cluster.get('settings'),
-          version: app.version
+          version: app.version,
+          node_attributes: nodeAttributesModel,
+          default: nodeAttributesModel
         };
         nodeAttributesModel.isValid({models: configModels});
         this.setState({
