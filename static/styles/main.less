@@ -3634,20 +3634,36 @@ input[type=range] {
       }
       label {
         display: inline-block;
-        padding-top: 5px;
+        padding-top: 9px;
         width: 26%;
         .font-normal;
       }
-      input {
-        width: 100px;
-        margin: 0 @node-attributes-padding;
+      input, textarea {
+        width: 371px;
+        margin-left: @node-attributes-padding;
+      }
+      div.field-list {
+        input, textarea {
+          width: 319px;
+          margin: 0 @node-attributes-padding @node-attributes-padding;
+          display: inline-block;
+          &:last-child {
+            margin-bottom: 0;
+          }
+        }
+        .field-controls {
+          width: 50px;
+          display: inline;
+          button {
+            padding: 0;
+          }
+        }
       }
       .help-block {
         padding-top: 3px;
         display: block;
-        float: right;
-        width: 250px;
         color: @gray;
+        margin-top: 0;
       }
       &.has-error .help-block {color: @red;}
     }
