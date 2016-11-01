@@ -267,23 +267,25 @@ customControls.text_list = customControls.textarea_list = React.createClass({
     return this.changeField(index);
   }, 200, {leading: true}),
   renderMultipleInputControls(index) {
+    var {value, max, min, disabled} = this.props;
     return (
       <div className='field-controls'>
-        {(!this.props.max || this.props.value.length < this.props.max) &&
+        {(!max || value.length < max) &&
           <button
             ref={'add' + index}
             className='btn btn-link btn-add-field'
-            disabled={this.props.disabled}
+            disabled={disabled}
             onClick={() => this.changeField(index, 'add')}
           >
             <i className='glyphicon glyphicon-plus-sign' />
+            {value.length === 0 && i18n('controls.text_list.add_value')}
           </button>
         }
-        {this.props.value.length > this.props.min &&
+        {value.length > min &&
           <button
             ref={'remove' + index}
             className='btn btn-link btn-remove-field'
-            disabled={this.props.disabled}
+            disabled={disabled}
             onClick={() => this.changeField(index, 'remove')}
           >
             <i className='glyphicon glyphicon-minus-sign' />
@@ -353,11 +355,13 @@ customControls.text_list = customControls.textarea_list = React.createClass({
   render() {
     return this.renderWrapper([
       this.renderLabel(),
-      this.props.value.length === 0 ?
-        this.renderMultipleInputControls(-1) :
-        <div key='field-list' className='field-list'>
-          {_.map(this.props.value, this.renderInput)}
-        </div>,
+      <div key='field-list' className='field-list'>
+        {this.props.value.length === 0 ?
+          <div>{this.renderMultipleInputControls(-1)}</div>
+        :
+          _.map(this.props.value, this.renderInput)
+        }
+      </div>,
       this.renderDescription()
     ]);
   }

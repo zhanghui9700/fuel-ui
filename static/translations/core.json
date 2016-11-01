@@ -68,6 +68,9 @@
                 "file": {
                     "placeholder": "No file selected"
                 },
+                "text_list": {
+                    "add_value": "Add Value"
+                },
                 "selected_options": "__count__ selected",
                 "select_all": "Select All",
                 "find_options_placeholder": "type option name..."
