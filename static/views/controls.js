@@ -545,6 +545,10 @@ export var MultiSelectControl = React.createClass({
       optionsNumberToShowFilter: 10
     };
   },
+  componentWillReceiveProps({isOpen, values}) {
+    // reset options filter when closing options list if no options were selected
+    if (!isOpen && !values.length) this.setState({optionsFilter: null});
+  },
   onChange(name, checked, isLabel = false) {
     var {options, values, onChange, dynamicValues} = this.props;
     if (!dynamicValues) {
@@ -590,6 +594,7 @@ export var MultiSelectControl = React.createClass({
       values, dynamicValues, isOpen, className, toggle, extraContent,
       addOptionsFilter, optionsNumberToShowFilter
     } = this.props;
+    var {optionsFilter} = this.state;
 
     if (!this.props.options.length) return null;
 
@@ -638,6 +643,7 @@ export var MultiSelectControl = React.createClass({
                 type='text'
                 ref='optionsFilter'
                 name='optionsFilter'
+                defaultValue={optionsFilter}
                 onChange={this.setOptionsFilter}
                 wrapperClassName='options-filter'
                 placeholder={i18n('controls.find_options_placeholder')}
