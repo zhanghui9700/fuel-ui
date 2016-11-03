@@ -13,6 +13,7 @@
  * License for the specific language governing permissions and limitations
  * under the License.
  **/
+import $ from 'jquery';
 import _ from 'underscore';
 import i18n from 'i18n';
 import React from 'react';
@@ -46,7 +47,7 @@ var WorkflowsTab = React.createClass({
           if (deploymentGraphs.some((graph) => graph.getLevel() === 'plugin')) {
             return plugins.fetch();
           }
-          return Promise.resolve();
+          return $.Deferred().resolve();
         })
         .then(() => ({plugins}));
     }

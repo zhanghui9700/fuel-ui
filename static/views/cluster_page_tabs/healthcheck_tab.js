@@ -69,7 +69,7 @@ var HealthCheckTab = React.createClass({
             () => $.Deferred().resolve()
           );
       } else {
-        promise = Promise.resolve();
+        promise = $.Deferred().resolve();
       }
       return promise.then(() => ({ostf: cluster.get('ostf')}));
     }
