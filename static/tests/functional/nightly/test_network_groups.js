@@ -227,19 +227,22 @@ registerSuite(() => {
       var fieldWithError = fieldListSelector + ' .has-error';
       var invalidInputMessage = fieldWithError + ' .help-block.field-error';
       return this.remote
-        .clickByCssSelector('.subtab-link-network_settings')
+        .then(() => networksLib.goToNodeNetworkSubTab('Other'))
         .waitForCssSelector(addFieldButton, 500)
         .assertElementsExist(addFieldButton, 2, '"add field" buttons should exist')
         .clickByCssSelector(removeFieldButton)
-        .assertElementDisappears(removeFieldButton, 200, '"remove field" button has disappeared')
-        .assertElementsExist(addFieldButton, 1, '1 "add field" button should exist')
+        .clickByCssSelector(removeFieldButton)
+        .assertElementDisappears(removeFieldButton, 500, '"remove field" button has disappeared')
+        .assertElementsExist(addFieldButton, 1, 'Only 1 "Add Value" button exists')
+        .assertElementContainsText(addFieldButton, 'Add Value',
+          '"Add Value" button has correct description')
         .clickByCssSelector(addFieldButton)
         .clickByCssSelector(addFieldButton)
-        .assertElementDisappears(addFieldButton, 200, '"add field" button has disappeared')
+        .clickByCssSelector(addFieldButton)
+        .assertElementDisappears(addFieldButton, 500, '"add field" button has disappeared')
         .assertElementsExist(removeFieldButton, 3, 'Quantity of "remove field" buttons equal 3')
         .clickByCssSelector(removeFieldButton)
         .clickByCssSelector(removeFieldButton)
-        .assertElementDisappears(removeFieldButton, 200, '"remove field" button has disappeared')
         .assertElementsExist(addFieldButton, 1, '1 "add field" button should exist')
         .assertElementExists(fieldWithError, 'invalid nameserver exists')
         .assertElementExists(invalidInputMessage, 'error message appears')
@@ -252,9 +255,9 @@ registerSuite(() => {
           .sleep(300)
           .end()
         .assertElementDisappears(fieldWithError, 500, 'The error message has dissappeared')
-        .assertElementEnabled(btnSaveSelector, '"Save Changes" button is disabled')
-        .clickByCssSelector('button.btn-revert-changes')
-        .clickLinkByText('Network_Group_1');
+        .assertElementEnabled(btnSaveSelector, '"Save Changes" button is enabled')
+        .then(() => networksLib.cancelChanges())
+        .then(() => networksLib.goToNodeNetworkSubTab('Network_Group_1'));
     },
     'Node network group deletion'() {
       return this.remote
