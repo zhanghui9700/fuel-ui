@@ -405,10 +405,16 @@ export var DiscardClusterChangesDialog = React.createClass({
           pending_deletion: false
         };
       }
+      if (node.get('pending_addition')) {
+        return {
+          id: node.id,
+          cluster_id: null,
+          pending_addition: false,
+          pending_roles: []
+        };
+      }
       return {
         id: node.id,
-        cluster_id: null,
-        pending_addition: false,
         pending_roles: []
       };
     }));
@@ -429,7 +435,11 @@ export var DiscardClusterChangesDialog = React.createClass({
     var text = changeName === 'changed_configuration' ?
       i18n(ns + 'discard_environment_configuration')
     :
-      i18n(ns + (nodes[0].get('pending_deletion') ? 'discard_deletion' : 'discard_addition'));
+      i18n(ns + (nodes[0].get('pending_deletion') ?
+        'discard_deletion'
+      :
+        nodes[0].get('pending_addition') ? 'discard_addition' : 'discard_role_changes'
+      ));
     return (
       <div className='text-danger'>
         {this.renderImportantLabel()}
