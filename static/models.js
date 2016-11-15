@@ -512,7 +512,8 @@ models.Node = BaseModel.extend({
     var status = this.get('status');
     return status === 'provisioned' ||
       status === 'stopped' ||
-      status === 'error' && this.get('error_type') === 'deploy';
+      status === 'error' && this.get('error_type') === 'deploy' ||
+      status === 'ready' && !!this.get('pending_roles').length;
   },
   hasChanges() {
     return this.get('pending_addition') ||

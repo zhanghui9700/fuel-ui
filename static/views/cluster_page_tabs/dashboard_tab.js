@@ -753,6 +753,12 @@ var ClusterActionsPanel = React.createClass({
           <ul key='cluster-changes'>
             {this.renderClusterChangeItem('added_node', nodes.where({pending_addition: true}))}
             {this.renderClusterChangeItem(
+              'changed_roles',
+              nodes.filter(
+                (node) => !node.get('pending_addition') && node.get('pending_roles').length
+              )
+            )}
+            {this.renderClusterChangeItem(
               'provisioned_node',
               nodes.where({pending_deletion: false, status: 'provisioned'}),
               false
@@ -803,16 +809,21 @@ var ClusterActionsPanel = React.createClass({
         ];
         break;
       case 'deployment':
+        var provisionedNodes = nodes.filter({status: 'provisioned'});
+        var nodesWithChangedRoles = nodes.filter(
+          (node) => node.get('status') === 'ready' && !!node.get('pending_roles').length
+        );
         actionControls = [
           !!nodes.length &&
             <ul key='node-changes'>
-              <li>
-                {i18n(actionNs + 'nodes_to_deploy', {count: nodes.length})}
-              </li>
+              {!!provisionedNodes.length &&
+                <li>{i18n(actionNs + 'provisioned_nodes', {count: provisionedNodes.length})}</li>
+              }
+              {!!nodesWithChangedRoles.length &&
+                <li>{i18n(ns + 'changed_roles', {count: nodesWithChangedRoles.length})}</li>
+              }
               {!!offlineNodes.length &&
-                <li>
-                  {i18n(ns + 'offline_nodes', {count: offlineNodes.length})}
-                </li>
+                <li>{i18n(ns + 'offline_nodes', {count: offlineNodes.length})}</li>
               }
             </ul>,
           <ClusterActionButton
@@ -821,7 +832,7 @@ var ClusterActionsPanel = React.createClass({
             className='btn-deploy-nodes'
             dialog={DeployNodesDialog}
             canSelectNodes
-            nodeStatusesToFilter={['provisioned', 'stopped', 'error']}
+            nodeStatusesToFilter={['provisioned', 'stopped', 'error', 'ready']}
           />
         ];
         break;

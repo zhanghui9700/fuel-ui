@@ -2620,7 +2620,7 @@ input[type=range] {
         }
 
         .role-list {
-          li {
+          li:not(.text-success) {
             color: @base-text-color;
           }
         }
@@ -3210,7 +3210,7 @@ input[type=range] {
       cursor: default;
       color: @orange;
       border-color: lighten(@orange, 20%);
-      &.indeterminated {
+      &.selected, &.indeterminated {
         background-color: lighten(@green, 15%);
         border: 1px solid lighten(@green, 15%);
         color: @white;

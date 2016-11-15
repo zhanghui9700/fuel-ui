@@ -1138,7 +1138,7 @@ ManagementPanel = React.createClass({
                         {i18n('common.delete_button')}
                       </button>
                     }
-                    {!!nodes.length && !nodes.any({pending_addition: false}) &&
+                    {!locked && !!nodes.length &&
                       <button
                         className='btn btn-success btn-edit-roles'
                         onClick={_.partial(this.changeScreen, 'edit', true)}
@@ -1628,12 +1628,15 @@ RolePanel = React.createClass({
     });
   },
   processRestrictions(role) {
+    var {
+      cluster, nodes, selectedRoles, indeterminateRoles, processedRoleLimits, configModels
+    } = this.props;
     var name = role.get('name');
-    var restrictionsCheck = role.checkRestrictions(this.props.configModels, 'disable');
-    var roleLimitsCheckResults = this.props.processedRoleLimits[name];
-    var roles = this.props.cluster.get('roles');
-    var conflicts = _.chain(this.props.selectedRoles)
-      .union(this.props.indeterminateRoles)
+    var restrictionsCheck = role.checkRestrictions(configModels, 'disable');
+    var roleLimitsCheckResults = processedRoleLimits[name];
+    var roles = cluster.get('roles');
+    var conflicts = _.chain(selectedRoles)
+      .union(indeterminateRoles)
       .map((role) => roles.find({name: role}).conflicts)
       .flatten()
       .uniq()
@@ -1650,10 +1653,19 @@ RolePanel = React.createClass({
       warnings.push(i18n('cluster_page.nodes_tab.role_conflict'));
     }
 
+    var isDeployed = nodes.some((node) => node.hasRole(name, true));
+    if (isDeployed) {
+      warnings.push(i18n('cluster_page.nodes_tab.deployed_role'));
+    }
+
     return {
-      result: restrictionsCheck.result || _.contains(conflicts, name) ||
-        (roleLimitsCheckResults && !roleLimitsCheckResults.valid &&
-          !_.contains(this.props.selectedRoles, name)
+      result: restrictionsCheck.result ||
+        _.includes(conflicts, name) ||
+        isDeployed ||
+        (
+          roleLimitsCheckResults &&
+          !roleLimitsCheckResults.valid &&
+          !_.includes(selectedRoles, name)
         ),
       warnings
     };
@@ -1683,9 +1695,8 @@ RolePanel = React.createClass({
                   <Role
                     key={roleName}
                     ref={roleName}
-                    role={role}
-                    selected={selected}
-                    indeterminated={_.contains(indeterminateRoles, roleName)}
+                    {...{role, selected}}
+                    indeterminated={_.includes(indeterminateRoles, roleName)}
                     restrictions={this.processRestrictions(role)}
                     isRolePanelDisabled={!nodes.length}
                     onClick={() => selectRoles(roleName, !selected)}
@@ -1774,7 +1785,7 @@ Role = React.createClass({
             <i
               className={utils.classNames({
                 glyphicon: true,
-                'glyphicon-selected-role': selected,
+                'glyphicon-selected-role': selected && !warnings.length,
                 'glyphicon-indeterminated-role': indeterminated && !warnings.length,
                 'glyphicon-warning-sign': !!warnings.length
               })}

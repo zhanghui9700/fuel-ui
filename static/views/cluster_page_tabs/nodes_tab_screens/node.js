@@ -93,6 +93,25 @@ var Node = React.createClass({
         });
       });
   },
+  discardRoleChanges(e) {
+    e.preventDefault();
+    if (this.state.actionInProgress) return;
+    this.setState({actionInProgress: true});
+    new models.Node(this.props.node.attributes)
+      .save({pending_roles: []}, {patch: true})
+      .then(
+        () => this.props.cluster.get('nodes').fetch(),
+        (response) => {
+          utils.showErrorDialog({
+            title: i18n('cluster_page.nodes_tab.node.cant_discard'),
+            response
+          });
+        }
+      )
+      .then(() => {
+        this.setState({actionInProgress: false});
+      });
+  },
   removeNode(e) {
     e.preventDefault();
     if (this.props.viewMode === 'compact') this.toggleExtendedNodePanel();
@@ -209,18 +228,19 @@ var Node = React.createClass({
     );
   },
   renderRoleList(roles) {
+    var {node} = this.props;
     return (
       <ul>
-        {_.map(roles, (role) => {
-          return (
-            <li
-              key={this.props.node.id + role}
-              className={utils.classNames({'text-success': !this.props.node.get('roles').length})}
-            >
-              {role}
-            </li>
-          );
-        })}
+        {_.map(roles, (role) =>
+          <li
+            key={node.id + role}
+            className={utils.classNames({
+              'text-success': _.includes(node.get('pending_roles'), role)
+            })}
+          >
+            {role}
+          </li>
+        )}
       </ul>
     );
   },
@@ -292,22 +312,33 @@ var Node = React.createClass({
                   </a>
                 }
                 {renderActionButtons &&
-                  (node.get('pending_addition') || node.get('pending_deletion')) &&
-                  !locked &&
+                (
+                  node.get('pending_addition') ||
+                  node.get('pending_deletion') ||
+                  !!node.get('cluster') && !!node.get('pending_roles').length
+                ) &&
+                !locked &&
                   <button
                     className='btn btn-discard'
                     key='btn-discard'
-                    onClick={node.get('pending_deletion') ?
-                      this.discardNodeDeletion
-                    :
-                      this.showDeleteNodesDialog
+                    onClick={
+                      node.get('pending_deletion') ?
+                        this.discardNodeDeletion
+                      :
+                        node.get('pending_addition') ?
+                          this.showDeleteNodesDialog
+                        :
+                          this.discardRoleChanges
                     }
                   >
-                    {i18n(ns + (node.get('pending_deletion') ?
-                      'discard_deletion'
-                    :
-                      'delete_node'
-                    ))}
+                    {i18n(ns +
+                      (node.get('pending_deletion') ?
+                        'discard_deletion'
+                      :
+                        node.get('pending_addition') ?
+                          'discard_addition' : 'discard_role_changes'
+                      )
+                    )}
                   </button>
                 }
               </div>
@@ -469,20 +500,35 @@ var Node = React.createClass({
                   <a className='btn-view-logs icon icon-logs' href={this.getNodeLogsLink()} />
                 </Tooltip>,
               renderActionButtons &&
-                (node.get('pending_addition') || node.get('pending_deletion')) &&
-                !locked &&
+              (
+                node.get('pending_addition') ||
+                node.get('pending_deletion') ||
+                !!node.get('cluster') && !!node.get('pending_roles').length
+              ) &&
+              !locked &&
                 <Tooltip
                   key={'discard-node-changes-' + node.id}
-                  text={i18n(ns +
-                    (node.get('pending_deletion') ? 'discard_deletion' : 'delete_node')
-                  )}
+                  text={
+                    i18n(ns +
+                      (node.get('pending_deletion') ?
+                        'discard_deletion'
+                      :
+                        node.get('pending_addition') ?
+                          'discard_addition' : 'discard_role_changes'
+                      )
+                    )
+                  }
                 >
                   <div
                     className='icon btn-discard'
-                    onClick={node.get('pending_deletion') ?
-                      this.discardNodeDeletion
-                    :
-                      this.showDeleteNodesDialog
+                    onClick={
+                      node.get('pending_deletion') ?
+                        this.discardNodeDeletion
+                      :
+                        node.get('pending_addition') ?
+                          this.showDeleteNodesDialog
+                        :
+                          this.discardRoleChanges
                     }
                   />
                 </Tooltip>
