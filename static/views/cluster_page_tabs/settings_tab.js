@@ -218,7 +218,7 @@ var SettingsTab = React.createClass({
     return !this.isLocked() && this.hasChanges() && areSettingsValid;
   },
   isLocked() {
-    return this.state.actionInProgress || !this.props.cluster.isAvailableForSettingsChanges();
+    return !!this.state.actionInProgress || !this.props.cluster.isAvailableForSettingsChanges();
   },
   render() {
     var {cluster, activeSettingsSectionName, setActiveSettingsGroupName} = this.props;
@@ -251,6 +251,7 @@ var SettingsTab = React.createClass({
             groupedSettings[settings.sanitizeGroup(group)][sectionName] = {invalid: hasErrors};
           }
         } else {
+          var isPlugin = settings.isPlugin(section);
           // Settings like 'Common' can be splitted to different groups
           var settingGroups = _.chain(section)
             .omit('metadata')
@@ -259,8 +260,9 @@ var SettingsTab = React.createClass({
             .without('network')
             .value();
 
-          // to support plugins without settings (just for user to be able to switch its version)
-          if (!settingGroups.length && settings.isPlugin(section)) {
+          // display plugins without settings
+          // (for user to be able to enable a plugin or switch its version)
+          if (!settingGroups.length && isPlugin) {
             groupedSettings.other[sectionName] = {settings: [], invalid: hasErrors};
           }
 
@@ -275,7 +277,9 @@ var SettingsTab = React.createClass({
             var hasErrors = _.any(pickedSettings, (settingName) => {
               return (settings.validationError || {})[utils.makePath(sectionName, settingName)];
             });
-            if (!_.isEmpty(pickedSettings)) {
+            // display plugins without visible settings
+            // (for user to be able to enable a plugin or switch its version)
+            if (!_.isEmpty(pickedSettings) || isPlugin) {
               groupedSettings[calculatedGroup][sectionName] = {
                 settings: pickedSettings,
                 invalid: hasErrors
