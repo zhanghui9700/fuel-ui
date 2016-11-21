@@ -47,7 +47,7 @@ define([
           })
           .clickByCssSelector('.node.pending_addition input[type=checkbox]:not(:checked)')
           .clickByCssSelector('button.btn-configure-interfaces')
-          .assertElementAppears('div.ifc-list', 2000, 'Node interfaces loaded')
+          .assertElementAppears('div.ifc-list', 5000, 'Node interfaces loaded')
           .then(pollUntil(function() {
             return window.$('div.ifc-list').is(':visible') || null;
           }, 1000));
