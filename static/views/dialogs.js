@@ -1700,6 +1700,7 @@ export var ShowNodeInfoDialog = React.createClass({
               {... {sectionName, settingsToDisplay, cluster, configModels}}
               key={sectionName}
               initialAttributes={initialNodeAttributes}
+              getValueAttribute={nodeAttributes.getValueAttribute}
               onChange={_.partial(this.onNodeAttributesChange, sectionName)}
               settings={nodeAttributes}
               locked={
