@@ -1446,25 +1446,27 @@ export var ShowNodeInfoDialog = React.createClass({
       .fetch({
         url: _.result(this.props.node, 'url') + '/attributes/defaults'
       })
-      .done(() => {
-        nodeAttributes.set(defaultNodeAttributes.attributes);
-        nodeAttributes.isValid({models: configModels});
-        this.setState({
-          nodeAttributes,
-          nodeAttributesError: nodeAttributes.validationError,
-          actionInProgress: false,
-          loadDefaultsError: null,
-          savingError: null,
-          key: _.now()
-        });
-      })
-      .fail((response) => {
-        this.setState({
-          actionInProgress: false,
-          savingError: null,
-          loadDefaultsError: utils.getResponseText(response)
-        });
-      });
+      .then(
+        () => {
+          nodeAttributes.set(defaultNodeAttributes.attributes);
+          nodeAttributes.isValid({models: configModels});
+          this.setState({
+            nodeAttributes,
+            nodeAttributesError: nodeAttributes.validationError,
+            actionInProgress: false,
+            loadDefaultsError: null,
+            savingError: null,
+            key: _.now()
+          });
+        },
+        (response) => {
+          this.setState({
+            actionInProgress: false,
+            savingError: null,
+            loadDefaultsError: utils.getResponseText(response)
+          });
+        }
+      );
   },
   cancelNodeAttributesChange() {
     var {nodeAttributes, initialNodeAttributes, configModels} = this.state;
