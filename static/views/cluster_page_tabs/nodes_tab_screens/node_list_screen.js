@@ -1755,10 +1755,11 @@ SelectAllMixin = {
     var {
       nodes, selectedNodeIds, maxNumberOfNodes, selectNodes, mode, locked, nodeActionsAvailable
     } = this.props;
-    var nodesToSelect = nodeActionsAvailable ?
-      nodes
-    :
-      _.filter(nodes, (node) => node.get('online'));
+    var nodesToSelect = _.filter(nodes, (node) => node.isSelectable());
+    if (!nodeActionsAvailable) {
+      // exclude offline nodes from autoselection
+      nodesToSelect = _.filter(nodesToSelect, (node) => node.get('online'));
+    }
     var checked = mode === 'edit' ||
       nodesToSelect.length && !_.any(nodesToSelect, (node) => !selectedNodeIds[node.id]);
     return (
@@ -2029,7 +2030,7 @@ NodeGroup = React.createClass({
               )}
               key={node.id}
               node={node}
-              renderActionButtons={!!cluster}
+              renderActionButtons={!!cluster && node.isSelectable()}
               cluster={cluster || clusters.get(node.get('cluster'))}
               checked={selectedNodeIds[node.id]}
               locked={
