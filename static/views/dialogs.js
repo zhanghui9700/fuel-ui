@@ -1676,7 +1676,14 @@ export var ShowNodeInfoDialog = React.createClass({
 
     var isLocked = !node.get('pending_addition') || actionInProgress;
 
-    var attributes = _.chain(_.keys(nodeAttributes.attributes))
+    var attributes = _.chain(
+        _.keys(nodeAttributes.attributes).sort(
+          (sectionName1, sectionName2) => nodeAttributes.sortAttributes(
+            nodeAttributes.get(sectionName1 + '.metadata'),
+            nodeAttributes.get(sectionName2 + '.metadata')
+          )
+        )
+      )
       .filter(
         (sectionName) => !nodeAttributes.checkRestrictions(
           configModels,
@@ -1684,10 +1691,6 @@ export var ShowNodeInfoDialog = React.createClass({
           nodeAttributes.get(sectionName).metadata
         ).result
       )
-      .sortBy((sectionName) => {
-        var {weight, label} = nodeAttributes.get(sectionName + '.metadata');
-        return [weight, label];
-      })
       .map(
         (sectionName) => {
           var metadata = nodeAttributes.get(utils.makePath(sectionName, 'metadata'));
