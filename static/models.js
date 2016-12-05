@@ -522,7 +522,7 @@ models.Node = BaseModel.extend({
     ).join(', ');
   },
   getStatus() {
-    if (!this.get('online')) return 'offline';
+    if (!this.get('online') && this.get('status') !== 'removing') return 'offline';
     return this.get('status');
   },
   getLabel(label) {

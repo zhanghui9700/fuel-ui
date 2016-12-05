@@ -2278,12 +2278,17 @@ input[type=range] {
           background-color: @node-color-error + 5%;
         }
       }
-      &.offline {
+      &.offline, &.removing {
         background-color: @node-color-offline + 10%;
         border-color: @node-border-color-offline + 10%;
         .node-name, .node-status, .node-settings {opacity: .7;}
         &:hover {
           background-color: @node-color-offline + 20%;
+        }
+      }
+      &.removing {
+        .node-box {
+          cursor: default;
         }
       }
       &.selected {
