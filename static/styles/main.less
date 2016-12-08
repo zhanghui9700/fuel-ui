@@ -4911,8 +4911,11 @@ input[type=range] {
     }
     .dashboard-actions-wrapper {
       margin: @dashboard-offset 0 @dashboard-offset 0;
-      .reset-environment {
-        margin-right: 87px;
+      > div {
+        width: 50%;
+        &:last-child {
+          padding-left: 15px;
+        }
       }
       button {
         margin-right: @dashboard-offset / 2;

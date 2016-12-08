@@ -1389,7 +1389,7 @@ var ResetEnvironmentAction = React.createClass({
       cluster.get('nodes').all({status: 'discover'}) ||
       !!task;
     return (
-      <div className='pull-right reset-environment'>
+      <div className='pull-left reset-environment'>
         <button
           className='btn btn-default reset-environment-btn'
           onClick={() => ResetEnvironmentDialog.show({cluster})}
