@@ -1357,7 +1357,7 @@ var RenameEnvironmentAction = React.createClass({
         <Input
           type='text'
           disabled={this.state.disabled}
-          maxLength='50'
+          maxLength={100}
           onChange={this.onChange}
           defaultValue={this.state.name}
           error={this.state.error}
