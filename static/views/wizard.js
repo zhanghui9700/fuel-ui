@@ -313,6 +313,7 @@ var NameAndRelease = React.createClass({
           value={wizard.get('name')}
           error={wizard.get('name_error')}
           onChange={onChange}
+          maxLength={100}
         />
         <Input
           type='select'

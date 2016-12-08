@@ -1354,7 +1354,7 @@ var RenameEnvironmentAction = React.createClass({
             type='text'
             disabled={this.state.disabled}
             className={utils.classNames({'form-control': true, error: this.state.error})}
-            maxLength='50'
+            maxLength={100}
             onChange={this.onChange}
             defaultValue={this.state.name}
             selectOnFocus
