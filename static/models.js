@@ -519,6 +519,7 @@ models.Node = BaseModel.extend({
     return this.get('pending_addition') ||
       this.get('pending_deletion') ||
       this.get('status') === 'stopped' ||
+      this.get('status') === 'error' ||
       !!this.get('cluster') && !!this.get('pending_roles').length;
   },
   areDisksConfigurable() {
