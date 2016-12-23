@@ -217,7 +217,7 @@ var EditNodeInterfacesScreen = React.createClass({
     return interfaces.map((ifc) => picker(ifc.toJSON()));
   },
   hasChangesInRemainingNodes() {
-    var {nodes, interfaces} = this.props;
+    var {nodes, interfaces, bondAttributeNames} = this.props;
     var {limitations} = this.state;
 
     var firstNodeInterfacesData = this.interfacesToJSON(interfaces, true);
@@ -235,6 +235,7 @@ var EditNodeInterfacesScreen = React.createClass({
             case 'attributes': {
               // omit restricted parameters from the comparison
               return _.some(data, (section, sectionName) =>
+                !_.includes(bondAttributeNames, sectionName) &&
                 limitationsData[sectionName].equal &&
                 _.some(section, (setting, settingName) =>
                   !_.isEqual(
