@@ -87,6 +87,8 @@ define([
     deleteCluster: function(modal) {
       return new this.constructor(this, function() {
         return this.parent
+          .clickIfExists('.btn-revert-changes')
+          .clickIfExists('.discard-changes')
           .clickIfExists('a.dashboard.cluster-tab')
 
           .clickIfExists('.btn-danger')
@@ -116,10 +118,10 @@ define([
           }).end();
       });
     },
-    selectPluginNICPropertyByIndex: function(index) {
+    expandNICPropertyByIndex: function(cssPropLabel, index) {
       return new this.constructor(this, function() {
         return this.parent
-          .clickObjectByIndex('span.fuel_plugin_example_v5 button', index);
+          .clickObjectByIndex(cssPropLabel + ' button', index);
       });
     },
     selectNodeByIndex: function(nodeIndex) {
@@ -156,6 +158,14 @@ define([
           .assertElementEnabled('button.btn-apply', 'Apply is disabled')
           .clickByCssSelector('button.btn-apply')
           .waitForCssSelector('.btn-defaults:not(:disabled)', 1000);
+      });
+    },
+    assertInputValueEquals: function(cssSelector, value, message) {
+      return new this.constructor(this, function() {
+        return this.parent
+          .findAllByCssSelector(cssSelector).getProperty('value').then(function(el) {
+            return assert.equal(el[0], value, message);
+          }).end();
       });
     }
   });
