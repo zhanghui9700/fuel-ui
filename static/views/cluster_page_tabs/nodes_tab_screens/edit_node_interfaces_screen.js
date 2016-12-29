@@ -362,7 +362,6 @@ var EditNodeInterfacesScreen = React.createClass({
         });
         this.updateWithLimitations(updatedIfc, ifc);
       });
-
       return Backbone.sync('update', node.interfaces, {url: _.result(node, 'url') + '/interfaces'});
     }))
       .done(() => {
@@ -448,6 +447,14 @@ var EditNodeInterfacesScreen = React.createClass({
         )
       });
 
+      var bondMeta = {
+        dpdk: {
+          available: _.every(interfaces,
+            (ifc) => ((ifc.get('meta') || {}).dpdk || {}).available !== false
+          )
+        }
+      };
+
       // populate bond attributes with first slave values
       var firstSlaveAttributes = interfaces[0].get('attributes');
       _.each(bondAttributes.attributes, (section, sectionName) => {
@@ -469,7 +476,8 @@ var EditNodeInterfacesScreen = React.createClass({
         assigned_networks: new models.InterfaceNetworks(),
         slaves: _.invoke(interfaces, 'pick', 'name'),
         state: 'down',
-        attributes: bondAttributes
+        attributes: bondAttributes,
+        meta: bondMeta
       });
       this.updateBondOffloading(bond, interfaces);
     } else {
