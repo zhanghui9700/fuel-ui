@@ -602,10 +602,14 @@ var EditNodeInterfacesScreen = React.createClass({
     var errors = {};
     interfaces.each((ifc) => {
       if (!_.includes(slaveInterfaceNames, ifc.get('name'))) {
-        var interfaceErrors = ifc.validate(
-          {networkingParameters, networks},
-          {cluster, configModels, meta: ifc.get('meta') || {}}
-        );
+        var interfaceErrors = ifc.validate({networkingParameters, networks}, {
+          cluster,
+          configModels: _.extend({}, configModels, {
+            [ifc.isBond() ? 'bond_attributes' : 'nic_attributes']: ifc.get('attributes'),
+            default: ifc.get('attributes')
+          }),
+          meta: ifc.get('meta') || {}
+        });
         if (!_.isEmpty(interfaceErrors)) errors[ifc.get('name')] = interfaceErrors;
       }
     });
@@ -830,7 +834,7 @@ var EditNodeInterfacesScreen = React.createClass({
             return !_.includes(slaveInterfaceNames, ifcName) && (
               <NodeInterfaceDropTarget
                 {... _.pick(this.props,
-                  'cluster', 'nodes', 'interfaces', 'configModels', 'bondAttributeNames'
+                  'cluster', 'nodes', 'interfaces', 'bondAttributeNames'
                 )}
                 {... _.pick(this,
                   'validate', 'removeInterfaceFromBond', 'getAvailableBondingTypes'
