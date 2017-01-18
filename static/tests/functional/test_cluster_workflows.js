@@ -191,13 +191,11 @@ define([
             return modal.clickFooterButton('Run Workflow');
           })
           .waitForElementDeletion('.confirmation-question', 5000)
-          // FIXME(jkirnosova): the following check should be restored after
-          // merging of https://review.openstack.org/#/c/409830/
-          //.assertElementContainsText(
-          //  '.modal-body',
-          //  'Deployment tasks not found for',
-          //  'Workflow can not be started because it contains no deployment tasks'
-          //)
+          .assertElementContainsText(
+            '.modal-body',
+            'There are no deployment tasks for graph type',
+            'Workflow can not be started because it contains no deployment tasks'
+          )
           .then(function() {
             return modal.clickFooterButton('Close');
           })
