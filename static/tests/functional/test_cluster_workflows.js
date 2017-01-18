@@ -158,13 +158,11 @@ registerSuite(() => {
         )
         .then(() => modal.clickFooterButton('Run Workflow'))
         .waitForElementDeletion('.confirmation-question', 5000)
-        // FIXME(jkirnosova): the following check should be restored after
-        // merging of https://review.openstack.org/#/c/348299/
-        //.assertElementContainsText(
-        //  '.modal-body',
-        //  'Deployment tasks not found for',
-        //  'Workflow can not be started because it contains no deployment tasks'
-        //)
+        .assertElementContainsText(
+          '.modal-body',
+          'There are no deployment tasks for graph type',
+          'Workflow can not be started because it contains no deployment tasks'
+        )
         .then(() => modal.clickFooterButton('Close'))
         .then(() => modal.waitToClose())
         .clickByCssSelector('.actions-panel .dropdown button.dropdown-toggle')
