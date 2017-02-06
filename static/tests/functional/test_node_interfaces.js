@@ -55,8 +55,7 @@ registerSuite(() => {
       return this.remote
         .then(() => common.removeCluster(clusterName, true));
     },
-    // FIXME(jkirnosova) restore this check after #1643599 fix
-    /*'Configure interface properties manipulations'() {
+    'Configure interface properties manipulations'() {
       return this.remote
         .clickByCssSelector('.mtu .btn-link')
         .clickByCssSelector('.mtu-section input[name="nullable-value"]')
@@ -67,7 +66,7 @@ registerSuite(() => {
         .setInputValue('.mtu-section input[name="value"]', '2')
         .assertElementExists(
           '.mtu-section .has-error',
-          'Error styles are applied to MTU control on invalid value'
+          'Error styles are applied to MTU control with invalid value'
         )
         .assertElementExists(
           '.mtu .btn-link.text-danger',
@@ -84,7 +83,7 @@ registerSuite(() => {
           '.mtu-section input[name="value"]',
           'MTU control is hidden after clicking MTU link again'
         );
-    },*/
+    },
     'Unassigned networks'() {
       return this.remote
         .assertElementExists('.unassigned-networks .collapsed', 'Unassigned networks block exists')
@@ -98,9 +97,8 @@ registerSuite(() => {
           '.unassigned-networks .network-block .network-name',
           'Public',
           'Public network was successfully removed'
-        );
-        // FIXME(jkirnosova): should be restored after #1643599 fix
-        //.assertElementEnabled('.btn-apply', 'Network removal can be saved');
+        )
+        .assertElementEnabled('.btn-apply', 'Network removal can be saved');
     },
     'Untagged networks error'() {
       return this.remote
@@ -130,7 +128,7 @@ registerSuite(() => {
     'Interfaces unbonding'() {
       return this.remote
         .then(() => interfacesPage.bondInterfaces('eth1', 'eth2'))
-        // Two interfaces bondin
+        // Two interfaces bonding
         .then(() => interfacesPage.selectInterface('bond0'))
         .clickByCssSelector('.btn-unbond')
         .then(() => interfacesPage.selectInterface('eth1'))
