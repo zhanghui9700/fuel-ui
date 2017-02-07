@@ -48,7 +48,8 @@ var LoginPage = React.createClass({
 });
 
 var LoginForm = React.createClass({
-  login(username, password) {
+  login() {
+    var {username, password} = this.state;
     var keystoneClient = app.keystoneClient;
 
     return keystoneClient.authenticate({
@@ -112,18 +113,17 @@ var LoginForm = React.createClass({
       error: null
     };
   },
-  onChange() {
-    this.setState({error: null});
+  onChange(e) {
+    this.setState({
+      [e.target.name]: e.target.value,
+      error: null
+    });
   },
   onSubmit(e) {
     e.preventDefault();
-
-    var username = ReactDOM.findDOMNode(this.refs.username).value;
-    var password = ReactDOM.findDOMNode(this.refs.password).value;
-
     this.setState({actionInProgress: true});
 
-    this.login(username, password)
+    this.login()
       .catch(() => {
         this.setState({actionInProgress: false});
       });
@@ -186,7 +186,10 @@ var LoginForm = React.createClass({
                 'btn-warning': !httpsUsed,
                 'btn-progress': this.state.actionInProgress
               })}
-              disabled={this.state.actionInProgress}
+              disabled={
+                this.state.actionInProgress ||
+                !(this.state.username && this.state.password)
+              }
             >
               {i18n('login_page.log_in')}
             </button>
