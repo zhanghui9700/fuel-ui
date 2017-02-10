@@ -1226,8 +1226,8 @@ export var UploadGraphDialog = React.createClass({
 
     return (
       <div className='forms-box upload-graph-form'>
-        <Input {...composeInputProps('name')} />
-        <Input {...composeInputProps('type')} />
+        <Input {...composeInputProps('name')} maxLength='255' />
+        <Input {...composeInputProps('type')} maxLength='255' />
         <Input
           {...composeInputProps('tasks')}
           type='file'
