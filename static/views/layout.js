@@ -312,10 +312,13 @@ var NotificationsPopover = React.createClass({
     this.updateNotifications();
   },
   updateNotifications() {
-    var {notifications} = this.props;
-    //FIXME(jkirnosova): need to fetch limited number of notifications
-    //according to visibleNotificationsNumber prop
-    return notifications.fetch().then(() => this.markAsRead());
+    var {notifications, visibleNotificationsNumber} = this.props;
+    return notifications
+      .fetch({
+        url: _.result(notifications, 'url') + '/?' +
+        $.param({limit: visibleNotificationsNumber, order_by: '-id'})
+      })
+      .then(() => this.markAsRead());
   },
   showNodeInfo(id) {
     this.props.toggle(false);
@@ -375,7 +378,7 @@ var NotificationsPopover = React.createClass({
   },
   render() {
     var {loading} = this.state;
-    var {notifications, toggle, visibleNotificationsNumber} = this.props;
+    var {notifications, toggle} = this.props;
     var showMore = Backbone.history.getHash() !== 'notifications';
     return (
       <Popover toggle={toggle} className='notifications-popover'>
@@ -383,7 +386,7 @@ var NotificationsPopover = React.createClass({
           <ProgressBar />
         :
           <div>
-            {notifications.take(visibleNotificationsNumber).map(this.renderNotification)}
+            {notifications.map(this.renderNotification)}
             {showMore &&
               <div className='show-more'>
                 <Link to='/notifications'>{i18n('notifications_popover.view_all_button')}</Link>
