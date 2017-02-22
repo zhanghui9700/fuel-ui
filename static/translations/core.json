@@ -1126,8 +1126,6 @@
                         "release_alert": "Additional services are not available in __NameAndRelease.release_name__",
                         "install_sahara": "Install Sahara",
                         "install_sahara_description": "Sahara enables on-demand provisioning of Hadoop clusters to be deployed on OpenStack utilizing a variety of vendor distributions.",
-                        "install_ceilometer": "Install Ceilometer and Aodh",
-                        "install_ceilometer_description": "Ceilometer provides metering and monitoring of an OpenStack cloud. Aodh is an alarming service which uses the data collected by Ceilometer.",
                         "install_ironic": "Install Ironic",
                         "install_ironic_description": "Ironic enables baremetal provisioning.",
                         "ironic_network_mode_alert": "Ironic requires Neutron with VLAN segmentation as a network option.",
@@ -2215,8 +2213,6 @@
                         "release_alert": "__releaseName__ 不支持附加服务",
                         "install_sahara": "安装 Sahara",
                         "install_sahara_description": "利用 Sahara 能在各大厂商的 OpenStack 发行版上部署 Hadoop 集群。",
-                        "install_ceilometer": "安装 Ceilometer（OpenStack 计费）",
-                        "install_ceilometer_description": "Ceilometer 能对 OpenStack 云计算进行计量和监控。",
                         "install_ironic": "安装 Ironic",
                         "install_ironic_description": "Ironic 能管理物理机。",
                         "ironic_network_mode_alert": "Ironic 需要使用 VLAN 模式的  Neutron 网络。",
@@ -2928,9 +2924,7 @@
                         "title": "追加サービス",
                         "release_alert": "追加サービスは __NameAndRelease.release_name__ では使用できません",
                         "install_sahara": "Saharaのインストール",
-                        "install_sahara_description": "Saharaは様々なベンダーディストリビューションでデプロイされたOpenStack上にHadoopクラスタのオンデマンドプロビジョニングを可能にします。",
-                        "install_ceilometer": "Ceilometer(OpenStack テレメトリー)のインストール",
-                        "install_ceilometer_description": "CeilometerはOpenStackクラウドのメータリングおよびモニタリング機能を提供します。"
+                        "install_sahara_description": "Saharaは様々なベンダーディストリビューションでデプロイされたOpenStack上にHadoopクラスタのオンデマンドプロビジョニングを可能にします。"
                     },
                     "ready": {
                         "title": "完了",
@@ -3412,9 +3406,7 @@
                         "title": "추가 서비스",
                         "release_alert": "추가 서비스는 __releaseName__에서는 지원되지 않습니다.",
                         "install_sahara": "Sahara 설치",
-                        "install_sahara_description": "Sahara 공급 업체의 다양한 분포를 활용하는 OpenStack에서 배치하는 하둡 클러스터의 on demand 프로비저닝을 가능하게 합니다.",
-                        "install_ceilometer": "Ceilometer (OpenStack Telemetry) 설치",
-                        "install_ceilometer_description": "Ceilometer는 OpenStack Cloud의 계량 및 모니터링 기능을 제공합니다."
+                        "install_sahara_description": "Sahara 공급 업체의 다양한 분포를 활용하는 OpenStack에서 배치하는 하둡 클러스터의 on demand 프로비저닝을 가능하게 합니다."
                     },
                     "ready": {
                         "title": "끝마침",
