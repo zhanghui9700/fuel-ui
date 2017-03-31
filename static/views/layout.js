@@ -374,7 +374,7 @@ export var Footer = React.createClass({
     var version = this.props.version;
     return (
       <div className='footer'>
-        <div key='version'>{i18n('common.version')}: {version.get('release')}</div>
+        <div key='version'>Proudly powered by xCloud, {i18n('common.version')}: {version.get('release')}</div>
       </div>
     );
   }

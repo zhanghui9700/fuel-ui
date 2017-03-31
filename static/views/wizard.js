@@ -332,7 +332,7 @@ var NameAndRelease = React.createClass({
           </div>
           <div className='release-description'>{release.get('description')}</div>
         </div>
-      </div>
+      </div> 
     );
   }
 });

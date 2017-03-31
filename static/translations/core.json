@@ -4,7 +4,7 @@
             "language": "EN",
             "language_name": "English",
             "common": {
-                "title": "Fuel Dashboard",
+                "title": "xCloud Dashboard",
                 "select_all": "Select All",
                 "load_defaults_button": "Load Defaults",
                 "load_deployed_button": "Load Deployed Settings",
@@ -132,7 +132,7 @@
                     "floating": "This network is used to assign Floating IPs to tenant VMs.",
                     "private": "The private network facilitates communication between each tenant's VMs. Private network address spaces are not a part of the public network address space; fixed IPs of virtual instances cannot be accessed directly from the rest of the public network.",
                     "baremetal": "A separate network where baremetal nodes managed by OpenStack Ironic reside. This IP range is assigned to service OpenStack nodes.",
-                    "fuelweb_admin": "The Fuel Master node uses the Admin (PXE) network to provision and orchestrate the OpenStack environment providing DNS, DHCP, and gateway services to a node before that node is provisioned."
+                    "fuelweb_admin": "The xCloud Master node uses the Admin (PXE) network to provision and orchestrate the OpenStack environment providing DNS, DHCP, and gateway services to a node before that node is provisioned."
                 },
                 "requirements": {
                     "public": [
@@ -176,7 +176,7 @@
                 "http_warning_link": "Switch to HTTPS"
             },
             "statistics": {
-                "help_to_improve": "Help us to improve your experience by sending information about the settings, features, and deployment actions when you use Fuel and OpenStack.",
+                "help_to_improve": "Help us to improve your experience by sending information about the settings, features, and deployment actions when you use xCloud and OpenStack.",
                 "learn_whats_collected": "Learn what's collected",
                 "statistics_user_info": "Note, that if you agree to send statistics, a new user \"fuel_stats_user\" will be added to your OpenStack environment. The fuel_stats_user will collect information about OpenStack workloads.",
                 "statistics_includes_full": "Usage statistics includes the following. Confidential information, such as passwords, IP addresses, node names, and so on, is not included into statistics.",
@@ -213,7 +213,7 @@
                 "system_info": {
                     "hypervisor": "Hypervisor",
                     "hardware_info": "Hardware info",
-                    "fuel_version": "Fuel version info",
+                    "fuel_version": "xCloud version info",
                     "openstack_version": "OpenStack version info"
                 },
                 "setting_labels": {
@@ -230,9 +230,9 @@
                 }
             },
             "welcome_page": {
-                "title": "Welcome to Fuel and OpenStack!",
-                "start_fuel": "Start Using Fuel",
-                "thanks": "Thanks for helping to improve Fuel and OpenStack!",
+                "title": "Welcome to xCloud and OpenStack!",
+                "start_fuel": "Start Using xCloud",
+                "thanks": "Thanks for helping to improve xCloud and OpenStack!",
                 "statistics_collector": "Web UI for collected statistics is under development and will be available at "
             },
             "navbar": {
@@ -285,8 +285,8 @@
                 "send_statistics_title": "Send Statistics About Usage",
                 "save_changes": "Save Changes",
                 "documentation_link": "Go to Documentation",
-                "documentation_title": "Fuel Documentation",
-                "documentation_text": "The page contains the most recent Fuel documentation."
+                "documentation_title": "xCloud Documentation",
+                "documentation_text": "The page contains the most recent xCloud documentation."
             },
             "release_page": {
                 "title": "Releases",
@@ -531,7 +531,7 @@
                             "networks_with_the_same_vlan": "Networks with the same VLAN ID cannot be assigned to the same interface.",
                             "vlan_range_intersection": "The network VLAN ID range should not include VLAN IDs of other networks assigned to the interface.",
                             "sriov_placement_error": "No network could be placed on SRIOV enabled interface",
-                            "non_default_physnet": "Only \"physnet2\" will be configured by Fuel in Neutron. Configuration of other physical networks is up to Operator or plugin. Fuel will just configure appropriate pci_passthrough_whitelist option in nova.conf for such interface and physical networks.",
+                            "non_default_physnet": "Only \"physnet2\" will be configured by xCloud in Neutron. Configuration of other physical networks is up to Operator or plugin. xCloud will just configure appropriate pci_passthrough_whitelist option in nova.conf for such interface and physical networks.",
                             "big_virtual_functions_number": "Virtual Functions number should be not more than __max__",
                             "dpdk_placement_error": "DPDK enabled interface requires Private network to be assigned. Other networks are not allowed."
                         },
@@ -656,7 +656,7 @@
                     "no_selected_nodes": "No selected nodes to edit.",
                     "disk_configuration_reset_warning": "When you change the node role, disk configuration will be reset to default.",
                     "no_nodes_in_environment": "To add nodes to the environment:\n1. Click Add Nodes.\n2. Select the nodes you want to allocate.\n3. Assign a role to each node.",
-                    "no_nodes_in_fuel": "A pool of one or more unallocated nodes is needed for this operation. To add nodes to the pool, configure the node to boot from the network (a.k.a. PXE booting). Fuel will automatically provision and discover the nodes.",
+                    "no_nodes_in_fuel": "A pool of one or more unallocated nodes is needed for this operation. To add nodes to the pool, configure the node to boot from the network (a.k.a. PXE booting). xCloud will automatically provision and discover the nodes.",
                     "role_conflict": "This role cannot be combined with the selected roles.",
                     "deployed_role": "This role is deployed on some node(s).",
                     "node_deletion_error": {
@@ -717,7 +717,7 @@
                     "reset_environment": "Reset Environment",
                     "reset_environment_description": "Enables you to modify the settings and re-deploy the environment.",
                     "reset_environment_warning": "You are about to reset all existing nodes to the pre-deployment state and delete this environment. Environment settings and network configuration will be preserved.",
-                    "reset_disabled_for_deploying_cluster": "The OpenStack environment is still being deployed. Wait untill Fuel completes the deployment and try again.",
+                    "reset_disabled_for_deploying_cluster": "The OpenStack environment is still being deployed. Wait untill xCloud completes the deployment and try again.",
                     "repeated_reset_disabled": "The environment is already being reset.",
                     "no_changes_to_reset": "Not deployed environment cannot be reset.",
                     "rename_error": {
@@ -761,7 +761,7 @@
                     "no_nodes_instruction": "You must add at least one node to your environment in order to deploy.",
                     "locked_settings_alert": "Before proceeding with deployment please verify that the nodes have disk partitioning and network interfaces configured properly. You will not be able to change these via UI after the cloud is deployed.",
                     "redeployment_alert": "You have made configuration changes which will now be applied to nodes in this environment. Please note that during settings change some services on OpenStack nodes may be restarted, availability of some APIs and resources may be interrupted. For Production clouds, please make sure that the cloud is properly set into maintenance mode prior to performing configuration changes.",
-                    "package_information": "Packages and updates are fetched from the repositories defined in the Settings tab. If your environment uses the default external repositories, verify that the Fuel Master node can access the Internet. If the Fuel Master node is not connected to the Internet, you must set up a local mirror and configure Fuel to upload packages from the local mirror. Fuel must have network access to the local mirror. You may also configure alternate repositories for installation.",
+                    "package_information": "Packages and updates are fetched from the repositories defined in the Settings tab. If your environment uses the default external repositories, verify that the xCloud Master node can access the Internet. If the xCloud Master node is not connected to the Internet, you must set up a local mirror and configure xCloud to upload packages from the local mirror. xCloud must have network access to the local mirror. You may also configure alternate repositories for installation.",
                     "and_vcenter": "and VCenter",
                     "nova_with": "Nova Network with",
                     "neutron_with": "Neutron with",
@@ -870,8 +870,8 @@
                         "step_0": "Network verification checks the following:",
                         "step_1": "1. L2 connectivity checks between nodes in the environment.",
                         "step_2": "2. DHCP discover check on all nodes.",
-                        "step_3": "3. Repository connectivity check from the Fuel Master node.",
-                        "step_4": "4. Repository connectivity check from the Fuel Slave nodes through the  public & admin (PXE) networks.",
+                        "step_3": "3. Repository connectivity check from the xCloud Master node.",
+                        "step_4": "4. Repository connectivity check from the xCloud Slave nodes through the  public & admin (PXE) networks.",
                         "success_alert": "Verification succeeded. Your network is configured correctly.",
                         "verification_error": {
                             "title": "Network Verification Error",
@@ -991,7 +991,7 @@
                     "actual_duration": "Actual Duration",
                     "status": "Status",
                     "provide_credentials": "Provide credentials",
-                    "credentials_description": "If you changed the credentials after deployment, provide the new ones to run the health checks. Fuel does not store the credentials.",
+                    "credentials_description": "If you changed the credentials after deployment, provide the new ones to run the health checks. xCloud does not store the credentials.",
                     "password_label": "Password",
                     "password_description": "Password for Administrator",
                     "user_label": "Username",
@@ -1011,14 +1011,14 @@
                 "hide_details_button": "Hide additional information",
                 "openstack_release": "OpenStack Release",
                 "environment_status": "Status",
-                "cluster_was_modified_from_cli": "Some deployment parameters for this environment have been modified using the Fuel CLI. Changes from the Fuel CLI precede the changes made using the Fuel web interface. Proceed with caution.",
+                "cluster_was_modified_from_cli": "Some deployment parameters for this environment have been modified using the xCloud CLI. Changes from the xCloud CLI precede the changes made using the xCloud web interface. Proceed with caution.",
                 "unavailable_release": "__name__ release is unavailable. Cannot deploy the OpenStack environment."
             },
             "capacity_page": {
                 "title": "Capacity Audit",
                 "license_usage": "License Usage Report",
-                "fuel_version": "Fuel version",
-                "fuel_uuid": "Fuel UUID",
+                "fuel_version": "xCloud version",
+                "fuel_uuid": "xCloud UUID",
                 "env_name": "Environment Name",
                 "node_count": "Node Count",
                 "total_number_alloc_nodes": "Total number of allocated nodes",
@@ -1046,7 +1046,7 @@
                 "nailgun_unavailability": {
                     "title": "Nailgun is Unavailable",
                     "retry_now": "Retry Now",
-                    "unavailability_message": "Failed to start Fuel UI. Nailgun is unavailable.",
+                    "unavailability_message": "Failed to start xCloud UI. Nailgun is unavailable.",
                     "retry_delay_message": "Reconnecting in __count__ second...",
                     "retry_delay_message_plural": "Reconnecting in __count__ seconds...",
                     "retrying": "Reconnecting...",
@@ -1056,7 +1056,7 @@
                     ]
                 },
                 "create_cluster_wizard": {
-                    "title": "Create a new OpenStack environment",
+                    "title": "Create a new Suninfo OpenStack environment",
                     "prev": "Prev",
                     "next": "Next",
                     "create": "Create",
@@ -1066,11 +1066,12 @@
                     "name_release": {
                         "title": "Name and Release",
                         "name": "Name",
+                        "timezone": "Timezone",
                         "release_label": "OpenStack Release",
                         "no_releases_message": "There are no releases available.",
                         "existing_environment": "Environment with this name already exists",
-                        "Ubuntu_connectivity_alert": "By default, Fuel uploads the software packages for the Fuel Slave nodes from the external repositories. Please verify the Fuel Master node has the Internet connection.\nIf the Fuel Master node does not have access to the Internet, you must create a local mirror with all required software packages and configure Fuel to use the mirror before you deploy an OpenStack environment.",
-                        "CentOS_connectivity_alert": "By default, Fuel uploads the software packages for the Fuel Slave nodes from the external repositories. Please verify the Fuel Master node has the Internet connection.\nIf the Fuel Master node does not have access to the Internet, you must create a local mirror with all required software packages and configure Fuel to use the mirror before you deploy an OpenStack environment."
+                        "Ubuntu_connectivity_alert": "By default, xCloud uploads the software packages for the xCloud Slave nodes from the external repositories. Please verify the xCloud Master node has the Internet connection.\nIf the xCloud Master node does not have access to the Internet, you must create a local mirror with all required software packages and configure xCloud to use the mirror before you deploy an OpenStack environment.",
+                        "CentOS_connectivity_alert": "By default, xCloud uploads the software packages for the xCloud Slave nodes from the external repositories. Please verify the xCloud Master node has the Internet connection.\nIf the xCloud Master node does not have access to the Internet, you must create a local mirror with all required software packages and configure xCloud to use the mirror before you deploy an OpenStack environment."
                     },
                     "mode": {
                         "title": "Deployment Mode"
@@ -1083,7 +1084,7 @@
                         "vcenter_description": "Select this option if you run OpenStack on VMware vCenter.",
                         "vcenter_warning": "vCenter can't be deployed without QEMU-KVM option selected.",
                         "vcenter_requires_network_backend": "Plugin for DVS/NSX is required to create an environment with vCenter and Neutron.",
-                        "vcenter_plugins_page": "Please visit Fuel plugins page for details.",
+                        "vcenter_plugins_page": "Please visit xCloud plugins page for details.",
                         "empty_choice":  "Please select at least one hypervisor type"
                     },
                     "network": {
@@ -1144,7 +1145,7 @@
                     "ready": {
                         "title": "Finish",
                         "env_select_deploy": "Your environment is now ready for deployment! After clicking the Create button, you can",
-                        "or_make_config_choice": "or modify additional configuration changes in the Fuel",
+                        "or_make_config_choice": "or modify additional configuration changes in the xCloud",
                         "console": "console.",
                         "deploy": "Deploy Changes",
                         "env": "Environments"
@@ -1167,20 +1168,20 @@
                 "deploy_cluster": {
                     "title": "Deploy Changes",
                     "no_deployment": "Environment configuration is invalid. Cannot start the deployment. Please check the warnings below.",
-                    "connectivity_alert": "Packages and updates are fetched from the repositories defined in the Settings tab. If your environment uses the default repositories, verify that the Fuel Master node can access the Internet. If the Fuel Master node is not connected to the Internet, you must set up a local mirror and configure Fuel to upload packages from the local mirror. Fuel must have network access to the local mirror.",
+                    "connectivity_alert": "Packages and updates are fetched from the repositories defined in the Settings tab. If your environment uses the default repositories, verify that the xCloud Master node can access the Internet. If the xCloud Master node is not connected to the Internet, you must set up a local mirror and configure xCloud to upload packages from the local mirror. xCloud must have network access to the local mirror.",
                     "are_you_sure_deploy": "Click Deploy to start the deployment or Cancel to make changes.",
                     "deploy": "Deploy"
                 },
                 "provision_nodes": {
                     "title": "Provision Nodes",
-                    "locked_node_settings_alert": "Before you proceed, review the nodes configuration, including roles, disk partitioning and interfaces configuration. You will not be able to change these settings after Fuel provisions the nodes.",
+                    "locked_node_settings_alert": "Before you proceed, review the nodes configuration, including roles, disk partitioning and interfaces configuration. You will not be able to change these settings after xCloud provisions the nodes.",
                     "are_you_sure_provision": "Click Start Provisioning to provision the operating system onto the environment nodes, or Cancel to make changes.",
                     "start_provisioning": "Provision __count__ Node",
                     "start_provisioning_plural": "Provision __count__ Nodes"
                 },
                 "deploy_nodes": {
                     "title": "Deploy Nodes",
-                    "locked_node_settings_alert": "Before you proceed, review role configuration of the nodes. You will not be able to change node roles after Fuel deploys it.",
+                    "locked_node_settings_alert": "Before you proceed, review role configuration of the nodes. You will not be able to change node roles after xCloud deploys it.",
                     "are_you_sure_deploy": "Click Start Deployment to start the deployment or Cancel to make changes.",
                     "start_deployment": "Deploy __count__ Node",
                     "start_deployment_plural": "Deploy __count__ Nodes"
@@ -1253,7 +1254,7 @@
                     "cant_discard_instruction_end": " tab to adjust the configuration manually."
                 },
                 "remove_node": {
-                    "default_message": "Fuel will remove this node from its database. This operation will not erase MBR or any data on this node. If you power on the node, it will boot bootstrap (discovery) system, and the node will appear in Fuel as a new unallocated server.",
+                    "default_message": "xCloud will remove this node from its database. This operation will not erase MBR or any data on this node. If you power on the node, it will boot bootstrap (discovery) system, and the node will appear in xCloud as a new unallocated server.",
                     "title": "Remove Node"
                 },
                 "remove_cluster": {
@@ -1267,7 +1268,7 @@
                 "stop_deploy": {
                     "title": "Stop Deployment",
                     "text": "Are you sure you want to stop this deployment? You may not be able to successfully re-deploy this OpenStack environment until you reset the environment. Proceed with caution!",
-                    "provisioning_warning": "Are you sure you want to interrupt the deployment at the OS provisioning stage? Fuel has not completed the node provisioning. Changes applied to the nodes will be discarded and the nodes will be reset to their pre-deployment state.",
+                    "provisioning_warning": "Are you sure you want to interrupt the deployment at the OS provisioning stage? xCloud has not completed the node provisioning. Changes applied to the nodes will be discarded and the nodes will be reset to their pre-deployment state.",
                     "redeployment_warning": "Please wait 20 minutes before attempting to run the deployment again to ensure the provisioning process has been stopped.",
                     "error": {
                         "title": "Stop Deployment Error",
@@ -1307,7 +1308,7 @@
                     "confirm_new_password": "Confirm the new password",
                     "wrong_current_password": "Wrong password",
                     "new_password_mismatch": "Passwords do not match",
-                    "changing_password_warning": "Please note that Fuel client configuration is not automatically updated. You may want to update /root/.config/fuel/fuel_client.yaml."
+                    "changing_password_warning": "Please note that xCloud client configuration is not automatically updated. You may want to update /root/.config/fuel/fuel_client.yaml."
                 },
                 "remove_node_network_group": {
                     "title": "Remove Node Network Group",
@@ -1337,7 +1338,7 @@
             "language": "CN",
             "language_name": "中文",
             "common": {
-                "title": "Fuel 控制台",
+                "title": "xCloud 控制台",
                 "select_all": "选择全部",
                 "load_defaults_button": "恢复默认",
                 "cancel_changes_button": "取消变更",
@@ -1446,7 +1447,7 @@
                     "floating": "该网络用于为租户虚拟机分配浮动IP。",
                     "private": "私有网络用于辅助每个租户的各个虚拟机之间的通信。私有网络地址空间不是公开网络地址空间的一部分，虚拟实例的固定IP无法被公开网络的其他部分直接访问。",
                     "baremetal": "由OpenStack Ironic管理的裸机节点所在的单独网络。该IP段被分配给OpenStack服务节点。",
-                    "fuelweb_admin": "Fuel主节点使用Admin（PXE）网络来提供和编排为节点提供DNS、DHCP和网关服务的OpenStack环境。"
+                    "fuelweb_admin": "xCloud主节点使用Admin（PXE）网络来提供和编排为节点提供DNS、DHCP和网关服务的OpenStack环境。"
                 },
                 "requirements": {
                     "public": [
@@ -1490,7 +1491,7 @@
                 "http_warning_link": "切换至HTTPS"
             },
             "statistics": {
-                "help_to_improve": "通过发送您在使用Fuel和OpenStack过程中的设置、功能、部署操作等信息，帮助我们改进您的使用体验。",
+                "help_to_improve": "通过发送您在使用xCloud和OpenStack过程中的设置、功能、部署操作等信息，帮助我们改进您的使用体验。",
                 "learn_whats_collected": "了解何种信息会被收集",
                 "statistics_user_info": "注意，如果您同意发送统计信息，一个名为\"fuel_states_user\"的新用户将会被添加至您的OpenStack环境，该用户将会收集OpenStack的负载信息",
                 "statistics_includes_full": "使用过程的统计信息包含下列信息。密码，IP地址，节点名称等保密信息不会包含在统计信息内。",
@@ -1527,7 +1528,7 @@
                 "system_info": {
                     "hypervisor": "Hypervisor",
                     "hardware_info": "硬件信息",
-                    "fuel_version": "Fuel版本信息",
+                    "fuel_version": "xCloud版本信息",
                     "openstack_version": "OpenStack版本信息"
                 },
                 "setting_labels": {
@@ -1544,9 +1545,9 @@
                 }
             },
             "welcome_page": {
-                "title": "欢迎来到Fuel与OpenStack！",
-                "start_fuel": "开始使用Fuel",
-                "thanks": "感谢您帮助改进Fuel与OpenStack!",
+                "title": "欢迎来到xCloud与OpenStack！",
+                "start_fuel": "开始使用xCloud",
+                "thanks": "感谢您帮助改进xCloud与OpenStack!",
                 "statistics_collector": "用于收集统计信息的Web UI正在开发中，将可通过以下链接访问"
             },
             "navbar": {
@@ -1585,7 +1586,7 @@
             },
             "support_page": {
                 "title": "技术支持",
-                "log_text": "如果您在使用Fuel Web的过程中遇到任何错误或异常，可能需要将日志提交给支持团队，请点击按钮下载：",
+                "log_text": "如果您在使用xCloud Web的过程中遇到任何错误或异常，可能需要将日志提交给支持团队，请点击按钮下载：",
                 "contact_support": "联系支持",
                 "master_node_uuid": "主节点UUID",
                 "manage_account": "管理账户",
@@ -1599,8 +1600,8 @@
                 "send_statistics_title": "发送使用过程的统计信息",
                 "save_changes": "保存更改",
                 "documentation_link": "查看文档",
-                "documentation_title": "Fuel文档",
-                "documentation_text": "该页面包含最新的Fuel文档，您可以在线阅读或下载PDF版本。"
+                "documentation_title": "xCloud文档",
+                "documentation_text": "该页面包含最新的xCloud文档，您可以在线阅读或下载PDF版本。"
             },
             "release_page": {
                 "title": "版本",
@@ -1858,7 +1859,7 @@
                     "no_selected_nodes": "没有选择任何节点",
                     "disk_configuration_reset_warning": "当你更改节点角色，磁盘配置将重置为默认值",
                     "no_nodes_in_environment": "选择想分配的节点并设置角色",
-                    "no_nodes_in_fuel": "这个操作需要拥有一个或多个未分配节点的节点池。配置节点从网络启动来将它添加到节点池(PXE booting)。Fuel会自动发现节点。",
+                    "no_nodes_in_fuel": "这个操作需要拥有一个或多个未分配节点的节点池。配置节点从网络启动来将它添加到节点池(PXE booting)。xCloud会自动发现节点。",
                     "role_conflict": "该角色无法与所选角色相结合",
                     "node_deletion_error": {
                         "title": "删除节点错误",
@@ -1916,7 +1917,7 @@
                     "reset_environment": "重置环境",
                     "reset_environment_description": "允许修改设置并重新部署环境",
                     "reset_environment_warning": "即将重置所有节点至部署前状态并删除该环境，环境设置和网络配置将会被保留。",
-                    "reset_disabled_for_deploying_cluster": "OpenStack环境仍在部署中，等待Fuel完成部署并再次尝试。",
+                    "reset_disabled_for_deploying_cluster": "OpenStack环境仍在部署中，等待xCloud完成部署并再次尝试。",
                     "repeated_reset_disabled": "环境已经在被重置",
                     "no_changes_to_reset": "无法重置未部署的环境",
                     "rename_error": {
@@ -1949,7 +1950,7 @@
                     "changes_header": "更改列表:",
                     "new_environment_welcome": "欢迎来到新的OpenStack环境!",
                     "add_nodes": "为OpenStack环境添加节点",
-                    "not_deployed_instruction": "在继续前，请重新检查环境配置包括节点磁盘分区和网络配置，在Fuel部署完该OpenStack环境后这些设置均无法更改",
+                    "not_deployed_instruction": "在继续前，请重新检查环境配置包括节点磁盘分区和网络配置，在xCloud部署完该OpenStack环境后这些设置均无法更改",
                     "deployment_of_environment_cannot_be_started": "由于非法环境配置部署无法启动，请检查并解决下方的warnings",
                     "stop": "停止",
                     "healthcheck": "查看OpenStack健康检查状态",
@@ -1958,8 +1959,8 @@
                     "go_to_nodes": "添加节点",
                     "unsuccessful_deploy": "您的部署不成功，See the Troubleshooting section of the ",
                     "no_nodes_instruction": "You must add at least one node to your environment in order to deploy. See the ",
-                    "locked_settings_alert": "在继续前，请重新检查环境配置包括节点磁盘分区和网络配置，在Fuel部署完该OpenStack环境后这些设置均无法更改",
-                    "package_information": "Packages and updates are fetched from the repositories defined in the Settings tab. If your environment uses the default external repositories, verify that the Fuel Master node can access the Internet. If the Fuel Master node is not connected to the Internet, you must set up a local mirror and configure Fuel to upload packages from the local mirror. Fuel must have network access to the local mirror. You may also configure alternate repositories for installation. For more information, see ",
+                    "locked_settings_alert": "在继续前，请重新检查环境配置包括节点磁盘分区和网络配置，在xCloud部署完该OpenStack环境后这些设置均无法更改",
+                    "package_information": "Packages and updates are fetched from the repositories defined in the Settings tab. If your environment uses the default external repositories, verify that the xCloud Master node can access the Internet. If the xCloud Master node is not connected to the Internet, you must set up a local mirror and configure xCloud to upload packages from the local mirror. xCloud must have network access to the local mirror. You may also configure alternate repositories for installation. For more information, see ",
                     "and_vcenter": "和VCenter",
                     "nova_with": "Nova Network with",
                     "neutron_with": "Neutron with",
@@ -1993,8 +1994,8 @@
                         "step_0": "完成网络验证的4个步骤:",
                         "step_1": "1. 环境中各节点的L2连通性检查",
                         "step_2": "2. 各节点DHCP检查",
-                        "step_3": "3. Fuel主节点源连通性检查",
-                        "step_4": "4. 通过公网和管理(PXE)网络对Fuel从节点源连通性检查",
+                        "step_3": "3. xCloud主节点源连通性检查",
+                        "step_4": "4. 通过公网和管理(PXE)网络对xCloud从节点源连通性检查",
                         "success_alert": "验证成功。网络配置正确。",
                         "verification_error": {
                             "title": "网络验证错误",
@@ -2112,7 +2113,7 @@
                     "actual_duration": "实际时长",
                     "status": "状态",
                     "provide_credentials": "提供认证信息",
-                    "credentials_description": "若在部署后更改认证信息，请在运行健康检查时修改它们，Fuel不会存储凭证。",
+                    "credentials_description": "若在部署后更改认证信息，请在运行健康检查时修改它们，xCloud不会存储凭证。",
                     "password_label": "密码",
                     "password_description": "Administrator的密码",
                     "user_label": "用户名",
@@ -2131,14 +2132,14 @@
                 "hide_details_button": "隐藏更多信息",
                 "openstack_release": "OpenStack版本：",
                 "environment_status": "环境状态：",
-                "cluster_was_modified_from_cli": "该部署环境中存在由Fuel CLI修改的参数，CLI的优先级高于使用Fuel Web接口修改的优先级，请谨慎操作。",
+                "cluster_was_modified_from_cli": "该部署环境中存在由xCloud CLI修改的参数，CLI的优先级高于使用xCloud Web接口修改的优先级，请谨慎操作。",
                 "unavailable_release": "__name__版本不可用，无法部署该OpenStack环境"
             },
             "capacity_page": {
                 "title": "性能审计",
                 "license_usage": "许可使用报告",
-                "fuel_version": "Fuel版本",
-                "fuel_uuid": "Fuel UUID",
+                "fuel_version": "xCloud版本",
+                "fuel_uuid": "xCloud UUID",
                 "env_name": "环境名称",
                 "node_count": "节点数量",
                 "total_number_alloc_nodes": "全部已分配节点的数量",
@@ -2152,7 +2153,7 @@
                 "nailgun_unavailability": {
                     "title": "Nailgun 不可用",
                     "retry_now": "马上重试",
-                    "unavailability_message": "无法启动 Fuel UI。Nailgun 不可用。",
+                    "unavailability_message": "无法启动 xCloud UI。Nailgun 不可用。",
                     "retry_delay_message": "__count__ 秒钟后重连...",
                     "retry_delay_message_plural": "__count__ 秒钟后重连...",
                     "retrying": "正在重连...",
@@ -2174,8 +2175,8 @@
                         "name": "名称",
                         "release_label": "OpenStack 版本",
                         "existing_environment": "名字为“__name__”的环境已经存在",
-                        "Ubuntu_connectivity_alert": "默认情况下，Fuel 使用外网来为 Fuel 的从属节点安装和更新软件包。所以请确认 Fuel 的主节点能够连接外网。如果 Fuel 的主节点不能连接外网，你需要在本地创建一个包含所需软件的镜像源，并且在部署 OpenStack 环境前配置 Fuel 使用本地镜像。",
-                        "CentOS_connectivity_alert": "默认情况下，Fuel 使用外网来为 Fuel 的从属节点安装和更新软件包。所以请确认 Fuel 的主节点能够连接外网。如果 Fuel 的主节点不能连接外网，你需要在本地创建一个包含所需软件的镜像源，并且在部署 OpenStack 环境前配置 Fuel 使用本地镜像。"
+                        "Ubuntu_connectivity_alert": "默认情况下，xCloud 使用外网来为 xCloud 的从属节点安装和更新软件包。所以请确认 xCloud 的主节点能够连接外网。如果 xCloud 的主节点不能连接外网，你需要在本地创建一个包含所需软件的镜像源，并且在部署 OpenStack 环境前配置 xCloud 使用本地镜像。",
+                        "CentOS_connectivity_alert": "默认情况下，xCloud 使用外网来为 xCloud 的从属节点安装和更新软件包。所以请确认 xCloud 的主节点能够连接外网。如果 xCloud 的主节点不能连接外网，你需要在本地创建一个包含所需软件的镜像源，并且在部署 OpenStack 环境前配置 xCloud 使用本地镜像。"
                     },
                     "mode": {
                         "title": "部署模式"
@@ -2188,7 +2189,7 @@
                         "vcenter_description": "如果要在 VMware vCenter 上运行 OpenStack，请选择此项。",
                         "vcenter_warning": "vCenter 不能和 QUME-KVM 一起部署。",
                         "vcenter_requires_network_backend": "需要 DVS/NSX 插件来创建 vCenter 和 Neutron 网络环境",
-                        "vcenter_plugins_page": "详细信息请访问 Fuel 插件页面",
+                        "vcenter_plugins_page": "详细信息请访问 xCloud 插件页面",
                         "empty_choice": "请至少选择一种虚拟化类型"
                     },
                     "network": {
@@ -2249,7 +2250,7 @@
                     "ready": {
                         "title": "完成",
                         "env_select_deploy": "部署准备就绪！单击新建按钮后，你可以",
-                        "or_make_config_choice": "。如果要修改更多配置，请前往 Fuel 的",
+                        "or_make_config_choice": "。如果要修改更多配置，请前往 xCloud 的",
                         "console": "控制面板。",
                         "deploy": "立即部署",
                         "env": "环境"
@@ -2272,20 +2273,20 @@
                 "deploy_cluster": {
                     "title": "部署变更",
                     "no_deployment": "环境配置有误，无法开始部署。请检查下面的错误。",
-                    "connectivity_alert": "软件包和更新所用的镜像源定义在设置标签页中。如果你的环境使用默认的镜像源，请检查 Fuel 的主节点能访问外网。如果 Fuel 的主节点没有连接外网，你必须搭建一个本地的镜像源，并配置 Fuel 从本地镜像源获取软件包。Fuel 必须能通过网络访问本地镜像源。",
+                    "connectivity_alert": "软件包和更新所用的镜像源定义在设置标签页中。如果你的环境使用默认的镜像源，请检查 xCloud 的主节点能访问外网。如果 xCloud 的主节点没有连接外网，你必须搭建一个本地的镜像源，并配置 xCloud 从本地镜像源获取软件包。xCloud 必须能通过网络访问本地镜像源。",
                     "are_you_sure_deploy": "单击部署开始操作或者取消",
                     "deploy": "部署"
                 },
                 "provision_nodes": {
                     "title": "配置节点",
-                    "locked_node_settings_alert": "在你开始之前，请检查环境的节点配置，包括磁盘分区、接口设置。在 Fuel 开始部署节点之后，你将不能再做更改。",
+                    "locked_node_settings_alert": "在你开始之前，请检查环境的节点配置，包括磁盘分区、接口设置。在 xCloud 开始部署节点之后，你将不能再做更改。",
                     "are_you_sure_provision": "点击开始配置进行操作或者取消。",
                     "start_provisioning": "开始配置 __count__ 个节点",
                     "start_provisioning_plural": "开始配置 __count__ 个节点"
                 },
                 "deploy_nodes": {
                     "title": "部署节点",
-                    "locked_node_settings_alert": "在你开始之前，请检查节点配置。在 Fuel 部署之后，你将不能再更改节点角色。",
+                    "locked_node_settings_alert": "在你开始之前，请检查节点配置。在 xCloud 部署之后，你将不能再更改节点角色。",
                     "are_you_sure_deploy": "点击开始部署进行操作或者取消。",
                     "start_deployment": "开始部署 __count__ 个节点",
                     "start_deployment_plural": "开始部署 __count__ 个节点"
@@ -2339,7 +2340,7 @@
                     "cant_discard": "不能放弃变更。"
                 },
                 "remove_node": {
-                    "default_message": "Fuel 会从数据库中删除这个节点。这个操作不会删除节点的 MBR 及任何数据。如果你开启这个节点，它会进入（发现）系统，这个节点会重新成为 Fuel 未分配节点。",
+                    "default_message": "xCloud 会从数据库中删除这个节点。这个操作不会删除节点的 MBR 及任何数据。如果你开启这个节点，它会进入（发现）系统，这个节点会重新成为 xCloud 未分配节点。",
                     "title": "删除节点"
                 },
                 "remove_cluster": {
@@ -2353,7 +2354,7 @@
                 "stop_deploy": {
                     "title": "停止部署",
                     "text": "你确定要停止这次的部署吗？你可能无法再重新部署这个 OpenStack 环境，除非重置它。请谨慎操作！",
-                    "provisioning_warning": "你确定要在系统部署阶段中断这次部署吗？Fuel 还未完成节点部署，所有对节点的改动会被丢弃，节点会被重置成部署前的状态。",
+                    "provisioning_warning": "你确定要在系统部署阶段中断这次部署吗？xCloud 还未完成节点部署，所有对节点的改动会被丢弃，节点会被重置成部署前的状态。",
                     "redeployment_warning": "请等待 20 分钟再重新部署，以确保前面的部署已彻底停止。",
                     "error": {
                         "title": "停止部署出错",
@@ -2391,7 +2392,7 @@
             "language": "JA",
             "language_name": "日本語",
             "common": {
-                "title": "Fuel ダッシュボード",
+                "title": "xCloud ダッシュボード",
                 "select_all": "すべてを選択",
                 "load_defaults_button": "デフォルトを読み込み",
                 "cancel_changes_button": "変更をキャンセル",
@@ -2455,7 +2456,7 @@
                 }
             },
             "network": {
-                "fuelweb_admin": "Fuel管理 (PXE)",
+                "fuelweb_admin": "xCloud管理 (PXE)",
                 "fixed": "VM (固定)",
                 "public": "パブリック",
                 "floating": "フローティング",
@@ -2471,7 +2472,7 @@
                 "title": "ログイン"
             },
             "statistics": {
-                "help_to_improve": "FuelとOpenStackを使用した設定、機能、そして、デプロイアクションの情報を送信して、製品をより良いものにする手助けをしてください。",
+                "help_to_improve": "xCloudとOpenStackを使用した設定、機能、そして、デプロイアクションの情報を送信して、製品をより良いものにする手助けをしてください。",
                 "learn_whats_collected": "収集される情報について",
                 "statistics_user_info": "統計情報を送信することに同意する場合は、\"fuel_stats_user\"の名前で、新しいユーザーがOpenStackの環境に追加されることに注意してください。 fuel_stats_userは、OpenStackのワークロードに関する情報を収集します。",
                 "statistics_includes_full": "利用統計には以下の情報が含まれます。パスワードやIPアドレス、ノード名は含まれません。",
@@ -2508,7 +2509,7 @@
                 "system_info": {
                     "hypervisor": "ハイパーバイザー",
                     "hardware_info": "ハードウェア情報",
-                    "fuel_version": "Fuelバージョン情報",
+                    "fuel_version": "xCloudバージョン情報",
                     "openstack_version": "OpenStackバージョン情報"
                 },
                 "setting_labels": {
@@ -2525,9 +2526,9 @@
                 }
             },
             "welcome_page": {
-                "title": "FuelとOpenStackへようこそ",
-                "start_fuel": "Fuelの使用を開始",
-                "thanks": "FuelとOpenStackの向上に貢献してくれてありがとうございます！",
+                "title": "xCloudとOpenStackへようこそ",
+                "start_fuel": "xCloudの使用を開始",
+                "thanks": "xCloudとOpenStackの向上に貢献してくれてありがとうございます！",
                 "statistics_collector": "収集した統計情報のためのWeb UIを開発中です。次で利用できるようになります"
             },
             "navbar": {
@@ -2572,8 +2573,8 @@
                 "send_statistics_title": "仕様統計情報を送信",
                 "save_changes": "変更を保存",
                 "documentation_link": "ドキュメントに移動",
-                "documentation_title": "Fuelドキュメント",
-                "documentation_text": "このページには、最新のFuelドキュメントが含まれています。あなたはそれをオンラインで読むか、PDFでダウンロードすることができます。"
+                "documentation_title": "xCloudドキュメント",
+                "documentation_text": "このページには、最新のxCloudドキュメントが含まれています。あなたはそれをオンラインで読むか、PDFでダウンロードすることができます。"
             },
             "release_page": {
                 "title": "リリース",
@@ -2711,7 +2712,7 @@
                     "no_selected_nodes": "編集のために選択されたノードはありません。",
                     "disk_configuration_reset_warning": "ディスクの設定はロールが変更されるとリセットされます。",
                     "no_nodes_in_environment": "環境にノードを追加するにはノードの追加オプションを選択し、割り当てたいノードを選択し、それぞれにロールを設定します。",
-                    "no_nodes_in_fuel": "一つ以上の未割り当てのノードがこの操作には必要です。プールに追加するにはネットワークから起動(別名:PXEブート)するようにノードを設定します。Fuelは自動的にプロビジョニングを行い、ノードを検出します。",
+                    "no_nodes_in_fuel": "一つ以上の未割り当てのノードがこの操作には必要です。プールに追加するにはネットワークから起動(別名:PXEブート)するようにノードを設定します。xCloudは自動的にプロビジョニングを行い、ノードを検出します。",
                     "role_conflict": "このロールは、すでに選択済みの他のロールと組み合わせることはできません。",
                     "node_deletion_error": {
                         "title": "ノード削除エラー",
@@ -2891,14 +2892,14 @@
                 "hide_details_button": "追加の情報を非表示",
                 "openstack_release": "OpenStackリリース",
                 "environment_status": "ステータス",
-                "cluster_was_modified_from_cli": "この環境のいくつかのデプロイ・パラメータはFuel CLIから変更されています。Fuel CLIから変更されたものはお使いのブラウザから行われた設定よりも優先されます。注意してください。",
+                "cluster_was_modified_from_cli": "この環境のいくつかのデプロイ・パラメータはxCloud CLIから変更されています。xCloud CLIから変更されたものはお使いのブラウザから行われた設定よりも優先されます。注意してください。",
                 "unavailable_release": "__name__のリリースは使用できません。この環境はデプロイできませんでした。"
             },
             "capacity_page": {
                 "title": "キャパシティ監査",
                 "license_usage": "License Usage Report",
-                "fuel_version": "Fuelバージョン",
-                "fuel_uuid": "Fuel UUID",
+                "fuel_version": "xCloudバージョン",
+                "fuel_uuid": "xCloud UUID",
                 "env_name": "環境名",
                 "node_count": "ノード数",
                 "total_number_alloc_nodes": "割り当て済みノードの合計",
@@ -2920,8 +2921,8 @@
                         "name": "名前",
                         "release_label": "OpenStackリリース",
                         "existing_environment": "\"__name__\"という名前の環境はすでに存在します",
-                        "Ubuntu_connectivity_alert": "デフォルトではパッケージは外部のリポジトリから取得されます。Fuelマスターノードがインターネットにアクセスできることを確認してください。\n別のリポジトリを指定または、ローカルミラーを作成するにはデプロイ前に設定タブを確認してください。",
-                        "CentOS_connectivity_alert": "Fuelマスターノードがインターネットにアクセスできることを確認してください。\n別のリポジトリを指定または、ローカルミラーを作成するにはデプロイ前に設定タブを確認してください。"
+                        "Ubuntu_connectivity_alert": "デフォルトではパッケージは外部のリポジトリから取得されます。xCloudマスターノードがインターネットにアクセスできることを確認してください。\n別のリポジトリを指定または、ローカルミラーを作成するにはデプロイ前に設定タブを確認してください。",
+                        "CentOS_connectivity_alert": "xCloudマスターノードがインターネットにアクセスできることを確認してください。\n別のリポジトリを指定または、ローカルミラーを作成するにはデプロイ前に設定タブを確認してください。"
                     },
                     "mode": {
                         "title": "デプロイモード"
@@ -2987,7 +2988,7 @@
                     "ready": {
                         "title": "完了",
                         "env_select_deploy": "環境をデプロイする準備ができました！作成ボタンをクリックした後で、環境を選択",
-                        "or_make_config_choice": "またはFuelで追加の構成を選択することができます",
+                        "or_make_config_choice": "またはxCloudで追加の構成を選択することができます",
                         "console": "コンソール。",
                         "deploy": "変更をデプロイ",
                         "env": "環境"
@@ -3007,7 +3008,7 @@
                     "title": "変更をデプロイ",
                     "deploy": "デプロイ",
                     "no_deployment": "環境の設定が無効です。デプロイは開始できません。次の警告を確認してください。",
-                    "connectivity_alert": "デフォルトではパッケージやパッケージの更新は、リポジトリから取得されます。 Fuelノードがインタネットにアクセスできることを確認してください。\n別のリポジトリを指定またはローカルミラーを作成するには、デプロイ前に設定タブを確認してください。"
+                    "connectivity_alert": "デフォルトではパッケージやパッケージの更新は、リポジトリから取得されます。 xCloudノードがインタネットにアクセスできることを確認してください。\n別のリポジトリを指定またはローカルミラーを作成するには、デプロイ前に設定タブを確認してください。"
                 },
                 "show_node": {
                     "manufacturer_label": "製造元",
@@ -3034,7 +3035,7 @@
                     "cant_discard": "ノードの変更を破棄することができません"
                 },
                 "remove_node": {
-                    "default_message": "Fuelはデータベースからこのノードを削除します。この操作ではノードのMBRやそのほかのデータは削除されません。ノードの起動した場合、ブートストラップ（ディスカバリー）システムが起動され、新規または未割り当てのサーバとしてFuelに再表示されます。",
+                    "default_message": "xCloudはデータベースからこのノードを削除します。この操作ではノードのMBRやそのほかのデータは削除されません。ノードの起動した場合、ブートストラップ（ディスカバリー）システムが起動され、新規または未割り当てのサーバとしてxCloudに再表示されます。",
                     "title": "ノードの削除"
                 },
                 "remove_cluster": {
@@ -3078,7 +3079,7 @@
             "language": "KO",
             "language_name": "한국말",
             "common": {
-                "title": "Fuel 대시보드",
+                "title": "xCloud 대시보드",
                 "select_all": "모두선택",
                 "load_defaults_button": "초기설정로드",
                 "cancel_changes_button": "변경취소",
@@ -3268,7 +3269,7 @@
                     "no_selected_nodes": "바꾸기위한 노드가 선택되지 않았읍니다",
                     "disk_configuration_reset_warning": "디스크는 역할 변경후 기본값으로 재설정됩니다",
                     "no_nodes_in_environment": "환경에 노드를 추가하기 위해서는, 노드추가 옵션을 선택한다음에, 배치하기를 원하는 노드를 선택하고 각각의 역할을 할당합니다",
-                    "no_nodes_in_fuel": "배치되지 않은 노드 풀은 이 작업을 위해 필요합니다. 풀에 노드를 추가하려면 네트워크(일명 PXE 부팅)로부터 부팅하도록 노드를 설정합니다. 그러면, Fuel가 자동적으로 노드를 찾아낼 수 있습니다.",
+                    "no_nodes_in_fuel": "배치되지 않은 노드 풀은 이 작업을 위해 필요합니다. 풀에 노드를 추가하려면 네트워크(일명 PXE 부팅)로부터 부팅하도록 노드를 설정합니다. 그러면, xCloud가 자동적으로 노드를 찾아낼 수 있습니다.",
                     "role_conflict": "이 역할은 이미 선택된 다른 역할과 섞을 수 없습니다.",
                     "no_filtered_nodes_warning": "필터값과 일치하는 노드가 없습니다.",
                     "filtered_nodes_count":"__count__ node의__filteredNodesCount__ ",
@@ -3419,13 +3420,13 @@
                 "deployment_mode": "환경배치 모드:",
                 "openstack_release": "OpenStack 출시:",
                 "environment_status": "환경 상태:",
-                "cluster_was_modified_from_cli": "이 환경에 대한 몇 가지 배치 매개 변수는 Fuel CLI에서 수정되었습니다. Fuel CLI의 변경은 브라우저에서의 설정보다 우선합니다. 주의해서 진행하십시요."
+                "cluster_was_modified_from_cli": "이 환경에 대한 몇 가지 배치 매개 변수는 xCloud CLI에서 수정되었습니다. xCloud CLI의 변경은 브라우저에서의 설정보다 우선합니다. 주의해서 진행하십시요."
             },
             "capacity_page": {
                 "title": "용량 감사",
                 "license_usage": "라이센스 사용 보고서",
-                "fuel_version": "Fuel 버전",
-                "fuel_uuid": "Fuel UUID",
+                "fuel_version": "xCloud 버전",
+                "fuel_uuid": "xCloud UUID",
                 "env_name": "환경 이름",
                 "node_count": "노드 개수",
                 "total_number_alloc_nodes": "할당된 노드의 총수",
@@ -3481,7 +3482,7 @@
                     },
                     "ready": {
                         "title": "끝마침",
-                        "env_select_deploy": "환경은 이제 배치 할 준비가 되었습니다! [만들기] 버튼을 클릭한후, Fuel 콘솔에서 선택하거나",
+                        "env_select_deploy": "환경은 이제 배치 할 준비가 되었습니다! [만들기] 버튼을 클릭한후, xCloud 콘솔에서 선택하거나",
                         "or_make_config_choice": "추가설정을 할 수 있습니다",
                         "console": ".",
                         "deploy": "변경내용 배치",
